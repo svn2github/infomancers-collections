@@ -17,18 +17,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com/infomancers" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com/infomancers/tests" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yielder.iws" afterPath="$PROJECT_DIR$/Yielder.iws" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yielder.iml" afterPath="$PROJECT_DIR$/Yielder.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yielder.iws" afterPath="$PROJECT_DIR$/Yielder.iws" />
     </list>
   </component>
   <component name="ChangeListSynchronizer" />
@@ -165,10 +155,8 @@
       <file leaf-file-name="LocalVariablePromoter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="19" selection-start="265" selection-end="265" vertical-scroll-proportion="0.23703703">
-              <folding>
-                <element signature="class#MyMethodAdapter#0;class#LocalVariablePromoter#0" expanded="true" />
-              </folding>
+            <state line="11" column="19" selection-start="265" selection-end="265" vertical-scroll-proportion="0.02962963">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -176,7 +164,7 @@
       <file leaf-file-name="LocalVariableAssigner.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="13" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.33333334">
+            <state line="47" column="13" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.096296296">
               <folding />
             </state>
           </provider>
@@ -191,10 +179,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="YielderTests.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="YielderTests.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="16" selection-start="664" selection-end="664" vertical-scroll-proportion="0.74285716">
+            <state line="19" column="10" selection-start="505" selection-end="505" vertical-scroll-proportion="0.54285717">
               <folding />
             </state>
           </provider>
@@ -212,7 +200,7 @@
       <file leaf-file-name="YielderTransformer.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="59" column="80" selection-start="2443" selection-end="2443" vertical-scroll-proportion="0.46666667">
+            <state line="59" column="80" selection-start="2443" selection-end="2443" vertical-scroll-proportion="1.074074">
               <folding />
             </state>
           </provider>
@@ -227,10 +215,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="YieldReturnCounter.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="YieldReturnCounter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="12" selection-start="831" selection-end="831" vertical-scroll-proportion="0.65925926">
+            <state line="36" column="14" selection-start="1155" selection-end="1155" vertical-scroll-proportion="0.91851854">
               <folding />
             </state>
           </provider>
@@ -448,7 +436,7 @@
       <showLibraryContents />
       <hideEmptyPackages ProjectPane="true" />
       <abbreviatePackageNames />
-      <showStructure Scope="false" ProjectPane="false" PackagesPane="false" Favorites="false" />
+      <showStructure Favorites="false" ProjectPane="false" Scope="false" PackagesPane="false" />
       <autoscrollToSource />
       <autoscrollFromSource />
       <sortByType />
@@ -464,8 +452,8 @@
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
-    <property name="RunManagerConfig.showSettingsBeforeRunnig" value="false" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
+    <property name="RunManagerConfig.showSettingsBeforeRunnig" value="false" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
   </component>
   <component name="ReadonlyStatusHandler">
@@ -476,6 +464,7 @@
       <recent name="com.infomancers.collections.yield.asm.Util" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.infomancers.collections.yield.asm" />
       <recent name="com.infomancers.collections.yield" />
     </key>
     <key name="IntroduceConstantDialog.RECENTS_KEY">
@@ -543,7 +532,7 @@
       <option name="ALTERNATIVE_JRE_PATH" />
     </configuration>
     <configuration default="false" name="Runner" type="Application" factoryName="Application" enabled="false" merge="false">
-      <option name="MAIN_CLASS_NAME" value="com.infomancers.collections.yield.YielderTests" />
+      <option name="MAIN_CLASS_NAME" value="com.infomancers.collections.yield.asm.YielderTests" />
       <option name="VM_PARAMETERS" value="-javaagent:deploy/yielder.jar=debug" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -798,13 +787,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/Yielder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="28" selection-start="1188" selection-end="1188" vertical-scroll-proportion="0.028571429">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="25" selection-start="289" selection-end="289" vertical-scroll-proportion="0.34285715">
@@ -812,25 +794,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="16" selection-start="664" selection-end="664" vertical-scroll-proportion="0.74285716">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="19" selection-start="265" selection-end="265" vertical-scroll-proportion="0.23703703">
-          <folding>
-            <element signature="class#MyMethodAdapter#0;class#LocalVariablePromoter#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="13" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.33333334">
+        <state line="11" column="19" selection-start="265" selection-end="265" vertical-scroll-proportion="0.02962963">
           <folding />
         </state>
       </provider>
@@ -842,9 +808,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/Yielder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="28" selection-start="1188" selection-end="1188" vertical-scroll-proportion="0.028571429">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="80" selection-start="2443" selection-end="2443" vertical-scroll-proportion="0.46666667">
+        <state line="59" column="80" selection-start="2443" selection-end="2443" vertical-scroll-proportion="1.074074">
           <folding />
         </state>
       </provider>
@@ -858,7 +831,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="12" selection-start="831" selection-end="831" vertical-scroll-proportion="0.65925926">
+        <state line="36" column="14" selection-start="1155" selection-end="1155" vertical-scroll-proportion="0.91851854">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="13" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.096296296">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="10" selection-start="505" selection-end="505" vertical-scroll-proportion="0.54285717">
           <folding />
         </state>
       </provider>
