@@ -15,6 +15,7 @@ public final class LocalVariablePromoter extends ClassAdapter {
     public static class NewMember {
         public String name;
         public String desc;
+        public int index;
 
 
         @Override
@@ -24,7 +25,11 @@ public final class LocalVariablePromoter extends ClassAdapter {
 
             NewMember newMember = (NewMember) o;
 
-            return desc.equals(newMember.desc) && name.equals(newMember.name);
+            if (index != newMember.index) return false;
+            if (!desc.equals(newMember.desc)) return false;
+            if (!name.equals(newMember.name)) return false;
+
+            return true;
         }
 
         @Override
@@ -32,6 +37,7 @@ public final class LocalVariablePromoter extends ClassAdapter {
             int result;
             result = name.hashCode();
             result = 31 * result + desc.hashCode();
+            result = 31 * result + index;
             return result;
         }
     }
@@ -82,7 +88,7 @@ public final class LocalVariablePromoter extends ClassAdapter {
     }
 
     private class MyMethodAdapter extends MethodAdapter {
-        private final String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
+//        private final String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
 
         public MyMethodAdapter(MethodVisitor methodVisitor) {
             super(methodVisitor);
@@ -96,13 +102,14 @@ public final class LocalVariablePromoter extends ClassAdapter {
                 String memberName = MEMBER_NAME_PREFIX + var;
                 NewMember newMember = new NewMember();
                 newMember.name = memberName;
+                newMember.index = var;
 
                 if (opcode > Opcodes.ALOAD) {
                     mv.visitVarInsn(opcode, var);
-                    newMember.desc = descs[opcode - Opcodes.ISTORE];
+                    newMember.desc = Util.descForOffset(opcode - Opcodes.ISTORE);
                     createPutField(var, opcode - Opcodes.ISTORE + Opcodes.ILOAD, memberName, newMember.desc);
                 } else {
-                    newMember.desc = descs[opcode - Opcodes.ILOAD];
+                    newMember.desc = Util.descForOffset(opcode - Opcodes.ILOAD);
                     createGetField(memberName, newMember.desc);
                 }
                 newMembers.add(newMember);

@@ -17,13 +17,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yielder.iml" afterPath="$PROJECT_DIR$/Yielder.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/Yielder.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/Yielder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderChecker.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderChecker.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com/infomancers" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com/infomancers/tests" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yielder.iws" afterPath="$PROJECT_DIR$/Yielder.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/StateKeeper.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/StateKeeper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yielder.iml" afterPath="$PROJECT_DIR$/Yielder.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java" afterPath="$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java" />
     </list>
   </component>
   <component name="ChangeListSynchronizer" />
@@ -151,7 +156,7 @@
       <file leaf-file-name="Util.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="12" selection-start="257" selection-end="257" vertical-scroll-proportion="0.2294854">
+            <state line="12" column="25" selection-start="289" selection-end="289" vertical-scroll-proportion="0.34285715">
               <folding />
             </state>
           </provider>
@@ -160,7 +165,18 @@
       <file leaf-file-name="LocalVariablePromoter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="11" column="19" selection-start="265" selection-end="265" vertical-scroll-proportion="0.23703703">
+              <folding>
+                <element signature="class#MyMethodAdapter#0;class#LocalVariablePromoter#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LocalVariableAssigner.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="47" column="13" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.33333334">
               <folding />
             </state>
           </provider>
@@ -169,16 +185,25 @@
       <file leaf-file-name="AgentMain.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="19" selection-start="345" selection-end="345" vertical-scroll-proportion="0.20435968">
+            <state line="14" column="42" selection-start="472" selection-end="472" vertical-scroll-proportion="0.34285715">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Yielder.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="YielderTests.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="26" column="16" selection-start="664" selection-end="664" vertical-scroll-proportion="0.74285716">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Yielder.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/Yielder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="28" selection-start="1199" selection-end="1199" vertical-scroll-proportion="0.47547683">
+            <state line="39" column="28" selection-start="1188" selection-end="1188" vertical-scroll-proportion="0.028571429">
               <folding />
             </state>
           </provider>
@@ -187,10 +212,8 @@
       <file leaf-file-name="YielderTransformer.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="0" selection-start="319" selection-end="319" vertical-scroll-proportion="0.20862308">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="59" column="80" selection-start="2443" selection-end="2443" vertical-scroll-proportion="0.46666667">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -198,25 +221,16 @@
       <file leaf-file-name="YielderChecker.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderChecker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="19" selection-start="427" selection-end="427" vertical-scroll-proportion="0.2503477">
+            <state line="13" column="19" selection-start="432" selection-end="432" vertical-scroll-proportion="0.35555556">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StateKeeper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/StateKeeper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="19" selection-start="442" selection-end="442" vertical-scroll-proportion="0.27121">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="YieldReturnCounter.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="YieldReturnCounter.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="19" selection-start="513" selection-end="513" vertical-scroll-proportion="0.2503477">
+            <state line="26" column="12" selection-start="831" selection-end="831" vertical-scroll-proportion="0.65925926">
               <folding />
             </state>
           </provider>
@@ -365,6 +379,28 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
         <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:$PROJECT_DIR$/testsrc" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:$PROJECT_DIR$/testsrc/com/infomancers/tests" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Yielder.ipr" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Yielder" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="PsiDirectory:$PROJECT_DIR$" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
           <option name="myItemId" value="PsiDirectory:$PROJECT_DIR$/src" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
@@ -412,7 +448,7 @@
       <showLibraryContents />
       <hideEmptyPackages ProjectPane="true" />
       <abbreviatePackageNames />
-      <showStructure ProjectPane="false" PackagesPane="false" Scope="false" Favorites="false" />
+      <showStructure Scope="false" ProjectPane="false" PackagesPane="false" Favorites="false" />
       <autoscrollToSource />
       <autoscrollFromSource />
       <sortByType />
@@ -428,8 +464,8 @@
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
-    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="RunManagerConfig.showSettingsBeforeRunnig" value="false" />
+    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
   </component>
   <component name="ReadonlyStatusHandler">
@@ -438,6 +474,9 @@
   <component name="RecentsManager">
     <key name="MoveMembersDialog.RECENTS_KEY">
       <recent name="com.infomancers.collections.yield.asm.Util" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.infomancers.collections.yield" />
     </key>
     <key name="IntroduceConstantDialog.RECENTS_KEY">
       <recent name="" />
@@ -452,17 +491,18 @@
   </component>
   <component name="RestoreUpdateTree" />
   <component name="RunManager" selected="Application.Runner">
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
+    <configuration default="true" type="Application" factoryName="Application" enabled="false" merge="false">
       <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="/Applications/IntelliJ/idea-5557.app/bin/appletviewer.policy" />
       <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <module name="" />
+      <method>
+        <option name="Make" value="true" />
+      </method>
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
@@ -490,43 +530,21 @@
         <option name="Make" value="true" />
       </method>
     </configuration>
-    <configuration default="true" type="Application" factoryName="Application" enabled="false" merge="false">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
       <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="/Applications/IntelliJ/idea-5557.app/bin/appletviewer.policy" />
       <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <module name="" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
-    </configuration>
-    <configuration default="false" name="enhancer" type="Application" factoryName="Application" enabled="false" merge="false">
-      <option name="MAIN_CLASS_NAME" value="com.infomancers.yield.enhancer" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <module name="Yielder" />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="58417" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
     </configuration>
     <configuration default="false" name="Runner" type="Application" factoryName="Application" enabled="false" merge="false">
-      <option name="MAIN_CLASS_NAME" value="com.infomancers.yield.Runner" />
-      <option name="VM_PARAMETERS" value="-javaagent:yielder.jar" />
+      <option name="MAIN_CLASS_NAME" value="com.infomancers.collections.yield.YielderTests" />
+      <option name="VM_PARAMETERS" value="-javaagent:deploy/yielder.jar=debug" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -605,7 +623,7 @@
     <option name="UPDATE_RUN_STATUS" value="false" />
     <option name="UPDATE_RECURSIVELY" value="true" />
     <option name="MERGE_DRY_RUN" value="false" />
-    <configuration useDefault="true">/home/freakazoid/.subversion</configuration>
+    <configuration useDefault="true">/Users/aviadbd/.subversion</configuration>
     <checkoutURL>https://infomancers-collections.googlecode.com/svn/</checkoutURL>
     <checkoutURL>svn://80.179.37.123</checkoutURL>
   </component>
@@ -624,24 +642,24 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="10" y="25" width="1260" height="910" extended-state="0" />
+    <frame x="0" y="22" width="1440" height="801" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="3" />
       <window_info id="CVS" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="13" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="3" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="7" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32972524" order="0" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3292595" order="0" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" order="1" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="1" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32950193" order="9" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328125" order="9" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" order="6" />
       <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="6" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="10" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="4" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2489592" order="1" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="11" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3224432" order="2" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3224432" order="2" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="2" />
       <window_info id="File View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="5" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39914772" order="4" />
@@ -703,7 +721,6 @@
       <option name="RECURSIVE" value="false" />
     </CheckinOptions>
     <AddOptions>
-      <option name="COMMENT" value="" />
       <option name="STORE_ONLY_LATEST_VERSION" value="false" />
       <option name="CHECK_OUT_IMMEDIATELY" value="false" />
       <option name="FILE_TYPE" value="0" />
@@ -719,7 +736,9 @@
       <option name="ANSWER_NEGATIVELY" value="false" />
       <option name="ANSWER_POSITIVELY" value="false" />
       <option name="RECURSIVE" value="false" />
+      <option name="VERSION" />
     </GetOptions>
+    <VssConfigurableExcludedFilesTag />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -765,13 +784,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="12" selection-start="257" selection-end="257" vertical-scroll-proportion="0.2294854">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/yielder.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="127" column="30" selection-start="4799" selection-end="4799" vertical-scroll-proportion="0.83717775">
@@ -779,53 +791,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/StateKeeper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="19" selection-start="442" selection-end="442" vertical-scroll-proportion="0.27121">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderChecker.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="19" selection-start="427" selection-end="427" vertical-scroll-proportion="0.2503477">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="319" selection-end="319" vertical-scroll-proportion="0.20862308">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="19" selection-start="513" selection-end="513" vertical-scroll-proportion="0.2503477">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="19" selection-start="345" selection-end="345" vertical-scroll-proportion="0.20435968">
+        <state line="13" column="19" selection-start="447" selection-end="447" vertical-scroll-proportion="0.06733167">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/Yielder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="28" selection-start="1199" selection-end="1199" vertical-scroll-proportion="0.47547683">
+        <state line="39" column="28" selection-start="1188" selection-end="1188" vertical-scroll-proportion="0.028571429">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="25" selection-start="289" selection-end="289" vertical-scroll-proportion="0.34285715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testsrc/com/infomancers/tests/YielderTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="16" selection-start="664" selection-end="664" vertical-scroll-proportion="0.74285716">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariablePromoter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="19" selection-start="265" selection-end="265" vertical-scroll-proportion="0.23703703">
+          <folding>
+            <element signature="class#MyMethodAdapter#0;class#LocalVariablePromoter#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/LocalVariableAssigner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="13" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/AgentMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="42" selection-start="472" selection-end="472" vertical-scroll-proportion="0.34285715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderTransformer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="59" column="80" selection-start="2443" selection-end="2443" vertical-scroll-proportion="0.46666667">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YielderChecker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="19" selection-start="432" selection-end="432" vertical-scroll-proportion="0.35555556">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/infomancers/collections/yield/asm/YieldReturnCounter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="12" selection-start="831" selection-end="831" vertical-scroll-proportion="0.65925926">
           <folding />
         </state>
       </provider>

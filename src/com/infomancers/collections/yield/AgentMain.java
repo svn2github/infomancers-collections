@@ -12,7 +12,7 @@ import java.lang.instrument.Instrumentation;
  */
 public final class AgentMain {
     public static void premain(String agentArgs, Instrumentation inst) {
-        inst.addTransformer(new YielderTransformer());
+        inst.addTransformer(new YielderTransformer("debug".equals(agentArgs)));
     }
 
 }
