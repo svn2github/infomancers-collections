@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="yielder" default="all">
+  
+  
+  <property file="yielder.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <include name="**/?*.properties"/>
+    <include name="**/?*.xml"/>
+    <include name="**/?*.gif"/>
+    <include name="**/?*.png"/>
+    <include name="**/?*.jpeg"/>
+    <include name="**/?*.jpg"/>
+    <include name="**/?*.html"/>
+    <include name="**/?*.dtd"/>
+    <include name="**/?*.tld"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.6" value="${jdk.home.1.6}/bin"/>
+  <path id="jdk.classpath.1.6">
+    <fileset dir="${jdk.home.1.6}">
+      <include name="lib/deploy.jar"/>
+      <include name="../Classes/dt.jar"/>
+      <include name="../Classes/jce.jar"/>
+      <include name="../Classes/management-agent.jar"/>
+      <include name="lib/plugin.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="../Classes/charsets.jar"/>
+      <include name="../Classes/classes.jar"/>
+      <include name="../Classes/dt.jar"/>
+      <include name="../Classes/jce.jar"/>
+      <include name="../Classes/jconsole.jar"/>
+      <include name="../Classes/jsse.jar"/>
+      <include name="../Classes/laf.jar"/>
+      <include name="../Classes/management-agent.jar"/>
+      <include name="../Classes/ui.jar"/>
+      <include name="lib/ext/apple_provider.jar"/>
+      <include name="lib/ext/dnsns.jar"/>
+      <include name="lib/ext/localedata.jar"/>
+      <include name="lib/ext/sunjce_provider.jar"/>
+      <include name="lib/ext/sunpkcs11.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.6}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.6}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.6"/>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module Yielder -->
+  
+  <dirname property="module.yielder.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.yielder" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.yielder" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.yielder" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.yielder" value="${compiler.args}"/>
+  
+  <property name="yielder.output.dir" value="${module.yielder.basedir}/classes/production/Yielder"/>
+  <property name="yielder.testoutput.dir" value="${module.yielder.basedir}/classes/test/Yielder"/>
+  
+  <path id="yielder.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="yielder.module.classpath">
+    <path refid="${module.jdk.classpath.yielder}"/>
+    <pathelement location="${module.yielder.basedir}/lib/bcel-5.2.jar"/>
+    <pathelement location="${module.yielder.basedir}/lib/asm-all-3.0.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.yielder">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.yielder">
+    <patternset refid="excluded.from.module.yielder"/>
+  </patternset>
+  
+  <path id="yielder.module.sourcepath">
+    <dirset dir="${module.yielder.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.yielder" depends="compile.module.yielder.production,compile.module.yielder.tests" description="Compile module Yielder"/>
+  
+  <target name="compile.module.yielder.production" description="Compile module Yielder; production classes">
+    <mkdir dir="${yielder.output.dir}"/>
+    <javac destdir="${yielder.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.yielder}/javac">
+      <compilerarg line="${compiler.args.yielder}"/>
+      <bootclasspath refid="yielder.module.bootclasspath"/>
+      <classpath refid="yielder.module.classpath"/>
+      <src refid="yielder.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.yielder"/>
+    </javac>
+    
+    <copy todir="${yielder.output.dir}">
+      <fileset dir="${module.yielder.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.yielder.tests" depends="compile.module.yielder.production" description="compile module Yielder; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.yielder" description="cleanup module">
+    <delete dir="${yielder.output.dir}"/>
+    <delete dir="${yielder.testoutput.dir}"/>
+    <delete dir="${module.yielder.basedir}/deploy" />
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.yielder" description="cleanup all"/>
+
+    <target name="compile.module.jar">
+        <mkdir dir="${module.yielder.basedir}/deploy" />
+        <jar basedir="${yielder.output.dir}" jarfile="${module.yielder.basedir}/deploy/yielder.jar">
+            <manifest>
+                <attribute name="Premain-Class" value="com.infomancers.collections.yield.AgentMain" />
+            </manifest>
+        </jar>
+    </target>
+    <target name="all" depends="init, clean, compile.module.yielder, compile.module.jar" description="build all"/>
+</project>
