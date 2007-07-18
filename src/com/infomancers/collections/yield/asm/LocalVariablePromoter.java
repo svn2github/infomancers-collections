@@ -6,11 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: aviadbd
- * Date: Jul 13, 2007
- * Time: 1:41:55 PM
- * To change this template use File | Settings | File Templates.
+ * Promotes all local variables inside the <code>yieldNextCore</code> implementation
+ * to class member fields.
  */
 public final class LocalVariablePromoter extends ClassAdapter {
     private final static String MEMBER_NAME_PREFIX = "member";
@@ -27,10 +24,7 @@ public final class LocalVariablePromoter extends ClassAdapter {
 
             NewMember newMember = (NewMember) o;
 
-            if (!desc.equals(newMember.desc)) return false;
-            if (!name.equals(newMember.name)) return false;
-
-            return true;
+            return desc.equals(newMember.desc) && name.equals(newMember.name);
         }
 
         @Override
@@ -88,7 +82,7 @@ public final class LocalVariablePromoter extends ClassAdapter {
     }
 
     private class MyMethodAdapter extends MethodAdapter {
-        private final String[] descs = { "I", "L", "F", "D", "Ljava/lang/Object;" };
+        private final String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
 
         public MyMethodAdapter(MethodVisitor methodVisitor) {
             super(methodVisitor);

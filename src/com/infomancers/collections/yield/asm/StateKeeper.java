@@ -3,15 +3,15 @@ package com.infomancers.collections.yield.asm;
 import org.objectweb.asm.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: aviadbd
- * Date: Jul 14, 2007
- * Time: 11:24:17 AM
- * To change this template use File | Settings | File Templates.
+ * Creates the state switch, which decides where code execution needs
+ * to resume to the next call to <code>yieldNextCore</code>.
+ * <p/>
+ * This creates a new member, a swtich statement at the beginning of the
+ * method, and state assignments after each call to <code>yieldReturn</code>.
+ *
+ * @see com.infomancers.collections.yield.Yielder
  */
 public final class StateKeeper extends ClassAdapter {
-
-
     private static final String STATE_FIELD_NAME = "state";
     private final YieldReturnCounter counter;
     private String owner;
@@ -20,9 +20,9 @@ public final class StateKeeper extends ClassAdapter {
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
-     * @param cv the class visitor to which this adapter must delegate calls.
+     * @param cv      the class visitor to which this adapter must delegate calls.
      * @param counter The counter visitor counting the amount of yieldReturn calls in a
-     * yieldNextCore method.
+     *                yieldNextCore method.
      */
     public StateKeeper(ClassVisitor cv, YieldReturnCounter counter) {
         super(cv);

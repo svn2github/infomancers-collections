@@ -2,15 +2,16 @@ package com.infomancers.collections.yield.asm;
 
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.MethodAdapter;
+import org.objectweb.asm.MethodVisitor;
 
 /**
- * Created by IntelliJ IDEA.
- * User: aviadbd
- * Date: Jul 14, 2007
- * Time: 3:00:51 PM
- * To change this template use File | Settings | File Templates.
+ * Visits the <code>yieldNextCore</code> method implementation
+ * and counts the number of times the <code>yieldReturn</code> method
+ * was called, to determine the amount of branches required for
+ * the state switch.
+ *
+ * @see com.infomancers.collections.yield.asm.StateKeeper
  */
 public final class YieldReturnCounter extends ClassAdapter {
     private int counter = 0;

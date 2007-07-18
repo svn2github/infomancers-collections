@@ -4,11 +4,12 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 
 /**
- * Created by IntelliJ IDEA.
- * User: aviadbd
- * Date: Jul 14, 2007
- * Time: 4:41:17 PM
- * To change this template use File | Settings | File Templates.
+ * Makes sure that the class being examined is in fact
+ * a sub-class of the Yielder class.
+ * <p/>
+ * This is necessary because during instrumentation, all we have
+ * is the bytecode. Only a bytecode framework can load up the class
+ * from that and check for such information.
  */
 public final class YielderChecker extends ClassAdapter {
     private boolean isYielder = false;
