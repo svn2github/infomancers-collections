@@ -7,7 +7,7 @@ package com.infomancers.collections.yield.asm;
  * Time: 1:51:49 AM
  * To change this template use File | Settings | File Templates.
  */
-public class NewMember {
+final class NewMember {
     public String name;
     public String desc;
     public int index;
