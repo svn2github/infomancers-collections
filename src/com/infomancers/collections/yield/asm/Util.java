@@ -48,6 +48,10 @@ final class Util {
         return opcode == Opcodes.INVOKEVIRTUAL && "yieldReturn".equals(name) && "(Ljava/lang/Object;)V".equals(desc);
     }
 
+    public static boolean isInvokeYieldBreak(int opcode, String name, String desc) {
+        return opcode == Opcodes.INVOKEVIRTUAL && "yieldBreak".equals(name) && "()V".equals(desc);
+    }
+
     public static boolean isYielderClassName(String name) {
         return "com/infomancers/collections/yield/Yielder".equals(name);
     }
@@ -66,4 +70,5 @@ final class Util {
     public static String descForOffset(int offset) {
         return descs[offset];
     }
+
 }

@@ -139,6 +139,8 @@ final class StateKeeper extends ClassAdapter {
 
                 // advance stateIndex
                 stateIndex++;
+            } else if (Util.isInvokeYieldBreak(opcode, name, desc)) {
+                mv.visitInsn(Opcodes.RETURN);
             }
         }
     }
