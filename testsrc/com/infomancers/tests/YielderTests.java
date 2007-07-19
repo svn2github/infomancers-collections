@@ -102,4 +102,55 @@ public class YielderTests {
         Assert.assertEquals("Here", it.next());
         Assert.assertFalse("Did not break", it.hasNext());
     }
+
+    @Test
+    public void stopConditionTest() {
+        final int stop = 10;
+
+        Iterator<Integer> it = new Yielder<Integer>() {
+
+            @Override
+            protected void yieldNextCore() {
+                int i = 1;
+                while (true) {
+                    if (i == stop) {
+                        yieldBreak();
+                    }
+
+                    if (checkPrime(i)) {
+                        yieldReturn(i);
+                    }
+
+                    i++;
+                }
+            }
+
+            private boolean checkPrime(int i) {
+                switch (i) {
+                    case 1:
+                        return false;
+                    case 2:
+                        return true;
+                }
+
+                if (i % 2 == 0) {
+                    return false;
+                }
+
+                for (int c = 3; c <= Math.sqrt(i); c += 2) {
+                    if (i % c == 0) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }.iterator();
+
+        Assert.assertEquals(2, (int) it.next());
+        Assert.assertEquals(3, (int) it.next());
+        Assert.assertEquals(5, (int) it.next());
+        Assert.assertEquals(7, (int) it.next());
+        Assert.assertFalse("Too many elements in iterator", it.hasNext());
+    }
 }
