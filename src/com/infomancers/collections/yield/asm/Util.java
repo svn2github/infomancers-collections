@@ -3,11 +3,8 @@ package com.infomancers.collections.yield.asm;
 import org.objectweb.asm.Opcodes;
 
 /**
- * Created by IntelliJ IDEA.
- * User: aviadbd
- * Date: Jul 14, 2007
- * Time: 11:26:04 AM
- * To change this template use File | Settings | File Templates.
+ * Utility class for doing redundant checks on fields, variables and methods while
+ * visiting different classes.
  */
 final class Util {
     private final static String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};

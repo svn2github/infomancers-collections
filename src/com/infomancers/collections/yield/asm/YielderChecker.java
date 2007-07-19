@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassVisitor;
  * is the bytecode. Only a bytecode framework can load up the class
  * from that and check for such information.
  */
-public final class YielderChecker extends ClassAdapter {
+final class YielderChecker extends ClassAdapter {
     private boolean isYielder = false;
 
 

@@ -13,7 +13,7 @@ import org.objectweb.asm.MethodVisitor;
  *
  * @see com.infomancers.collections.yield.asm.StateKeeper
  */
-public final class YieldReturnCounter extends ClassAdapter {
+final class YieldReturnCounter extends ClassAdapter {
     private int counter = 0;
 
 

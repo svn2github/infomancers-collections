@@ -16,7 +16,7 @@ import org.objectweb.asm.*;
  * when returning to a previous state. For example, the following code:
  * <code>
  * for (int i = 0; i < arr.length; i++) {
- *   yieldReturn(arr[i]);
+ * yieldReturn(arr[i]);
  * }
  * </code>
  * is enhanced to:
@@ -24,8 +24,8 @@ import org.objectweb.asm.*;
  * int i = 0;
  * member1 = i;
  * for (; member1 < member2.length; i++) {
- *   yieldReturn(member2[member1]);
- *   return;
+ * yieldReturn(member2[member1]);
+ * return;
  * LABEL:
  * }
  * </code>
@@ -33,10 +33,10 @@ import org.objectweb.asm.*;
  * to be incremented - however, it wasn't set (as the state switch
  * makes the code jump directly before the incrementation, immediately
  * at the beginning of the method).
- *
+ * <p/>
  * This class takes care of that by making sure the local variables
  * are set to their corresponding class field members.
- *
+ * <p/>
  * The bytecode for each new member:
  * ALOAD 0
  * GETFIELD <i>field</i>
@@ -45,14 +45,15 @@ import org.objectweb.asm.*;
  * @see com.infomancers.collections.yield.asm.StateKeeper
  * @see com.infomancers.collections.yield.asm.LocalVariablePromoter
  */
-public class LocalVariableAssigner extends ClassAdapter {
+final class LocalVariableAssigner extends ClassAdapter {
     private final LocalVariablePromoter promoter;
     private String owner;
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
-     * @param cv the class visitor to which this adapter must delegate calls.
+     * @param cv       the class visitor to which this adapter must delegate calls.
+     * @param promoter The visitor used to promote the local variables.
      */
     public LocalVariableAssigner(ClassVisitor cv, LocalVariablePromoter promoter) {
         super(cv);

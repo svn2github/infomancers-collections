@@ -1,22 +1,27 @@
 package com.infomancers.collections.yield.asm;
 
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.util.TraceClassVisitor;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.util.TraceClassVisitor;
 
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.io.PrintWriter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: freakazoid
- * Date: Jul 18, 2007
- * Time: 11:16:54 AM
- * To change this template use File | Settings | File Templates.
+ * A class transformation file which creates three chains of ASM visitors, all three
+ * eventually create the enhanced class which keeps state and supports the yield idea.
+ * <p/>
+ * The chains are:
+ * <p/>
+ * 1. reader (of origin) -> returnCounter -> null
+ * 2. reader (of origin) -> stateKeeper (using returnCounter) -> promoter -> writer (to output1)
+ * 3. reader (of output1) -> assigner (using promoter) -> writer (to output2)
+ * <p/>
+ * And then returns output2.
  */
 public class YielderTransformer implements ClassFileTransformer {
     private final boolean debug;
@@ -43,9 +48,7 @@ public class YielderTransformer implements ClassFileTransformer {
                 ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                 ClassVisitor nextVisitor = writer;
                 if (debug) {
-                    TraceClassVisitor tracer = new TraceClassVisitor(writer, new PrintWriter(System.out));
-                    nextVisitor = tracer;
-
+                    nextVisitor = new TraceClassVisitor(writer, new PrintWriter(System.out));
                 }
                 LocalVariablePromoter promoter = new LocalVariablePromoter(nextVisitor);
                 StateKeeper stateKeeper = new StateKeeper(promoter, counter);
@@ -57,8 +60,7 @@ public class YielderTransformer implements ClassFileTransformer {
                 ClassWriter thirdWriter = new ClassWriter(thirdReader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                 nextVisitor = thirdWriter;
                 if (debug) {
-                    TraceClassVisitor tracer = new TraceClassVisitor(thirdWriter, new PrintWriter(System.out));
-                    nextVisitor = tracer;
+                    nextVisitor = new TraceClassVisitor(thirdWriter, new PrintWriter(System.out));
                 }
                 LocalVariableAssigner assigner = new LocalVariableAssigner(nextVisitor, promoter);
 

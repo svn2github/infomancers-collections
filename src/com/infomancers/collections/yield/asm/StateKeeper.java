@@ -11,7 +11,7 @@ import org.objectweb.asm.*;
  *
  * @see com.infomancers.collections.yield.Yielder
  */
-public final class StateKeeper extends ClassAdapter {
+final class StateKeeper extends ClassAdapter {
     private static final String STATE_FIELD_NAME = "state";
     private final YieldReturnCounter counter;
     private String owner;

@@ -9,7 +9,7 @@ import java.util.Set;
  * Promotes all local variables inside the <code>yieldNextCore</code> implementation
  * to class member fields.
  */
-public final class LocalVariablePromoter extends ClassAdapter {
+final class LocalVariablePromoter extends ClassAdapter {
     private final static String MEMBER_NAME_PREFIX = "member";
 
     public static class NewMember {
@@ -25,11 +25,8 @@ public final class LocalVariablePromoter extends ClassAdapter {
 
             NewMember newMember = (NewMember) o;
 
-            if (index != newMember.index) return false;
-            if (!desc.equals(newMember.desc)) return false;
-            if (!name.equals(newMember.name)) return false;
+            return index == newMember.index && desc.equals(newMember.desc) && name.equals(newMember.name);
 
-            return true;
         }
 
         @Override
