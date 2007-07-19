@@ -4,6 +4,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
@@ -48,11 +49,14 @@ import java.security.ProtectionDomain;
  * <p/>
  * The chains are:
  * <p/>
- * 1. reader (of origin) -> returnCounter -> null
- * 2. reader (of origin) -> stateKeeper (using returnCounter) -> promoter -> writer (to output1)
+ * 1. reader (of origin) -> returnCounter -> assignMapper -> null
+ * 2. reader (of origin) -> promoter -> stateKeeper (using returnCounter) -> writer (to output1)
  * 3. reader (of output1) -> assigner (using promoter) -> writer (to output2)
  * <p/>
  * And then returns output2.
+ * <p/>
+ * Also, notice that the order of the visitors is important:
+ * The promoter counts on the labels to be in the exact same order as the assignMapper sees them.
  */
 public final class YielderTransformer implements ClassFileTransformer {
     private final boolean debug;
@@ -63,41 +67,40 @@ public final class YielderTransformer implements ClassFileTransformer {
     }
 
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-
         byte[] result = classfileBuffer;
 
         if (classBeingRedefined == null) {
-            // first pass - gather statistics
-            ClassReader reader = new ClassReader(classfileBuffer);
-            YieldReturnCounter counter = new YieldReturnCounter(new EmptyVisitor());
-            YielderChecker checker = new YielderChecker(counter);
+            try {
+                // first pass - gather statistics
+                ClassReader reader = new ClassReader(classfileBuffer);
+                YieldReturnCounter counter = new YieldReturnCounter(new EmptyVisitor());
+                LocalVariableMapper mapper = new LocalVariableMapper(counter);
+                YielderChecker checker = new YielderChecker(mapper);
 
-            reader.accept(checker, 0);
+                reader.accept(checker, 0);
 
-            if (checker.isYielder()) {
-                // second pass - write new code
-                ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-                ClassVisitor nextVisitor = writer;
-                if (debug) {
-                    nextVisitor = new TraceClassVisitor(writer, new PrintWriter(System.out));
+                if (checker.isYielder()) {
+                    // second pass - write new code
+                    ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+                    ClassVisitor nextVisitor = writer;
+                    if (debug) {
+                        TraceClassVisitor tcv = new TraceClassVisitor(new PrintWriter(System.out));
+                        nextVisitor = new CheckClassAdapter(tcv);
+                    }
+
+                    StateKeeper stateKeeper = new StateKeeper(nextVisitor, counter);
+                    LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, mapper);
+                    ClassVisitor startVisitor = promoter;
+                    if (debug) {
+                        startVisitor = new TraceClassVisitor(promoter, new PrintWriter(System.out));
+                    }
+
+                    reader.accept(startVisitor, 0);
+
+                    result = writer.toByteArray();
                 }
-                LocalVariablePromoter promoter = new LocalVariablePromoter(nextVisitor);
-                StateKeeper stateKeeper = new StateKeeper(promoter, counter);
-
-                reader.accept(stateKeeper, 0);
-
-                // third pass - write finalizers
-                ClassReader thirdReader = new ClassReader(writer.toByteArray());
-                ClassWriter thirdWriter = new ClassWriter(thirdReader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-                nextVisitor = thirdWriter;
-                if (debug) {
-                    nextVisitor = new TraceClassVisitor(thirdWriter, new PrintWriter(System.out));
-                }
-                LocalVariableAssigner assigner = new LocalVariableAssigner(nextVisitor, promoter);
-
-                thirdReader.accept(assigner, 0);
-
-                result = thirdWriter.toByteArray();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return result;

@@ -1,12 +1,16 @@
 package com.infomancers.tests;
 
 import com.infomancers.collections.yield.Yielder;
+import junit.framework.Assert;
+import org.junit.Test;
 
 /**
  * Some base tests.
  */
 public class YielderTests {
-    public static void main(String[] args) {
+
+    @Test
+    public void array() {
         final int[] arr = new int[]{1, 3, 5, 7};
 
         Iterable<Integer> it = new Yielder<Integer>() {
@@ -16,14 +20,13 @@ public class YielderTests {
                 for (int i : arr) {
                     yieldReturn(i);
                 }
-
-                yieldBreak();
             }
         };
 
+        int i = 0;
         for (Integer integer : it) {
-            System.out.println("int = " + integer);
+            Assert.assertEquals("Bad value for index " + i, (int) integer, arr[i]);
+            i++;
         }
     }
-
 }

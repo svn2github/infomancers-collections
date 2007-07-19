@@ -41,67 +41,43 @@ import java.util.Set;
  * to class member fields.
  */
 final class LocalVariablePromoter extends ClassAdapter {
-    private final static String MEMBER_NAME_PREFIX = "member";
-
-    public static class NewMember {
-        public String name;
-        public String desc;
-        public int index;
-
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            NewMember newMember = (NewMember) o;
-
-            return index == newMember.index && desc.equals(newMember.desc) && name.equals(newMember.name);
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result;
-            result = name.hashCode();
-            result = 31 * result + desc.hashCode();
-            result = 31 * result + index;
-            return result;
-        }
-    }
-
-    private final Set<NewMember> newMembers = new HashSet<NewMember>();
+    private final LocalVariableMapper mapper;
+    private int labelIndex = 0;
 
     private String owner;
-
-
-    public Iterable<NewMember> getNewMembers() {
-        return newMembers;
-    }
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
-     * @param cv the class visitor to which this adapter must delegate calls.
+     * @param cv     the class visitor to which this adapter must delegate calls.
+     * @param mapper The visitor used to map where assignments to local variables
+     *               take place, so that this visitor could prepare an ALOAD_0 for the PUTFIELD
+     *               opcode.
      */
-    public LocalVariablePromoter(ClassVisitor cv) {
+    public LocalVariablePromoter(ClassVisitor cv, LocalVariableMapper mapper) {
         super(cv);
+        this.mapper = mapper;
     }
 
     @Override
     public void visitEnd() {
-        for (NewMember newMember : newMembers) {
-            visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.desc, newMember.desc, null);
+        Set<String> memberNames = new HashSet<String>();
+
+        for (NewMember newMember : mapper.getNewMembers()) {
+            if (!memberNames.contains(newMember.name)) {
+                visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.desc, newMember.desc, null);
+                memberNames.add(newMember.name);
+            }
         }
 
         super.visitEnd();
     }
 
+
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         super.visit(version, access, name, signature, superName, interfaces);
         owner = name;
-        newMembers.clear();
     }
 
     @Override
@@ -116,10 +92,49 @@ final class LocalVariablePromoter extends ClassAdapter {
     }
 
     private class MyMethodAdapter extends MethodAdapter {
-//        private final String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
-
         public MyMethodAdapter(MethodVisitor methodVisitor) {
             super(methodVisitor);
+        }
+
+        @Override
+        public void visitLabel(final Label label) {
+            super.visitLabel(label);
+
+            dealWithLoads();
+
+            labelIndex++;
+        }
+
+
+        @Override
+        public void visitJumpInsn(final int opcode, final Label label) {
+            super.visitJumpInsn(opcode, label);
+
+            dealWithLoads();
+        }
+
+
+        @Override
+        public void visitLineNumber(final int line, final Label start) {
+            super.visitLineNumber(line, start);
+
+            dealWithLoads();
+        }
+
+        private void dealWithLoads() {
+            int loads = mapper.getLoads().remove();
+
+            while (loads-- > 0) {
+                mv.visitVarInsn(Opcodes.ALOAD, 0);
+            }
+        }
+
+
+        @Override
+        public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
+            super.visitFrame(Opcodes.F_SAME, 0, local, 0, stack);
+
+            dealWithLoads();
         }
 
         @Override
@@ -127,32 +142,75 @@ final class LocalVariablePromoter extends ClassAdapter {
             if (var == 0) {
                 mv.visitVarInsn(opcode, var);
             } else {
-                String memberName = MEMBER_NAME_PREFIX + var;
-                NewMember newMember = new NewMember();
-                newMember.name = memberName;
-                newMember.index = var;
+                NewMember newMember = searchMember(var);
 
                 if (opcode > Opcodes.ALOAD) {
-                    mv.visitVarInsn(opcode, var);
-                    newMember.desc = Util.descForOffset(opcode - Opcodes.ISTORE);
-                    createPutField(var, opcode - Opcodes.ISTORE + Opcodes.ILOAD, memberName, newMember.desc);
+                    createPutField(newMember);
                 } else {
-                    newMember.desc = Util.descForOffset(opcode - Opcodes.ILOAD);
-                    createGetField(memberName, newMember.desc);
+                    createGetField(newMember);
                 }
-                newMembers.add(newMember);
             }
         }
 
-        private void createPutField(int var, int op, String memberName, String desc) {
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitVarInsn(op, var);
-            mv.visitFieldInsn(Opcodes.PUTFIELD, owner, memberName, desc);
+        private NewMember searchMember(int index) {
+            for (NewMember newMember : mapper.getNewMembers()) {
+                if (newMember.index == index && (newMember.start <= labelIndex && newMember.end >= labelIndex)) {
+                    return newMember;
+                }
+            }
+
+            throw new IllegalStateException("Local variable encountered with no member mapped to it");
         }
 
-        private void createGetField(String memberName, String desc) {
+
+        /**
+         * Converts an increment (++ or --) by a normal
+         * add or sub.
+         * <p/>
+         * meaning, the following:
+         * <code>
+         * IINC 3, 1
+         * </code>
+         * <p/>
+         * becomes the following:
+         * <code>
+         * ALOAD 0
+         * ALOAD 0
+         * GETFIELD member3
+         * BIPUSH 1
+         * IADD
+         * PUTFIELD member3
+         * </code>
+         *
+         * @param var       The local variable index. Used to determine member name.
+         * @param increment The increment amount.
+         */
+        @Override
+        public void visitIincInsn(final int var, final int increment) {
+            NewMember newMember = searchMember(var);
+
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, owner, memberName, desc);
+            createGetField(newMember);
+            mv.visitIntInsn(Opcodes.BIPUSH, Math.abs(increment));
+            mv.visitInsn(increment > 0 ? Opcodes.IADD : Opcodes.ISUB);
+            createPutField(newMember);
+        }
+
+
+        @Override
+        public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
+            if ("this".equals(name)) {
+                super.visitLocalVariable(name, desc, signature, start, end, index);
+            }
+        }
+
+        private void createPutField(NewMember newMember) {
+            mv.visitFieldInsn(Opcodes.PUTFIELD, owner, newMember.name, newMember.desc);
+        }
+
+        private void createGetField(NewMember newMember) {
+            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitFieldInsn(Opcodes.GETFIELD, owner, newMember.name, newMember.desc);
         }
     }
 }
