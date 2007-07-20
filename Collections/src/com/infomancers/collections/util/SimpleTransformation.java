@@ -1,7 +1,4 @@
-package com.infomancers.collections.iterators;
-
-import com.infomancers.collections.tree.TreeAdapter;
-import com.infomancers.collections.yield.Yielder;
+package com.infomancers.collections.util;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -35,39 +32,9 @@ import com.infomancers.collections.yield.Yielder;
  */
 
 /**
- * Utility class used to create an iterator which iterates over
- * all the nodes of a tree, either in prefix or postfix mode.
+ * Transforms an item of type T internally, or to another item of
+ * type T.
  */
-public final class TreeIterators {
+public interface SimpleTransformation<T> extends Transformation<T, T> {
 
-
-    public static Iterable<Object> prefixIterator(final TreeAdapter tree) {
-        return getIterator(tree, tree.getRoot(), TreeIterationType.Prefix);
-    }
-
-    public static Iterable<Object> postfixIterator(final TreeAdapter tree) {
-        return getIterator(tree, tree.getRoot(), TreeIterationType.Postfix);
-    }
-
-    private static Iterable<Object> getIterator(final TreeAdapter tree, final Object treeNode, final TreeIterationType type) {
-        return new Yielder<Object>() {
-
-            @Override
-            protected void yieldNextCore() {
-                if (type == TreeIterationType.Prefix) {
-                    yieldReturn(treeNode);
-                }
-
-                for (Object child : tree.getChildren(treeNode)) {
-                    for (Object item : TreeIterators.getIterator(tree, child, type)) {
-                        yieldReturn(item);
-                    }
-                }
-
-                if (type == TreeIterationType.Postfix) {
-                    yieldReturn(treeNode);
-                }
-            }
-        };
-    }
 }

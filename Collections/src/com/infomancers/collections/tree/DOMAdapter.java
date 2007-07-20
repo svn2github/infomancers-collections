@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
 /**
  * Adapter wrapping an XML DOM.
  */
-public class DOMAdapter implements TreeAdapter {
+public final class DOMAdapter implements TreeAdapter {
 
     private Document document;
 
