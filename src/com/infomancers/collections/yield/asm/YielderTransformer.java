@@ -80,29 +80,38 @@ public final class YielderTransformer implements ClassFileTransformer {
                 reader.accept(checker, 0);
 
                 if (checker.isYielder()) {
+                    if (debug) {
+                        enhanceClass(reader, counter, mapper, result, true);
+                    }
+
                     // second pass - write new code
-                    ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-                    ClassVisitor nextVisitor = writer;
-                    if (debug) {
-                        TraceClassVisitor tcv = new TraceClassVisitor(new PrintWriter(System.out));
-                        nextVisitor = new CheckClassAdapter(tcv);
-                    }
-
-                    StateKeeper stateKeeper = new StateKeeper(nextVisitor, counter);
-                    LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, mapper);
-                    ClassVisitor startVisitor = promoter;
-                    if (debug) {
-                        startVisitor = new TraceClassVisitor(promoter, new PrintWriter(System.out));
-                    }
-
-                    reader.accept(startVisitor, 0);
-
-                    result = writer.toByteArray();
+                    result = enhanceClass(reader, counter, mapper, result, false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return result;
+    }
+
+    private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, byte[] result, boolean debug) {
+        ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        ClassVisitor nextVisitor = writer;
+        if (debug) {
+            TraceClassVisitor tcv = new TraceClassVisitor(new PrintWriter(System.out));
+            nextVisitor = new CheckClassAdapter(tcv);
+        }
+
+        StateKeeper stateKeeper = new StateKeeper(nextVisitor, counter);
+        LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, mapper);
+        ClassVisitor startVisitor = promoter;
+        if (debug) {
+            startVisitor = new TraceClassVisitor(promoter, new PrintWriter(System.out));
+        }
+
+        reader.accept(startVisitor, 0);
+
+        result = writer.toByteArray();
         return result;
     }
 }
