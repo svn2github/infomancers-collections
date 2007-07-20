@@ -486,6 +486,7 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Collections/Collections.iml" filepath="$PROJECT_DIR$/Collections/Collections.iml" />
       <module fileurl="file://$PROJECT_DIR$/Yielder.iml" filepath="$PROJECT_DIR$/Yielder.iml" />
     </modules>
   </component>
