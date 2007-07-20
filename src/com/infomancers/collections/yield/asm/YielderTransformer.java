@@ -81,11 +81,11 @@ public final class YielderTransformer implements ClassFileTransformer {
 
                 if (checker.isYielder()) {
                     if (debug) {
-                        enhanceClass(reader, counter, mapper, result, true);
+                        enhanceClass(reader, counter, mapper, true);
                     }
 
                     // second pass - write new code
-                    result = enhanceClass(reader, counter, mapper, result, false);
+                    result = enhanceClass(reader, counter, mapper, false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -94,7 +94,7 @@ public final class YielderTransformer implements ClassFileTransformer {
         return result;
     }
 
-    private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, byte[] result, boolean debug) {
+    private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, boolean debug) {
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         ClassVisitor nextVisitor = writer;
         if (debug) {
@@ -111,7 +111,6 @@ public final class YielderTransformer implements ClassFileTransformer {
 
         reader.accept(startVisitor, 0);
 
-        result = writer.toByteArray();
-        return result;
+        return writer.toByteArray();
     }
 }

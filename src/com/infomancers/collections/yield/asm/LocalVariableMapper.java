@@ -108,7 +108,7 @@ final class LocalVariableMapper extends ClassAdapter {
             newMember.index = index;
             newMember.start = labelLocations.get(start);
             newMember.end = labelLocations.get(end);
-            newMember.name = name + "$promoted";
+            newMember.name = name + "$promoted" + "$" + newMember.start + "$" + newMember.end;
             newMember.desc = desc;
 
             newMembers.add(newMember);

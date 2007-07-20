@@ -103,7 +103,7 @@ public class YielderTests {
         Assert.assertFalse("Did not break", it.hasNext());
     }
 
-    @Test
+    @Test(timeout = 5000)
     public void stopConditionTest() {
         final int stop = 10;
 
@@ -165,6 +165,41 @@ public class YielderTests {
         Iterator<Integer> it = new Yielder<Integer>() {
             @Override
             protected void yieldNextCore() {
+                for (int i = 0; i < mat.length; i++) {
+                    int[] arr = mat[i];
+                    for (int i1 = 0; i1 < arr.length; i1++) {
+                        int x = arr[i1];
+                        yieldReturn(x);
+                    }
+                }
+            }
+        }.iterator();
+
+
+        for (int i = 0; i < mat.length; i++) {
+            int[] ints = mat[i];
+            for (int i1 = 0; i1 < ints.length; i1++) {
+                int anInt = ints[i1];
+                Assert.assertEquals(anInt, (int) it.next());
+            }
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
+
+
+    }
+
+    @Test
+    public void nestedLoopsWithEod() {
+        final int[][] mat = new int[][]{
+                new int[]{1, 2, 3},
+                new int[]{4, 5, 6},
+                new int[]{7, 8, 9}
+        };
+
+        Iterator<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
                 for (int[] arr : mat) {
                     for (int x : arr) {
                         yieldReturn(x);
@@ -174,9 +209,9 @@ public class YielderTests {
         }.iterator();
 
 
-        for (int[] ints : mat) {
-            for (int anInt : ints) {
-                Assert.assertEquals(anInt, (int) it.next());
+        for (int[] arr : mat) {
+            for (int x : arr) {
+                Assert.assertEquals(x, (int) it.next());
             }
         }
 
