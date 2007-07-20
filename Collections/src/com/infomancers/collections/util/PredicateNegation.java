@@ -7,7 +7,7 @@ package com.infomancers.collections.util;
  * Time: 5:45:58 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PredicateNegation<T> implements Predicate<T> {
+public final class PredicateNegation<T> implements Predicate<T> {
     private Predicate<T> internal;
 
     public PredicateNegation(Predicate<T> internal) {

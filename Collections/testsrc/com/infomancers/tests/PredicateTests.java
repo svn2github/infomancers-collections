@@ -5,6 +5,7 @@ import com.infomancers.collections.util.Predicate;
 import com.infomancers.collections.util.PredicateCollection;
 import com.infomancers.collections.util.PredicateNegation;
 import junit.framework.Assert;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -18,7 +19,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class PredicateTests {
-
+    @Test
     public void collectionAnd() {
         Predicate<Integer> pred1 = new Predicate<Integer>() {
             public boolean evaluate(Integer item) {
@@ -73,6 +74,7 @@ public class PredicateTests {
         Assert.assertTrue("0", predColl.evaluate(0));
     }
 
+    @Test
     public void collectionNotRange() {
         Predicate<Integer> pred1 = new Predicate<Integer>() {
             public boolean evaluate(Integer item) {
@@ -93,13 +95,14 @@ public class PredicateTests {
         Assert.assertFalse("80", predColl.evaluate(80));
         Assert.assertFalse("23", predColl.evaluate(23));
         Assert.assertTrue("-1", predColl.evaluate(-1));
-        Assert.assertFalse("101", predColl.evaluate(101));
+        Assert.assertTrue("101", predColl.evaluate(101));
         Assert.assertTrue("100", predColl.evaluate(100));
         Assert.assertFalse("99", predColl.evaluate(99));
         Assert.assertFalse("1", predColl.evaluate(1));
         Assert.assertTrue("0", predColl.evaluate(0));
     }
 
+    @Test
     public void collectionAndIteration() {
         Predicate<Integer> pred1 = new Predicate<Integer>() {
             public boolean evaluate(Integer item) {

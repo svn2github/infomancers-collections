@@ -37,7 +37,7 @@ import java.util.LinkedList;
 /**
  * Used to evaluate an item against a collection of predicates.
  */
-public class PredicateCollection<T> implements Predicate<T> {
+public final class PredicateCollection<T> implements Predicate<T> {
     public enum Type {
         OR(false),
         AND(true);
@@ -88,7 +88,7 @@ public class PredicateCollection<T> implements Predicate<T> {
             // if:
             // 1. item did not evaluate AND needsAll - return false, because one failed,
             // 2. item did evaluate AND NOT needsAll - return true, because one passed.
-            if ((!predicate.evaluate(item) ^ type.isNeedsAll())) {
+            if (predicate.evaluate(item) ^ type.isNeedsAll()) {
                 return !type.isNeedsAll();
             }
         }
