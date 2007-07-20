@@ -153,4 +153,35 @@ public class YielderTests {
         Assert.assertEquals(7, (int) it.next());
         Assert.assertFalse("Too many elements in iterator", it.hasNext());
     }
+
+    @Test
+    public void nestedLoops() {
+        final int[][] mat = new int[][]{
+                new int[]{1, 2, 3},
+                new int[]{4, 5, 6},
+                new int[]{7, 8, 9}
+        };
+
+        Iterator<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                for (int[] arr : mat) {
+                    for (int x : arr) {
+                        yieldReturn(x);
+                    }
+                }
+            }
+        }.iterator();
+
+
+        for (int[] ints : mat) {
+            for (int anInt : ints) {
+                Assert.assertEquals(anInt, (int) it.next());
+            }
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
+
+
+    }
 }

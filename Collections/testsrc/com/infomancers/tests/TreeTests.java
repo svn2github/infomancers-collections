@@ -65,6 +65,25 @@ public class TreeTests {
     }
 
     @Test
+    public void twoElementsPrefix() throws Exception {
+        String xml = "<root><aviad/><joanna/></root>";
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+
+        TreeAdapter adapter = new DOMAdapter(doc);
+
+        Iterator<Object> it = TreeIterators.prefixIterator(adapter).iterator();
+
+        it.next(); // skipping document
+
+
+        Assert.assertEquals("root", ((Node) it.next()).getNodeName());
+        Assert.assertEquals("aviad", ((Node) it.next()).getNodeName());
+        Assert.assertEquals("joanna", ((Node) it.next()).getNodeName());
+    }
+
+    @Test
     public void intermediateDomPrefix() throws ParserConfigurationException, IOException, SAXException {
         String xml = "<root><people><person>Aviad</person><person>Joanna</person></people>" +
                 "<cars><car>Sirion</car></cars></root>";
