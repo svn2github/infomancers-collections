@@ -40,21 +40,25 @@ import com.infomancers.collections.yield.Yielder;
  */
 public final class TreeIterators {
 
+    public enum Type {
+        Prefix,
+        Postfix;
+    }
 
     public static Iterable<Object> prefixIterator(final TreeAdapter tree) {
-        return getIterator(tree, tree.getRoot(), TreeIterationType.Prefix);
+        return getIterator(tree, tree.getRoot(), Type.Prefix);
     }
 
     public static Iterable<Object> postfixIterator(final TreeAdapter tree) {
-        return getIterator(tree, tree.getRoot(), TreeIterationType.Postfix);
+        return getIterator(tree, tree.getRoot(), Type.Postfix);
     }
 
-    private static Iterable<Object> getIterator(final TreeAdapter tree, final Object treeNode, final TreeIterationType type) {
+    private static Iterable<Object> getIterator(final TreeAdapter tree, final Object treeNode, final Type type) {
         return new Yielder<Object>() {
 
             @Override
             protected void yieldNextCore() {
-                if (type == TreeIterationType.Prefix) {
+                if (type == Type.Prefix) {
                     yieldReturn(treeNode);
                 }
 
@@ -64,7 +68,7 @@ public final class TreeIterators {
                     }
                 }
 
-                if (type == TreeIterationType.Postfix) {
+                if (type == Type.Postfix) {
                     yieldReturn(treeNode);
                 }
             }

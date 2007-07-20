@@ -1,5 +1,7 @@
 package com.infomancers.collections.iterators;
 
+import com.infomancers.collections.util.Transformation;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  *
@@ -32,9 +34,29 @@ package com.infomancers.collections.iterators;
  */
 
 /**
- * Type of iteration over tree.
+ * Utility class to create chained transformations.
  */
-public enum TreeIterationType {
-    Prefix,
-    Postfix
+public final class ChainedTransformations {
+
+    public static <T1, T2, T3> Transformation<T1, T3> chainTransformations(final Transformation<T1, T2> first,
+                                                                           final Transformation<T2, T3> second) {
+        return new Transformation<T1, T3>() {
+            public T3 transform(T1 item) {
+                return second.transform(first.transform(item));
+            }
+        };
+    }
+
+    public static <T1, T2, T3, T4> Transformation<T1, T4> chainTransformations(final Transformation<T1, T2> first,
+                                                                               final Transformation<T2, T3> second,
+                                                                               final Transformation<T3, T4> third) {
+        return chainTransformations(chainTransformations(first, second), third);
+    }
+
+    public static <T1, T2, T3, T4, T5> Transformation<T1, T5> chainTransformations(final Transformation<T1, T2> first,
+                                                                                   final Transformation<T2, T3> second,
+                                                                                   final Transformation<T3, T4> third,
+                                                                                   final Transformation<T4, T5> forth) {
+        return chainTransformations(chainTransformations(first, second, third), forth);
+    }
 }
