@@ -4,6 +4,11 @@ import com.infomancers.collections.util.Predicate;
 import com.infomancers.collections.util.Transformation;
 import com.infomancers.collections.yield.Yielder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  *
@@ -104,5 +109,34 @@ public final class Iterators {
                 }
             }
         };
+    }
+
+    /**
+     * Used to get a List item from an iterable.
+     * <p/>
+     * This List is detached from the Iterable - Changes
+     * to the items returned by the Iterable do not change
+     * the List items, and vice versa.
+     * <p/>
+     * If the iterable is a collection, an ArrayList is created
+     * with the ArrayList(Collection) method. Otherwise, a
+     * LinkedList is created and all elements are added one
+     * by one.
+     *
+     * @param iterable The iterable to convert to a List.
+     * @return A List containing all items in the iterable.
+     */
+    public static <T> List<T> asList(Iterable<T> iterable) {
+        if (iterable instanceof Collection) {
+            Collection<T> collection = (Collection<T>) iterable;
+            return new ArrayList<T>(collection);
+        } else {
+            LinkedList<T> list = new LinkedList<T>();
+            for (T item : iterable) {
+                list.add(item);
+            }
+
+            return list;
+        }
     }
 }
