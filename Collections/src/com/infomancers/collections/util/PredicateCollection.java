@@ -86,8 +86,8 @@ public final class PredicateCollection<T> implements Predicate<T> {
     public boolean evaluate(T item) {
         for (Predicate<T> predicate : predicates) {
             // if:
-            // 1. item did not evaluate AND needsAll - return false, because one failed,
-            // 2. item did evaluate AND NOT needsAll - return true, because one passed.
+            // 1. item did not evaluate AND needsAll (0 ^ 1 == 1) - return false, because one failed,
+            // 2. item did evaluate AND NOT needsAll (1 ^ 0 == 1) - return true, because one passed.
             if (predicate.evaluate(item) ^ type.isNeedsAll()) {
                 return !type.isNeedsAll();
             }
