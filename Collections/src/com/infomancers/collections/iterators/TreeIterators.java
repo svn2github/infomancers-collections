@@ -42,13 +42,25 @@ public final class TreeIterators {
 
     public enum Type {
         Prefix,
-        Postfix;
+        Postfix
     }
 
+    /**
+     * Creates an iterator over a tree, returning the node before its children.
+     *
+     * @param tree The tree to iterate.
+     * @return An iterator for the tree.
+     */
     public static Iterable<Object> prefixIterator(final TreeAdapter tree) {
         return getIterator(tree, tree.getRoot(), Type.Prefix);
     }
 
+    /**
+     * Creates an iterator over a tree, returning the node after its children.
+     *
+     * @param tree The tree to iterate.
+     * @return An iterator for the tree.
+     */
     public static Iterable<Object> postfixIterator(final TreeAdapter tree) {
         return getIterator(tree, tree.getRoot(), Type.Postfix);
     }
