@@ -139,4 +139,38 @@ public final class Iterators {
             return list;
         }
     }
+
+    /**
+     * Used to create an iterable which loops over a different iterable.
+     * <p/>
+     * Meaning: When the original iterable reaches its end, the next element
+     * is the first element, starting the iteration all over again.
+     *
+     * @param iterable The original iterable.
+     * @param times    The amount of times to loop over the iterable, or 0 for
+     *                 infinitely.
+     * @return A looping iterable.
+     */
+    public static <T> Iterable<T> loopIterable(final Iterable<T> iterable, final int times) {
+        if (times < 0) {
+            throw new IllegalArgumentException("'times' should be greater than or equal to 0");
+        }
+
+        return new Yielder<T>() {
+
+            @Override
+            protected void yieldNextCore() {
+                int loopCount = times == 0 ? Integer.MAX_VALUE : times;
+                do {
+                    for (T item : iterable) {
+                        yieldReturn(item);
+                    }
+
+                    if (times != 0) {
+                        loopCount--;
+                    }
+                } while (loopCount > 0);
+            }
+        };
+    }
 }
