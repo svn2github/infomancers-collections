@@ -1,9 +1,6 @@
 package com.infomancers.collections.iterators;
 
 import com.infomancers.collections.graph.GraphAdapter;
-import com.infomancers.collections.util.Predicate;
-import com.infomancers.collections.util.PredicateNegation;
-import com.infomancers.collections.util.predicates.InCollection;
 import com.infomancers.collections.yield.Yielder;
 
 import java.util.Collection;
@@ -47,30 +44,26 @@ import java.util.HashSet;
  */
 public final class GraphIterators {
 
-    public Iterable<Object> depthFirstSearch(final GraphAdapter adapter) {
+    public static Iterable<Object> depthFirstSearch(final GraphAdapter adapter) {
         return dfsCore(adapter, adapter.getNode(0), new HashSet<Object>());
     }
 
-    private Iterable<Object> dfsCore(final GraphAdapter adapter, final Object graphNode,
-                                     final Collection<Object> visited) {
+    private static Iterable<Object> dfsCore(final GraphAdapter adapter, final Object graphNode,
+                                            final Collection<Object> visited) {
         return new Yielder<Object>() {
 
             @Override
             protected void yieldNextCore() {
+                if (visited.contains(graphNode)) {
+                    yieldBreak();
+                }
+
                 yieldReturn(graphNode);
 
                 visited.add(graphNode);
 
-                // First, let's create a filter for all vertices not visited yet.
-                InCollection<Object> inVisited = new InCollection<Object>(visited);
-                Predicate<Object> notInVisited = new PredicateNegation<Object>(inVisited);
-
-                // Then, let's create a filtered iteration over the neighbours of the current node.
-                Iterable<Object> neighbours = adapter.getNodeNeighbours(graphNode);
-                Iterable<Object> neighboursNotVisited = Iterators.filteredIterable(neighbours, notInVisited);
-
                 // Now, let's iterate the neighbours and recursively call DFS.
-                for (Object neighbour : neighboursNotVisited) {
+                for (Object neighbour : adapter.getNodeNeighbours(graphNode)) {
                     for (Object neighboursNeighbour : dfsCore(adapter, neighbour, visited)) {
                         yieldReturn(neighboursNeighbour);
                     }
