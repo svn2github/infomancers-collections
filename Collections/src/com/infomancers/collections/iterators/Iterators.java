@@ -4,10 +4,7 @@ import com.infomancers.collections.util.Predicate;
 import com.infomancers.collections.util.Transformation;
 import com.infomancers.collections.yield.Yielder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -170,6 +167,18 @@ public final class Iterators {
                         loopCount--;
                     }
                 } while (loopCount > 0);
+            }
+        };
+    }
+
+    public static <T> Iterable<T> enumerationIterable(final Enumeration<T> e) {
+        return new Yielder<T>() {
+
+            @Override
+            protected void yieldNextCore() {
+                while (e.hasMoreElements()) {
+                    yieldReturn(e.nextElement());
+                }
             }
         };
     }
