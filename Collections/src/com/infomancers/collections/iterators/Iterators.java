@@ -189,4 +189,32 @@ public final class Iterators {
             }
         };
     }
+
+    /**
+     * Used to iterate over only unique items from
+     * an already existing iteration.
+     * <p/>
+     * Meaning, that for the list: "Apple", "Orange",
+     * "Apple", "Banana", "Banana", "Orange", this iterator
+     * will yield: "Apple", "Orange", "Banana".
+     *
+     * @param iterable The iteration to get only unique values from.
+     * @return An iteration containing each value in the source iteration
+     *         only once.
+     */
+    public static <T> Iterable<T> uniqueIterable(final Iterable<T> iterable) {
+        return new Yielder<T>() {
+
+            @Override
+            protected void yieldNextCore() {
+                Set<T> uniqueGuard = new HashSet<T>();
+
+                for (T item : iterable) {
+                    if (uniqueGuard.add(item)) {
+                        yieldReturn(item);
+                    }
+                }
+            }
+        };
+    }
 }
