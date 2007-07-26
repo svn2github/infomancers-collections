@@ -171,6 +171,13 @@ public final class Iterators {
         };
     }
 
+    /**
+     * Transforms an enumeration into an iterable, by yielding all
+     * the enumeration's items.
+     *
+     * @param e The enumeration.
+     * @return An iteration returning all the enumeration's items.
+     */
     public static <T> Iterable<T> enumerationIterable(final Enumeration<T> e) {
         return new Yielder<T>() {
 
