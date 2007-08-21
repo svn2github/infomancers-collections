@@ -1,5 +1,6 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.Yielder;
 import org.objectweb.asm.Opcodes;
 
 /**
@@ -71,4 +72,11 @@ final class Util {
         return descs[offset];
     }
 
+    public static boolean isYielderInHierarchyTree(String className) {
+        try {
+            return Class.forName(className).isAssignableFrom(Yielder.class);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 }

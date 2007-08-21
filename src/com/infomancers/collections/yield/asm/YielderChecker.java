@@ -65,7 +65,7 @@ final class YielderChecker extends ClassAdapter {
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         super.visit(version, access, name, signature, superName, interfaces);
 
-        if (Util.isYielderClassName(superName)) {
+        if (Util.isYielderClassName(superName) || Util.isYielderInHierarchyTree(superName)) {
             isYielder = true;
         }
     }
