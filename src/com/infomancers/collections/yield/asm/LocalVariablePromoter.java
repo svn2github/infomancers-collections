@@ -159,7 +159,19 @@ final class LocalVariablePromoter extends ClassAdapter {
                 }
             }
 
-            throw new IllegalStateException("Local variable encountered with no member mapped to it");
+
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (NewMember newMember : mapper.getNewMembers()) {
+                if (first) first = false;
+                else sb.append(",");
+
+                sb.append(String.format("[name: %s, index: %d, start: %d, end: %d]",
+                        newMember.name, newMember.index, newMember.start, newMember.end));
+            }
+
+            throw new IllegalStateException(String.format("Local variable encountered with no member mapped to it. " +
+                    "index = %d, labelIndex = %d, mapper: [%s]", index, labelIndex, sb));
         }
 
 

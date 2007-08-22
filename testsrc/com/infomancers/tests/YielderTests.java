@@ -216,7 +216,40 @@ public class YielderTests {
         }
 
         Assert.assertFalse("Too many elements", it.hasNext());
+    }
 
+    @Test
+    public void grandchildYielder() {
+        Iterator<String> it = new Yielder<String>() {
 
+            /**
+             * Implemented by the developer to yield elements of
+             * type T back to the caller.
+             * <p/>
+             * A yieldReturn call will set the next element returned
+             * by the iterator's <code>next</code> call. A yieldBreak
+             * call will mark that there are no more elements in the
+             * iteration.
+             * <p/>
+             * If the method reaches its end without any
+             * yielding, it is considered as if it had implicitly called
+             * yieldBreak.
+             *
+             * @see #yieldBreak()
+             * @see #yieldReturn(Object)
+             */
+            @Override
+            protected void yieldNextCore() {
+                yieldReturn("I'm");
+                yieldReturn("a");
+                yieldReturn("grandchild");
+                yieldReturn("class");
+            }
+        }.iterator();
+
+        Assert.assertEquals("I'm", it.next());
+        Assert.assertEquals("a", it.next());
+        Assert.assertEquals("grandchild", it.next());
+        Assert.assertEquals("class", it.next());
     }
 }
