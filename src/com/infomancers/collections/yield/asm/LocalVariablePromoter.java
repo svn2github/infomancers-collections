@@ -42,7 +42,6 @@ import java.util.Set;
  */
 final class LocalVariablePromoter extends ClassAdapter {
     private final LocalVariableMapper mapper;
-    private int labelIndex = 0;
 
     private String owner;
 
@@ -101,8 +100,6 @@ final class LocalVariablePromoter extends ClassAdapter {
             super.visitLabel(label);
 
             dealWithLoads();
-
-            labelIndex++;
         }
 
 
@@ -152,28 +149,14 @@ final class LocalVariablePromoter extends ClassAdapter {
             }
         }
 
-        private NewMember searchMember(int index) {
-            for (NewMember newMember : mapper.getNewMembers()) {
-                if (newMember.index == index && (newMember.start <= labelIndex && newMember.end >= labelIndex)) {
-                    return newMember;
-                }
-            }
+        private NewMember searchMember(final int var) {
+            NewMember nm = new NewMember();
+            nm.name = "slot$" + var;
+            nm.index = var;
+            nm.desc = "Ljava/lang/Object";
 
-
-            StringBuilder sb = new StringBuilder();
-            boolean first = true;
-            for (NewMember newMember : mapper.getNewMembers()) {
-                if (first) first = false;
-                else sb.append(",");
-
-                sb.append(String.format("[name: %s, index: %d, start: %d, end: %d]",
-                        newMember.name, newMember.index, newMember.start, newMember.end));
-            }
-
-            throw new IllegalStateException(String.format("Local variable encountered with no member mapped to it. " +
-                    "index = %d, labelIndex = %d, mapper: [%s]", index, labelIndex, sb));
+            return nm;
         }
-
 
         /**
          * Converts an increment (++ or --) by a normal

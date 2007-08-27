@@ -98,22 +98,5 @@ final class LocalVariableMapper extends ClassAdapter {
                 loads.addLast(loads.removeLast() + 1);
             }
         }
-
-
-        @Override
-        public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
-            super.visitLocalVariable(name, desc, signature, start, end, index);
-
-            if (!"this".equals(name)) {
-                NewMember newMember = new NewMember();
-                newMember.index = index;
-                newMember.start = labelLocations.get(start);
-                newMember.end = labelLocations.get(end);
-                newMember.name = name + "$promoted" + "$" + newMember.start + "$" + newMember.end;
-                newMember.desc = desc;
-
-                newMembers.add(newMember);
-            }
-        }
     }
 }
