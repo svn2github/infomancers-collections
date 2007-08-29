@@ -2,8 +2,9 @@ package com.infomancers.collections.yield.asm;
 
 import org.objectweb.asm.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -45,6 +46,8 @@ final class LocalVariablePromoter extends ClassAdapter {
 
     private String owner;
 
+    private Map<Integer, NewMember> slots = new TreeMap<Integer, NewMember>();
+
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
@@ -60,13 +63,8 @@ final class LocalVariablePromoter extends ClassAdapter {
 
     @Override
     public void visitEnd() {
-        Set<String> memberNames = new HashSet<String>();
-
-        for (NewMember newMember : mapper.getNewMembers()) {
-            if (!memberNames.contains(newMember.name)) {
-                visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.desc, newMember.desc, null);
-                memberNames.add(newMember.name);
-            }
+        for (NewMember newMember : slots.values()) {
+            visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.desc, newMember.desc, null);
         }
 
         super.visitEnd();
@@ -118,20 +116,20 @@ final class LocalVariablePromoter extends ClassAdapter {
             dealWithLoads();
         }
 
+        @Override
+        public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
+            super.visitFrame(Opcodes.F_SAME, 0, local, 0, stack);
+
+            dealWithLoads();
+        }
+
+
         private void dealWithLoads() {
             int loads = mapper.getLoads().remove();
 
             while (loads-- > 0) {
                 mv.visitVarInsn(Opcodes.ALOAD, 0);
             }
-        }
-
-
-        @Override
-        public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
-            super.visitFrame(Opcodes.F_SAME, 0, local, 0, stack);
-
-            dealWithLoads();
         }
 
         @Override
@@ -142,20 +140,11 @@ final class LocalVariablePromoter extends ClassAdapter {
                 NewMember newMember = searchMember(var);
 
                 if (opcode > Opcodes.ALOAD) {
-                    createPutField(newMember);
+                    createPutField(opcode, newMember);
                 } else {
-                    createGetField(newMember);
+                    createGetField(opcode, newMember);
                 }
             }
-        }
-
-        private NewMember searchMember(final int var) {
-            NewMember nm = new NewMember();
-            nm.name = "slot$" + var;
-            nm.index = var;
-            nm.desc = "Ljava/lang/Object";
-
-            return nm;
         }
 
         /**
@@ -185,10 +174,25 @@ final class LocalVariablePromoter extends ClassAdapter {
             NewMember newMember = searchMember(var);
 
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            createGetField(newMember);
+            createGetField(Opcodes.ILOAD, newMember);
             mv.visitIntInsn(Opcodes.BIPUSH, Math.abs(increment));
             mv.visitInsn(increment > 0 ? Opcodes.IADD : Opcodes.ISUB);
-            createPutField(newMember);
+            createPutField(Opcodes.ISTORE, newMember);
+        }
+
+        private NewMember searchMember(final int var) {
+            NewMember nm = slots.get(var);
+
+            if (nm == null) {
+                nm = new NewMember();
+                nm.name = "slot$" + var;
+                nm.index = var;
+                nm.desc = "Ljava/lang/Object;";
+
+                slots.put(var, nm);
+            }
+
+            return nm;
         }
 
 
@@ -199,13 +203,36 @@ final class LocalVariablePromoter extends ClassAdapter {
             }
         }
 
-        private void createPutField(NewMember newMember) {
+
+        private void createPutField(int opcode, NewMember newMember) {
+            // Loading "this" is done in the dealWithLoads method, called from
+            // various locations.
+
+            // if this isn't for storing an object value, first box the value in an
+            // object.
+            if (opcode != Opcodes.ASTORE) {
+                int offset = opcode - Opcodes.ISTORE;
+                String methodOwner = Util.primitiveWrapperForOpcode(offset);
+                String desc = MessageFormat.format("({1}){0}", methodOwner, Util.descForOffset(offset));
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner, "valueOf", desc);
+            }
+
             mv.visitFieldInsn(Opcodes.PUTFIELD, owner, newMember.name, newMember.desc);
         }
 
-        private void createGetField(NewMember newMember) {
+        private void createGetField(int opcode, NewMember newMember) {
             mv.visitVarInsn(Opcodes.ALOAD, 0);
             mv.visitFieldInsn(Opcodes.GETFIELD, owner, newMember.name, newMember.desc);
+
+            // if this isn't for getting an object value, unboxed the object stored
+            // in the slot container.
+            if (opcode != Opcodes.ALOAD) {
+                int offset = opcode - Opcodes.ILOAD;
+                String desc = MessageFormat.format("(){0}", Util.descForOffset(offset));
+
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Util.primitiveWrapperForOpcode(offset),
+                        Util.unboxMethodForOpcode(offset), desc);
+            }
         }
     }
 }

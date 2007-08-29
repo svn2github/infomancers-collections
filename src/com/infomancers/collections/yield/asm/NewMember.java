@@ -11,6 +11,4 @@ final class NewMember {
     public String name;
     public String desc;
     public int index;
-    public int start;
-    public int end;
 }

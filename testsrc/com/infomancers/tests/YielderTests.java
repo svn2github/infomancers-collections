@@ -14,6 +14,21 @@ import java.util.List;
 public class YielderTests {
 
     @Test
+    public void arraySize() {
+        final int[] arr = new int[]{1, 3, 5, 7};
+
+        Iterable<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                int[] l = arr;
+                yieldReturn(l.length);
+            }
+        };
+
+        Assert.assertEquals(arr.length, (int) it.iterator().next());
+    }
+
+    @Test
     public void array() {
         final int[] arr = new int[]{1, 3, 5, 7};
 

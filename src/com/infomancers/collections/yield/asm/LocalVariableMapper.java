@@ -2,7 +2,8 @@ package com.infomancers.collections.yield.asm;
 
 import org.objectweb.asm.*;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,9 +19,6 @@ final class LocalVariableMapper extends ClassAdapter {
     }
 
     private LinkedList<Integer> loads = new LinkedList<Integer>();
-    private Map<Label, Integer> labelLocations = new HashMap<Label, Integer>();
-    private int labelIndex = 0;
-    private Collection<NewMember> newMembers = new HashSet<NewMember>();
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
@@ -36,10 +34,6 @@ final class LocalVariableMapper extends ClassAdapter {
         return loads;
     }
 
-
-    public Collection<NewMember> getNewMembers() {
-        return newMembers;
-    }
 
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
@@ -63,7 +57,6 @@ final class LocalVariableMapper extends ClassAdapter {
             super.visitLabel(label);
 
             loads.add(0);
-            labelLocations.put(label, labelIndex++);
         }
 
 

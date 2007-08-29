@@ -40,6 +40,10 @@ import org.objectweb.asm.Opcodes;
  */
 final class Util {
     private final static String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
+    private final static String[] wrappers = {"Ljava/lang/Integer;", "Ljava/lang/Long;",
+            "Ljava/lang/Float;", "Ljava/lang/Double;"
+    };
+    private final static String[] unboxMethods = {"intValue", "longValue", "floatValue", "doubleValue"};
 
     public static boolean isYieldNextCoreMethod(String name, String desc) {
         return "yieldNextCore".equals(name) && "()V".equals(desc);
@@ -78,5 +82,13 @@ final class Util {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    public static String primitiveWrapperForOpcode(int offset) {
+        return wrappers[offset];
+    }
+
+    public static String unboxMethodForOpcode(int offset) {
+        return unboxMethods[offset];
     }
 }

@@ -89,6 +89,13 @@ public final class YielderTransformer implements ClassFileTransformer {
     }
 
     private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, boolean trace) {
+        if (trace) {
+            TraceClassVisitor traceClassVisitor = new TraceClassVisitor(new PrintWriter(System.out));
+
+            System.out.println("<------------- Before the manipulation ---------------> ");
+            new ClassReader(reader.b).accept(traceClassVisitor, 0);
+        }
+
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 
         StateKeeper stateKeeper = new StateKeeper(writer, counter);
@@ -99,9 +106,6 @@ public final class YielderTransformer implements ClassFileTransformer {
 
         if (trace) {
             TraceClassVisitor traceClassVisitor = new TraceClassVisitor(new PrintWriter(System.out));
-
-            System.out.println("<------------- Before the manipulation ---------------> ");
-            new ClassReader(reader.b).accept(traceClassVisitor, 0);
 
             System.out.println("<------------- After the manipulation ---------------> ");
             new ClassReader(result).accept(traceClassVisitor, 0);
