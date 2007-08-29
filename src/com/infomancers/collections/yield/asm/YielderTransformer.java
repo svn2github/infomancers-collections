@@ -1,10 +1,8 @@
 package com.infomancers.collections.yield.asm;
 
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.EmptyVisitor;
-import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
@@ -80,12 +78,8 @@ public final class YielderTransformer implements ClassFileTransformer {
                 reader.accept(checker, 0);
 
                 if (checker.isYielder()) {
-                    if (debug) {
-                        enhanceClass(reader, counter, mapper, true);
-                    }
-
                     // second pass - write new code
-                    result = enhanceClass(reader, counter, mapper, false);
+                    result = enhanceClass(reader, counter, mapper, debug);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -94,23 +88,25 @@ public final class YielderTransformer implements ClassFileTransformer {
         return result;
     }
 
-    private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, boolean debug) {
+    private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, boolean trace) {
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        ClassVisitor nextVisitor = writer;
-        if (debug) {
-            TraceClassVisitor tcv = new TraceClassVisitor(new PrintWriter(System.out));
-            nextVisitor = new CheckClassAdapter(tcv);
-        }
 
-        StateKeeper stateKeeper = new StateKeeper(nextVisitor, counter);
+        StateKeeper stateKeeper = new StateKeeper(writer, counter);
         LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, mapper);
-        ClassVisitor startVisitor = promoter;
-        if (debug) {
-            startVisitor = new TraceClassVisitor(promoter, new PrintWriter(System.out));
+        reader.accept(promoter, 0);
+
+        byte[] result = writer.toByteArray();
+
+        if (trace) {
+            TraceClassVisitor traceClassVisitor = new TraceClassVisitor(new PrintWriter(System.out));
+
+            System.out.println("<------------- Before the manipulation ---------------> ");
+            new ClassReader(reader.b).accept(traceClassVisitor, 0);
+
+            System.out.println("<------------- After the manipulation ---------------> ");
+            new ClassReader(result).accept(traceClassVisitor, 0);
         }
 
-        reader.accept(startVisitor, 0);
-
-        return writer.toByteArray();
+        return result;
     }
 }
