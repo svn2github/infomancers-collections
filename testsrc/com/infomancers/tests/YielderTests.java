@@ -79,6 +79,33 @@ public class YielderTests {
     }
 
     @Test
+    public void someNumbers() {
+        final int i1 = 2;
+        final int i2 = 4;
+        final int i3 = 8;
+
+        Iterator<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                int ii1 = i1;
+                int ii2 = i2;
+                int ii3 = i3;
+
+                yieldReturn(ii1);
+                yieldReturn(ii2);
+                yieldReturn(ii3);
+            }
+        }.iterator();
+
+        Assert.assertEquals(i1, (int) it.next());
+        Assert.assertTrue(it.hasNext());
+        Assert.assertEquals(i2, (int) it.next());
+        Assert.assertTrue(it.hasNext());
+        Assert.assertEquals(i3, (int) it.next());
+        Assert.assertFalse(it.hasNext());
+    }
+
+    @Test
     public void someStrings() {
         Iterator<String> it = new Yielder<String>() {
             @Override

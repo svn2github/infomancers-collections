@@ -39,11 +39,33 @@ import org.objectweb.asm.Opcodes;
  * visiting different classes.
  */
 final class Util {
-    private final static String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
-    private final static String[] wrappers = {"Ljava/lang/Integer;", "Ljava/lang/Long;",
-            "Ljava/lang/Float;", "Ljava/lang/Double;"
+    public static class TypeDescriptor {
+        public String desc;
+        public String name;
+        public String wrapper;
+        public String unboxMethod;
+
+        public TypeDescriptor(String desc, String name, String wrapper, String unboxMethod) {
+            this.desc = desc;
+            this.name = name;
+            this.wrapper = wrapper;
+            this.unboxMethod = unboxMethod;
+        }
+    }
+
+    private final static TypeDescriptor[] descs = new TypeDescriptor[]{
+            new TypeDescriptor("I", "java/lang/Integer", "Ljava/lang/Integer;", "intValue"),
+            new TypeDescriptor("L", "java/lang/Long", "Ljava/lang/Long;", "longValue"),
+            new TypeDescriptor("F", "java/lang/Float", "Ljava/lang/Float;", "floatValue"),
+            new TypeDescriptor("D", "java/lang/Double", "Ljava/lang/Double;", "doubleValue"),
+            new TypeDescriptor("Ljava/lang/Object;", null, null, null)
     };
-    private final static String[] unboxMethods = {"intValue", "longValue", "floatValue", "doubleValue"};
+
+//    private final static String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
+//    private final static String[] wrappers = {"Ljava/lang/Integer;", "Ljava/lang/Long;",
+//            "Ljava/lang/Float;", "Ljava/lang/Double;"
+//    };
+//    private final static String[] unboxMethods = {"intValue", "longValue", "floatValue", "doubleValue"};
 
     public static boolean isYieldNextCoreMethod(String name, String desc) {
         return "yieldNextCore".equals(name) && "()V".equals(desc);
@@ -63,7 +85,7 @@ final class Util {
 
     public static int offsetForDesc(String desc) {
         for (int i = 0; i < descs.length; i++) {
-            String cur = descs[i];
+            String cur = descs[i].desc;
             if (cur.equals(desc)) {
                 return i;
             }
@@ -72,7 +94,7 @@ final class Util {
         return -1;
     }
 
-    public static String descForOffset(int offset) {
+    public static TypeDescriptor descForOffset(int offset) {
         return descs[offset];
     }
 
@@ -82,13 +104,5 @@ final class Util {
         } catch (ClassNotFoundException e) {
             return false;
         }
-    }
-
-    public static String primitiveWrapperForOpcode(int offset) {
-        return wrappers[offset];
-    }
-
-    public static String unboxMethodForOpcode(int offset) {
-        return unboxMethods[offset];
     }
 }

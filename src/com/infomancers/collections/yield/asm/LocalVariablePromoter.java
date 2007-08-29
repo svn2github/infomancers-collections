@@ -212,9 +212,9 @@ final class LocalVariablePromoter extends ClassAdapter {
             // object.
             if (opcode != Opcodes.ASTORE) {
                 int offset = opcode - Opcodes.ISTORE;
-                String methodOwner = Util.primitiveWrapperForOpcode(offset);
-                String desc = MessageFormat.format("({1}){0}", methodOwner, Util.descForOffset(offset));
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner, "valueOf", desc);
+                Util.TypeDescriptor type = Util.descForOffset(offset);
+                String desc = MessageFormat.format("({1}){0}", type.wrapper, type.desc);
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, type.name, "valueOf", desc);
             }
 
             mv.visitFieldInsn(Opcodes.PUTFIELD, owner, newMember.name, newMember.desc);
@@ -228,10 +228,11 @@ final class LocalVariablePromoter extends ClassAdapter {
             // in the slot container.
             if (opcode != Opcodes.ALOAD) {
                 int offset = opcode - Opcodes.ILOAD;
-                String desc = MessageFormat.format("(){0}", Util.descForOffset(offset));
+                Util.TypeDescriptor type = Util.descForOffset(offset);
+                String desc = MessageFormat.format("(){0}", type.desc);
 
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Util.primitiveWrapperForOpcode(offset),
-                        Util.unboxMethodForOpcode(offset), desc);
+                mv.visitTypeInsn(Opcodes.CHECKCAST, type.wrapper);
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, type.name, type.unboxMethod, desc);
             }
         }
     }
