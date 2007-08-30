@@ -44,7 +44,7 @@ final class Util {
         Long("L", "long", "Long"),
         Float("F", "float", "Float"),
         Double("D", "double", "Double"),
-        Object("Ljava/lang/Object;", "", "Object");
+        Object("Ljava/lang/Object;", null, "Object");
 
         private final String desc;
         private final String primitive;
@@ -71,6 +71,10 @@ final class Util {
         }
 
         public String getPrimitiveNameCapitalised() {
+            if (getPrimitiveName() == null) {
+                return "";
+            }
+
             char[] c = getPrimitiveName().toCharArray();
             c[0] = Character.toUpperCase(c[0]);
             return new String(c);
