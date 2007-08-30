@@ -2,7 +2,6 @@ package com.infomancers.collections.yield.asm;
 
 import org.objectweb.asm.*;
 
-import java.text.MessageFormat;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -180,6 +179,28 @@ final class LocalVariablePromoter extends ClassAdapter {
             createPutField(Opcodes.ISTORE, newMember);
         }
 
+
+        @Override
+        public void visitInsn(final int opcode) {
+            if (opcode == Opcodes.ARRAYLENGTH) {
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
+            } else if (opcode >= Opcodes.IALOAD && opcode <= Opcodes.SALOAD) {
+                int offset = opcode - Opcodes.IALOAD;
+                Util.TypeDescriptor type = Util.typeForOffset(offset);
+
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array",
+                        type.getArrayGetterMethodName(), type.getArrayGetterMethodDesc());
+            } else if (opcode >= Opcodes.IASTORE && opcode <= Opcodes.SASTORE) {
+                int offset = opcode - Opcodes.IASTORE;
+                Util.TypeDescriptor type = Util.typeForOffset(offset);
+
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array",
+                        type.getArraySetterMethodName(), type.getArraySetterMethodDesc());
+            } else {
+                super.visitInsn(opcode);
+            }
+        }
+
         private NewMember searchMember(final int var) {
             NewMember nm = slots.get(var);
 
@@ -212,9 +233,9 @@ final class LocalVariablePromoter extends ClassAdapter {
             // object.
             if (opcode != Opcodes.ASTORE) {
                 int offset = opcode - Opcodes.ISTORE;
-                Util.TypeDescriptor type = Util.descForOffset(offset);
-                String desc = MessageFormat.format("({1}){0}", type.wrapper, type.desc);
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, type.name, "valueOf", desc);
+                Util.TypeDescriptor type = Util.typeForOffset(offset);
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, type.getClassNameAsOwner(),
+                        type.getBoxMethodName(), type.getBoxMethodDesc());
             }
 
             mv.visitFieldInsn(Opcodes.PUTFIELD, owner, newMember.name, newMember.desc);
@@ -228,11 +249,11 @@ final class LocalVariablePromoter extends ClassAdapter {
             // in the slot container.
             if (opcode != Opcodes.ALOAD) {
                 int offset = opcode - Opcodes.ILOAD;
-                Util.TypeDescriptor type = Util.descForOffset(offset);
-                String desc = MessageFormat.format("(){0}", type.desc);
+                Util.TypeDescriptor type = Util.typeForOffset(offset);
 
-                mv.visitTypeInsn(Opcodes.CHECKCAST, type.wrapper);
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, type.name, type.unboxMethod, desc);
+                mv.visitTypeInsn(Opcodes.CHECKCAST, type.getClassNameAsDesc());
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, type.getClassNameAsOwner(),
+                        type.getUnboxMethodName(), type.getUnboxMethodDesc());
             }
         }
     }

@@ -29,6 +29,53 @@ public class YielderTests {
     }
 
     @Test
+    public void matrixSize() {
+        final int[][] mat = new int[5][5];
+        mat[2][2] = 5;
+
+        Iterable<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                int[][] l = mat;
+                yieldReturn(l.length);
+            }
+        };
+
+        Assert.assertEquals(mat.length, (int) it.iterator().next());
+    }
+
+    @Test
+    public void arrayAccess() {
+        final int[] arr = new int[]{1, 3, 5, 7};
+
+        Iterable<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                int[] l = arr;
+                yieldReturn(l[2]);
+            }
+        };
+
+        Assert.assertEquals(arr[2], (int) it.iterator().next());
+    }
+
+    @Test
+    public void matrixAccess() {
+        final int[][] mat = new int[5][5];
+        mat[2][2] = 5;
+
+        Iterable<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                int[][] l = mat;
+                yieldReturn(l[2][2]);
+            }
+        };
+
+        Assert.assertEquals(mat[2][2], (int) it.iterator().next());
+    }
+
+    @Test
     public void array() {
         final int[] arr = new int[]{1, 3, 5, 7};
 
