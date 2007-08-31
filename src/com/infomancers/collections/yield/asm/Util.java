@@ -157,9 +157,11 @@ final class Util {
     }
 
     public static boolean isYielderInHierarchyTree(String className) {
+        String name = className.replace('/', '.');
         try {
-            return Class.forName(className).isAssignableFrom(Yielder.class);
+            return Yielder.class.isAssignableFrom(Class.forName(name));
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
     }

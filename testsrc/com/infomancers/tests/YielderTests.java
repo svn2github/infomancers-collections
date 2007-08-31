@@ -309,7 +309,7 @@ public class YielderTests {
 
     @Test
     public void grandchildYielder() {
-        Iterator<String> it = new Yielder<String>() {
+        Iterator<String> it = new SuperYielder<String>() {
 
             /**
              * Implemented by the developer to yield elements of
