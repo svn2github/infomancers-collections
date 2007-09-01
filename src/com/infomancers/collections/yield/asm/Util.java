@@ -44,7 +44,10 @@ final class Util {
         Long("L", "long", "Long"),
         Float("F", "float", "Float"),
         Double("D", "double", "Double"),
-        Object("Ljava/lang/Object;", null, "Object");
+        Object("Ljava/lang/Object;", null, "Object"),
+        Byte("B", "byte", "Byte"),
+        Char("C", "char", "Character"),
+        Short("S", "short", "Short");
 
         private final String desc;
         private final String primitive;
@@ -118,12 +121,6 @@ final class Util {
             this.wrapper = wrapper;
         }
     }
-
-//    private final static String[] descs = {"I", "L", "F", "D", "Ljava/lang/Object;"};
-//    private final static String[] wrappers = {"Ljava/lang/Integer;", "Ljava/lang/Long;",
-//            "Ljava/lang/Float;", "Ljava/lang/Double;"
-//    };
-//    private final static String[] unboxMethods = {"intValue", "longValue", "floatValue", "doubleValue"};
 
     public static boolean isYieldNextCoreMethod(String name, String desc) {
         return "yieldNextCore".equals(name) && "()V".equals(desc);

@@ -310,23 +310,6 @@ public class YielderTests {
     @Test
     public void grandchildYielder() {
         Iterator<String> it = new SuperYielder<String>() {
-
-            /**
-             * Implemented by the developer to yield elements of
-             * type T back to the caller.
-             * <p/>
-             * A yieldReturn call will set the next element returned
-             * by the iterator's <code>next</code> call. A yieldBreak
-             * call will mark that there are no more elements in the
-             * iteration.
-             * <p/>
-             * If the method reaches its end without any
-             * yielding, it is considered as if it had implicitly called
-             * yieldBreak.
-             *
-             * @see #yieldBreak()
-             * @see #yieldReturn(Object)
-             */
             @Override
             protected void yieldNextCore() {
                 yieldReturn("I'm");
@@ -340,5 +323,45 @@ public class YielderTests {
         Assert.assertEquals("a", it.next());
         Assert.assertEquals("grandchild", it.next());
         Assert.assertEquals("class", it.next());
+    }
+
+    @Test
+    public void stringCharacters() {
+        final String s = "Hello";
+        Iterator<Character> it = new Yielder<Character>() {
+            @Override
+            protected void yieldNextCore() {
+                for (char c : s.toCharArray()) {
+                    yieldReturn(c);
+                }
+            }
+        }.iterator();
+
+        for (char c : s.toCharArray()) {
+            Assert.assertEquals(c, (char) it.next());
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
+    }
+
+    @Test
+    public void booleanArray() {
+        final boolean[] bools = {true, false, true, false, false};
+
+        Iterator<Boolean> it = new Yielder<Boolean>() {
+            @Override
+            protected void yieldNextCore() {
+                boolean[] b = bools;
+                for (boolean z : b) {
+                    yieldReturn(z);
+                }
+            }
+        }.iterator();
+
+        for (boolean z : bools) {
+            Assert.assertEquals(z, (boolean) it.next());
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
     }
 }
