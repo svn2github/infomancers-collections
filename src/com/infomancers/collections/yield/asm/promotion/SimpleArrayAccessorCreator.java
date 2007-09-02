@@ -33,7 +33,7 @@ import org.objectweb.asm.Opcodes;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class SimpleArrayAccessorCreator implements ArrayAccessorCreator {
+final class SimpleArrayAccessorCreator implements ArrayAccessorCreator {
     /**
      * Sets a value into an array.
      * <p/>
