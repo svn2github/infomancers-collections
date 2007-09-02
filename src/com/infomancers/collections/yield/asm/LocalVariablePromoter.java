@@ -188,14 +188,12 @@ final class LocalVariablePromoter extends ClassAdapter {
                 int offset = opcode - Opcodes.IALOAD;
                 TypeDescriptor type = Util.typeForOffset(offset);
 
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array",
-                        type.getArrayGetterMethodName(), type.getArrayGetterMethodDesc());
+                type.getArrayAccessorCreator().createGetValueCode(mv, type);
             } else if (opcode >= Opcodes.IASTORE && opcode <= Opcodes.SASTORE) {
                 int offset = opcode - Opcodes.IASTORE;
                 TypeDescriptor type = Util.typeForOffset(offset);
 
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array",
-                        type.getArraySetterMethodName(), type.getArraySetterMethodDesc());
+                type.getArrayAccessorCreator().createSetValueCode(mv, type);
             } else {
                 super.visitInsn(opcode);
             }
@@ -229,14 +227,14 @@ final class LocalVariablePromoter extends ClassAdapter {
             int offset = opcode - Opcodes.ISTORE;
             TypeDescriptor type = Util.typeForOffset(offset);
 
-            type.getAccessorCreator().createPutFieldCode(mv, owner, type, newMember);
+            type.getMemberAccessorCreator().createPutFieldCode(mv, owner, type, newMember);
         }
 
         private void createGetField(int opcode, NewMember newMember) {
             int offset = opcode - Opcodes.ILOAD;
             TypeDescriptor type = Util.typeForOffset(offset);
 
-            type.getAccessorCreator().createGetFieldCode(mv, owner, type, newMember);
+            type.getMemberAccessorCreator().createGetFieldCode(mv, owner, type, newMember);
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.infomancers.collections.yield.asm.promotion;
 
+import com.infomancers.collections.yield.asm.TypeDescriptor;
+import org.objectweb.asm.MethodVisitor;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  * <p/>
@@ -29,7 +32,29 @@ package com.infomancers.collections.yield.asm.promotion;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public final class FieldMemberAccessorCreators {
-    public static final FieldMemberAccessorCreator BOXING = new BoxingFieldMemberAccessorCreator();
-    public static final FieldMemberAccessorCreator SIMPLE = new SimpleFieldMemberAccessorCreator();
+
+public interface ArrayAccessorCreator {
+    /**
+     * Sets a value into an array.
+     * <p/>
+     * The stack is already filled with [..., arr, index, value ].
+     * <p/>
+     * The stack should be [ ... ] at the end.
+     *
+     * @param mv   The method visitor to write the code through.
+     * @param type The type of the array.
+     */
+    void createSetValueCode(MethodVisitor mv, TypeDescriptor type);
+
+    /**
+     * Gets a value from an array.
+     * <p/>
+     * The stack is already filled with [..., arr, index ].
+     * <p/>
+     * The should be [ ..., value ] at the end.
+     *
+     * @param mv   The method visitor to write the code through.
+     * @param type The type of the array.
+     */
+    void createGetValueCode(MethodVisitor mv, TypeDescriptor type);
 }

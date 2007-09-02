@@ -1,7 +1,8 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asm.promotion.AccessorCreators;
+import com.infomancers.collections.yield.asm.promotion.ArrayAccessorCreator;
 import com.infomancers.collections.yield.asm.promotion.FieldMemberAccessorCreator;
-import com.infomancers.collections.yield.asm.promotion.FieldMemberAccessorCreators;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -34,19 +35,21 @@ import com.infomancers.collections.yield.asm.promotion.FieldMemberAccessorCreato
  */
 
 public enum TypeDescriptor {
-    Integer("I", "int", "Integer", FieldMemberAccessorCreators.BOXING),
-    Long("L", "long", "Long", FieldMemberAccessorCreators.BOXING),
-    Float("F", "float", "Float", FieldMemberAccessorCreators.BOXING),
-    Double("D", "double", "Double", FieldMemberAccessorCreators.BOXING),
-    Object("Ljava/lang/Object;", null, "Object", FieldMemberAccessorCreators.SIMPLE),
-    Byte("B", "byte", "Byte", FieldMemberAccessorCreators.BOXING),
-    Char("C", "char", "Character", FieldMemberAccessorCreators.BOXING),
-    Short("S", "short", "Short", FieldMemberAccessorCreators.BOXING);
+    Integer("I", "int", "Integer", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Long("L", "long", "Long", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Float("F", "float", "Float", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Double("D", "double", "Double", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Object("Ljava/lang/Object;", null, "Object", AccessorCreators.FIELD_SIMPLE, AccessorCreators.ARRAY_SIMPLE),
+    Byte("B", "byte", "Byte", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Char("C", "char", "Character", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Short("S", "short", "Short", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE);
 
     private final String desc;
     private final String primitive;
     private final String wrapper;
-    private final FieldMemberAccessorCreator accessorCreator;
+    private final FieldMemberAccessorCreator memberAccessorCreator;
+    private final ArrayAccessorCreator arrayAccessorCreator;
+
 
     public String getDesc() {
         return desc;
@@ -110,14 +113,20 @@ public enum TypeDescriptor {
         return "get" + getPrimitiveNameCapitalised();
     }
 
-    public FieldMemberAccessorCreator getAccessorCreator() {
-        return accessorCreator;
+    public FieldMemberAccessorCreator getMemberAccessorCreator() {
+        return memberAccessorCreator;
     }
 
-    TypeDescriptor(String desc, String primitive, String wrapper, FieldMemberAccessorCreator accessorCreator) {
+    public ArrayAccessorCreator getArrayAccessorCreator() {
+        return arrayAccessorCreator;
+    }
+
+    TypeDescriptor(String desc, String primitive, String wrapper,
+                   FieldMemberAccessorCreator memberAccessorCreator, ArrayAccessorCreator arrayAccessorCreator) {
         this.desc = desc;
         this.primitive = primitive;
         this.wrapper = wrapper;
-        this.accessorCreator = accessorCreator;
+        this.memberAccessorCreator = memberAccessorCreator;
+        this.arrayAccessorCreator = arrayAccessorCreator;
     }
 }
