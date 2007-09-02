@@ -226,35 +226,17 @@ final class LocalVariablePromoter extends ClassAdapter {
 
 
         private void createPutField(int opcode, NewMember newMember) {
-            // Loading "this" is done in the dealWithLoads method, called from
-            // various locations.
+            int offset = opcode - Opcodes.ISTORE;
+            TypeDescriptor type = Util.typeForOffset(offset);
 
-            // if this isn't for storing an object value, first box the value in an
-            // object.
-            if (opcode != Opcodes.ASTORE) {
-                int offset = opcode - Opcodes.ISTORE;
-                TypeDescriptor type = Util.typeForOffset(offset);
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, type.getClassNameAsOwner(),
-                        type.getBoxMethodName(), type.getBoxMethodDesc());
-            }
-
-            mv.visitFieldInsn(Opcodes.PUTFIELD, owner, newMember.name, newMember.desc);
+            type.getAccessorCreator().createPutFieldCode(mv, owner, type, newMember);
         }
 
         private void createGetField(int opcode, NewMember newMember) {
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, owner, newMember.name, newMember.desc);
+            int offset = opcode - Opcodes.ILOAD;
+            TypeDescriptor type = Util.typeForOffset(offset);
 
-            // if this isn't for getting an object value, unboxed the object stored
-            // in the slot container.
-            if (opcode != Opcodes.ALOAD) {
-                int offset = opcode - Opcodes.ILOAD;
-                TypeDescriptor type = Util.typeForOffset(offset);
-
-                mv.visitTypeInsn(Opcodes.CHECKCAST, type.getClassNameAsDesc());
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, type.getClassNameAsOwner(),
-                        type.getUnboxMethodName(), type.getUnboxMethodDesc());
-            }
+            type.getAccessorCreator().createGetFieldCode(mv, owner, type, newMember);
         }
     }
 }

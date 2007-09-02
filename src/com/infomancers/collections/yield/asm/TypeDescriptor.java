@@ -1,5 +1,8 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asm.promotion.FieldMemberAccessorCreator;
+import com.infomancers.collections.yield.asm.promotion.FieldMemberAccessorCreators;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  * <p/>
@@ -31,18 +34,19 @@ package com.infomancers.collections.yield.asm;
  */
 
 public enum TypeDescriptor {
-    Integer("I", "int", "Integer"),
-    Long("L", "long", "Long"),
-    Float("F", "float", "Float"),
-    Double("D", "double", "Double"),
-    Object("Ljava/lang/Object;", null, "Object"),
-    Byte("B", "byte", "Byte"),
-    Char("C", "char", "Character"),
-    Short("S", "short", "Short");
+    Integer("I", "int", "Integer", FieldMemberAccessorCreators.BOXING),
+    Long("L", "long", "Long", FieldMemberAccessorCreators.BOXING),
+    Float("F", "float", "Float", FieldMemberAccessorCreators.BOXING),
+    Double("D", "double", "Double", FieldMemberAccessorCreators.BOXING),
+    Object("Ljava/lang/Object;", null, "Object", FieldMemberAccessorCreators.SIMPLE),
+    Byte("B", "byte", "Byte", FieldMemberAccessorCreators.BOXING),
+    Char("C", "char", "Character", FieldMemberAccessorCreators.BOXING),
+    Short("S", "short", "Short", FieldMemberAccessorCreators.BOXING);
 
     private final String desc;
     private final String primitive;
     private final String wrapper;
+    private final FieldMemberAccessorCreator accessorCreator;
 
     public String getDesc() {
         return desc;
@@ -106,9 +110,14 @@ public enum TypeDescriptor {
         return "get" + getPrimitiveNameCapitalised();
     }
 
-    TypeDescriptor(String desc, String primitive, String wrapper) {
+    public FieldMemberAccessorCreator getAccessorCreator() {
+        return accessorCreator;
+    }
+
+    TypeDescriptor(String desc, String primitive, String wrapper, FieldMemberAccessorCreator accessorCreator) {
         this.desc = desc;
         this.primitive = primitive;
         this.wrapper = wrapper;
+        this.accessorCreator = accessorCreator;
     }
 }
