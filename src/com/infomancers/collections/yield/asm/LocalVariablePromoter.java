@@ -186,13 +186,13 @@ final class LocalVariablePromoter extends ClassAdapter {
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
             } else if (opcode >= Opcodes.IALOAD && opcode <= Opcodes.SALOAD) {
                 int offset = opcode - Opcodes.IALOAD;
-                Util.TypeDescriptor type = Util.typeForOffset(offset);
+                TypeDescriptor type = Util.typeForOffset(offset);
 
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array",
                         type.getArrayGetterMethodName(), type.getArrayGetterMethodDesc());
             } else if (opcode >= Opcodes.IASTORE && opcode <= Opcodes.SASTORE) {
                 int offset = opcode - Opcodes.IASTORE;
-                Util.TypeDescriptor type = Util.typeForOffset(offset);
+                TypeDescriptor type = Util.typeForOffset(offset);
 
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array",
                         type.getArraySetterMethodName(), type.getArraySetterMethodDesc());
@@ -233,7 +233,7 @@ final class LocalVariablePromoter extends ClassAdapter {
             // object.
             if (opcode != Opcodes.ASTORE) {
                 int offset = opcode - Opcodes.ISTORE;
-                Util.TypeDescriptor type = Util.typeForOffset(offset);
+                TypeDescriptor type = Util.typeForOffset(offset);
                 mv.visitMethodInsn(Opcodes.INVOKESTATIC, type.getClassNameAsOwner(),
                         type.getBoxMethodName(), type.getBoxMethodDesc());
             }
@@ -249,7 +249,7 @@ final class LocalVariablePromoter extends ClassAdapter {
             // in the slot container.
             if (opcode != Opcodes.ALOAD) {
                 int offset = opcode - Opcodes.ILOAD;
-                Util.TypeDescriptor type = Util.typeForOffset(offset);
+                TypeDescriptor type = Util.typeForOffset(offset);
 
                 mv.visitTypeInsn(Opcodes.CHECKCAST, type.getClassNameAsDesc());
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, type.getClassNameAsOwner(),

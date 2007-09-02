@@ -39,88 +39,6 @@ import org.objectweb.asm.Opcodes;
  * visiting different classes.
  */
 final class Util {
-    public enum TypeDescriptor {
-        Integer("I", "int", "Integer"),
-        Long("L", "long", "Long"),
-        Float("F", "float", "Float"),
-        Double("D", "double", "Double"),
-        Object("Ljava/lang/Object;", null, "Object"),
-        Byte("B", "byte", "Byte"),
-        Char("C", "char", "Character"),
-        Short("S", "short", "Short");
-
-        private final String desc;
-        private final String primitive;
-        private final String wrapper;
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public String getClassName() {
-            return wrapper;
-        }
-
-        public String getClassNameAsOwner() {
-            return "java/lang/" + wrapper;
-        }
-
-        public String getClassNameAsDesc() {
-            return "L" + getClassNameAsOwner() + ";";
-        }
-
-        public String getPrimitiveName() {
-            return primitive;
-        }
-
-        public String getPrimitiveNameCapitalised() {
-            if (getPrimitiveName() == null) {
-                return "";
-            }
-
-            char[] c = getPrimitiveName().toCharArray();
-            c[0] = Character.toUpperCase(c[0]);
-            return new String(c);
-        }
-
-        public String getBoxMethodDesc() {
-            return "(" + getDesc() + ")" + getClassNameAsDesc();
-        }
-
-        public String getBoxMethodName() {
-            return "valueOf";
-        }
-
-        public String getUnboxMethodDesc() {
-            return "()" + getDesc();
-        }
-
-        public String getUnboxMethodName() {
-            return getPrimitiveName() + "Value";
-        }
-
-        public String getArraySetterMethodDesc() {
-            return "(Ljava/lang/Object;I" + getDesc() + ")V";
-        }
-
-        public String getArraySetterMethodName() {
-            return "set" + getPrimitiveNameCapitalised();
-        }
-
-        public String getArrayGetterMethodDesc() {
-            return "(Ljava/lang/Object;I)" + getDesc();
-        }
-
-        public String getArrayGetterMethodName() {
-            return "get" + getPrimitiveNameCapitalised();
-        }
-
-        TypeDescriptor(String desc, String primitive, String wrapper) {
-            this.desc = desc;
-            this.primitive = primitive;
-            this.wrapper = wrapper;
-        }
-    }
 
     public static boolean isYieldNextCoreMethod(String name, String desc) {
         return "yieldNextCore".equals(name) && "()V".equals(desc);
@@ -140,7 +58,7 @@ final class Util {
 
     public static int offsetForDesc(String desc) {
         for (int i = 0; i < TypeDescriptor.values().length; i++) {
-            String cur = TypeDescriptor.values()[i].desc;
+            String cur = TypeDescriptor.values()[i].getDesc();
             if (cur.equals(desc)) {
                 return i;
             }
