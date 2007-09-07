@@ -34,4 +34,5 @@ public final class AccessorCreators {
     public static final FieldMemberAccessorCreator FIELD_SIMPLE = new SimpleFieldMemberAccessorCreator();
 
     public static final ArrayAccessorCreator ARRAY_SIMPLE = new SimpleArrayAccessorCreator();
+    public static final ArrayAccessorCreator BYTE_OR_BOOLEAN = new ByteOrBooleanArrayAccessorCreator();
 }

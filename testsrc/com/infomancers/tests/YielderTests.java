@@ -355,6 +355,16 @@ public class YielderTests {
                 for (boolean z : b) {
                     yieldReturn(z);
                 }
+
+//                // for good measure:
+//                boolean[] c = new boolean[4];
+//                Object d = c;
+//
+//                if (d.getClass().getComponentType() == Byte.TYPE) {
+//                    Assert.assertEquals(0, Array.getByte(d, 0));
+//                } else {
+//                    Assert.assertEquals(true, Array.getBoolean(d, 0));
+//                }
             }
         }.iterator();
 
@@ -363,5 +373,6 @@ public class YielderTests {
         }
 
         Assert.assertFalse("Too many elements", it.hasNext());
+
     }
 }

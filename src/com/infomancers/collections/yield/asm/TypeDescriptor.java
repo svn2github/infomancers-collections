@@ -40,9 +40,10 @@ public enum TypeDescriptor {
     Float("F", "float", "Float", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
     Double("D", "double", "Double", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
     Object("Ljava/lang/Object;", null, "Object", AccessorCreators.FIELD_SIMPLE, AccessorCreators.ARRAY_SIMPLE),
-    Byte("B", "byte", "Byte", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Byte("B", "byte", "Byte", AccessorCreators.FIELD_BOXING, AccessorCreators.BYTE_OR_BOOLEAN),
     Char("C", "char", "Character", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
-    Short("S", "short", "Short", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE);
+    Short("S", "short", "Short", AccessorCreators.FIELD_BOXING, AccessorCreators.ARRAY_SIMPLE),
+    Boolean("Z", "boolean", "Boolean", AccessorCreators.FIELD_BOXING, AccessorCreators.BYTE_OR_BOOLEAN);
 
     private final String desc;
     private final String primitive;
