@@ -1,9 +1,7 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asm.promotion.AccessorCreators;
 import org.objectweb.asm.*;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -45,8 +43,6 @@ final class LocalVariablePromoter extends ClassAdapter {
 
     private String owner;
 
-    private Map<Integer, NewMember> slots = new TreeMap<Integer, NewMember>();
-
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
@@ -62,8 +58,8 @@ final class LocalVariablePromoter extends ClassAdapter {
 
     @Override
     public void visitEnd() {
-        for (NewMember newMember : slots.values()) {
-            visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.desc, newMember.desc, null);
+        for (NewMember newMember : mapper.getSlots()) {
+            visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.type.getDesc(), newMember.type.getDesc(), null);
         }
 
         super.visitEnd();
@@ -200,18 +196,7 @@ final class LocalVariablePromoter extends ClassAdapter {
         }
 
         private NewMember searchMember(final int var) {
-            NewMember nm = slots.get(var);
-
-            if (nm == null) {
-                nm = new NewMember();
-                nm.name = "slot$" + var;
-                nm.index = var;
-                nm.desc = "Ljava/lang/Object;";
-
-                slots.put(var, nm);
-            }
-
-            return nm;
+            return mapper.getSlot(var);
         }
 
 
@@ -224,17 +209,26 @@ final class LocalVariablePromoter extends ClassAdapter {
 
 
         private void createPutField(int opcode, NewMember newMember) {
-            int offset = opcode - Opcodes.ISTORE;
-            TypeDescriptor type = Util.typeForOffset(offset);
+            if (newMember.type == TypeDescriptor.Object) {
+                int offset = opcode - Opcodes.ISTORE;
+                TypeDescriptor type = Util.typeForOffset(offset);
 
-            type.getMemberAccessorCreator().createPutFieldCode(mv, owner, type, newMember);
+                type.getMemberAccessorCreator().createPutFieldCode(mv, owner, type, newMember);
+            } else {
+                AccessorCreators.FIELD_SIMPLE.createPutFieldCode(mv, owner, newMember.type, newMember);
+            }
+
         }
 
         private void createGetField(int opcode, NewMember newMember) {
-            int offset = opcode - Opcodes.ILOAD;
-            TypeDescriptor type = Util.typeForOffset(offset);
+            if (newMember.type == TypeDescriptor.Object) {
+                int offset = opcode - Opcodes.ILOAD;
+                TypeDescriptor type = Util.typeForOffset(offset);
 
-            type.getMemberAccessorCreator().createGetFieldCode(mv, owner, type, newMember);
+                type.getMemberAccessorCreator().createGetFieldCode(mv, owner, type, newMember);
+            } else {
+                AccessorCreators.FIELD_SIMPLE.createGetFieldCode(mv, owner, newMember.type, newMember);
+            }
         }
     }
 }

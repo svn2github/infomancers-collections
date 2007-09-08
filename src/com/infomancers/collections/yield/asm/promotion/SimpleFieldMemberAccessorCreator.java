@@ -43,11 +43,11 @@ final class SimpleFieldMemberAccessorCreator implements FieldMemberAccessorCreat
 
     public void createGetFieldCode(MethodVisitor mv, String owner, TypeDescriptor type, NewMember member) {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(Opcodes.GETFIELD, owner, member.name, member.desc);
+        mv.visitFieldInsn(Opcodes.GETFIELD, owner, member.name, member.type.getDesc());
     }
 
 
     public void createPutFieldCode(MethodVisitor mv, String owner, TypeDescriptor type, NewMember member) {
-        mv.visitFieldInsn(Opcodes.PUTFIELD, owner, member.name, member.desc);
+        mv.visitFieldInsn(Opcodes.PUTFIELD, owner, member.name, member.type.getDesc());
     }
 }

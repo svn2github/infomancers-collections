@@ -3,7 +3,9 @@ package com.infomancers.collections.yield.asm;
 import org.objectweb.asm.*;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,12 +15,8 @@ import java.util.Queue;
  * To change this template use File | Settings | File Templates.
  */
 final class LocalVariableMapper extends ClassAdapter {
-    public static class LineLoads {
-        public int line;
-        public int loads;
-    }
-
     private LinkedList<Integer> loads = new LinkedList<Integer>();
+    private Map<Integer, NewMember> slots = new TreeMap<Integer, NewMember>();
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
@@ -44,6 +42,14 @@ final class LocalVariableMapper extends ClassAdapter {
         } else {
             return methodVisitor;
         }
+    }
+
+    public NewMember getSlot(int index) {
+        return slots.get(index);
+    }
+
+    public Iterable<? extends NewMember> getSlots() {
+        return slots.values();
     }
 
     private class MyMethodAdapter extends MethodAdapter {
@@ -87,8 +93,26 @@ final class LocalVariableMapper extends ClassAdapter {
         public void visitVarInsn(final int opcode, final int var) {
             super.visitVarInsn(opcode, var);
 
+            NewMember nm = slots.get(var);
+            if (nm == null) {
+                nm = new NewMember();
+                nm.index = var;
+                nm.name = "slot$" + var;
+                nm.type = null;
+
+                slots.put(var, nm);
+            }
+
+            TypeDescriptor curType = null;
             if (opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE) {
                 loads.addLast(loads.removeLast() + 1);
+                curType = Util.typeForOffset(opcode - Opcodes.ISTORE);
+            } else if (opcode >= Opcodes.ILOAD && opcode <= Opcodes.ALOAD) {
+                curType = Util.typeForOffset(opcode - Opcodes.ILOAD);
+            }
+
+            if (curType != null) {
+                nm.type = nm.type == null || nm.type == curType ? curType : TypeDescriptor.Object;
             }
         }
     }
