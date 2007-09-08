@@ -365,4 +365,32 @@ public class YielderTests {
         Assert.assertFalse("Too many elements", it.hasNext());
 
     }
+
+    @Test
+    public void booleanArraySetter() {
+        final boolean[] bools = new boolean[(int) (Math.random() * 100)];
+
+        Iterator<Boolean> it = new Yielder<Boolean>() {
+
+            @Override
+            protected void yieldNextCore() {
+                boolean[] b = bools;
+
+                for (int i = 0; i < b.length; i++) {
+                    b[i] = i % 3 == 0;
+                }
+
+                for (boolean z : b) {
+                    yieldReturn(z);
+                }
+            }
+        }.iterator();
+
+        for (boolean z : bools) {
+            Assert.assertEquals(z, (boolean) it.next());
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
+
+    }
 }

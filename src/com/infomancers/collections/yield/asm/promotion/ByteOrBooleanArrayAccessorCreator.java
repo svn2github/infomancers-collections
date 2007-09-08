@@ -112,14 +112,12 @@ public class ByteOrBooleanArrayAccessorCreator implements ArrayAccessorCreator {
         Label l1 = new Label();
         Label l2 = new Label();
 
-        // Need to make the stack look like this: [... arr, index, value, arr] so we're going to duplicate value
+        // Need to make the stack look like this: [... arr, index, arr] so we're going to duplicate value
         // and index to be before arr, and then arr itself.
 
-        mv.visitInsn(Opcodes.DUP_X2);
+        mv.visitInsn(Opcodes.DUP_X1);
         mv.visitInsn(Opcodes.POP);
-        mv.visitInsn(Opcodes.DUP_X2);
-        mv.visitInsn(Opcodes.POP);
-        mv.visitInsn(Opcodes.DUP_X2);
+        mv.visitInsn(Opcodes.DUP_X1);
 
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "getComponentType", "()Ljava/lang/Class;");
