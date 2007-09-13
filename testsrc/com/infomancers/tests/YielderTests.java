@@ -393,4 +393,54 @@ public class YielderTests {
         Assert.assertFalse("Too many elements", it.hasNext());
 
     }
+
+    @Test
+    public void byteArray() {
+        final byte[] bytes = {2, 5, 1, 7, 100};
+
+        Iterator<Byte> it = new Yielder<Byte>() {
+            @Override
+            protected void yieldNextCore() {
+                byte[] b = bytes;
+                for (byte z : b) {
+                    yieldReturn(z);
+                }
+            }
+        }.iterator();
+
+        for (byte z : bytes) {
+            Assert.assertEquals(z, (byte) it.next());
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
+
+    }
+
+    @Test
+    public void byteArraySetter() {
+        final byte[] bools = new byte[(int) (Math.random() * 100)];
+
+        Iterator<Byte> it = new Yielder<Byte>() {
+
+            @Override
+            protected void yieldNextCore() {
+                byte[] b = bools;
+
+                for (int i = 0; i < b.length; i++) {
+                    b[i] = (byte) (i % 256);
+                }
+
+                for (byte z : b) {
+                    yieldReturn(z);
+                }
+            }
+        }.iterator();
+
+        for (byte z : bools) {
+            Assert.assertEquals(z, (byte) it.next());
+        }
+
+        Assert.assertFalse("Too many elements", it.hasNext());
+
+    }
 }
