@@ -17,6 +17,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * <p>This class and its iterator implement all of the
  * <em>optional</em> methods of the {@link Collection} and {@link
  * Iterator} interfaces.
+ * <p/>
+ * This code is loosely based on the {@linkplain java.util.concurrent.LinkedBlockingDeque linked blocking deque} code.
  *
  * @author Aviad Ben Dov
  * @param <E> the type of elements held in this collection
