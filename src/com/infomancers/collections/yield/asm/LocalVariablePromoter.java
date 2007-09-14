@@ -59,7 +59,7 @@ final class LocalVariablePromoter extends ClassAdapter {
     @Override
     public void visitEnd() {
         for (NewMember newMember : mapper.getSlots()) {
-            visitField(Opcodes.ACC_PRIVATE, newMember.name, newMember.type.getDesc(), newMember.type.getDesc(), null);
+            visitField(Opcodes.ACC_PRIVATE, newMember.getName(), newMember.getDesc(), newMember.getDesc(), null);
         }
 
         super.visitEnd();
@@ -209,25 +209,25 @@ final class LocalVariablePromoter extends ClassAdapter {
 
 
         private void createPutField(int opcode, NewMember newMember) {
-            if (newMember.type == TypeDescriptor.Object) {
+            if (newMember.getType() == TypeDescriptor.Object) {
                 int offset = opcode - Opcodes.ISTORE;
                 TypeDescriptor type = Util.typeForOffset(offset);
 
                 type.getMemberAccessorCreator().createPutFieldCode(mv, owner, type, newMember);
             } else {
-                AccessorCreators.FIELD_SIMPLE.createPutFieldCode(mv, owner, newMember.type, newMember);
+                AccessorCreators.FIELD_SIMPLE.createPutFieldCode(mv, owner, null, newMember);
             }
 
         }
 
         private void createGetField(int opcode, NewMember newMember) {
-            if (newMember.type == TypeDescriptor.Object) {
+            if (newMember.getType() == TypeDescriptor.Object) {
                 int offset = opcode - Opcodes.ILOAD;
                 TypeDescriptor type = Util.typeForOffset(offset);
 
                 type.getMemberAccessorCreator().createGetFieldCode(mv, owner, type, newMember);
             } else {
-                AccessorCreators.FIELD_SIMPLE.createGetFieldCode(mv, owner, newMember.type, newMember);
+                AccessorCreators.FIELD_SIMPLE.createGetFieldCode(mv, owner, null, newMember);
             }
         }
     }

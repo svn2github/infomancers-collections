@@ -95,10 +95,7 @@ final class LocalVariableMapper extends ClassAdapter {
 
             NewMember nm = slots.get(var);
             if (nm == null) {
-                nm = new NewMember();
-                nm.index = var;
-                nm.name = "slot$" + var;
-                nm.type = null;
+                nm = new NewMember(var);
 
                 slots.put(var, nm);
             }
@@ -112,7 +109,7 @@ final class LocalVariableMapper extends ClassAdapter {
             }
 
             if (curType != null) {
-                nm.type = nm.type == null || nm.type == curType ? curType : TypeDescriptor.Object;
+                nm.mergeType(curType);
             }
         }
     }
