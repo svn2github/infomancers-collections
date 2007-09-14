@@ -1,6 +1,8 @@
-package java.util.concurrent;
+package com.infomancers.collections.concurrent;
 
 import java.util.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 

@@ -8,10 +8,10 @@
       <customJdkName value="" />
       <maximumHeapSize value="128" />
       <properties />
-      <executeOn event="beforeRun" target="all" runConfigurationType="Application" runConfigurationName="Runner" />
-      <executeOn event="beforeRun" target="all" runConfigurationType="JUnit" runConfigurationName="all release" />
       <executeOn event="beforeRun" target="all" runConfigurationType="JUnit" runConfigurationName="YielderTests" />
       <executeOn event="beforeRun" target="all" runConfigurationType="JUnit" runConfigurationName="all debug" />
+      <executeOn event="beforeRun" target="all" runConfigurationType="JUnit" runConfigurationName="all release" />
+      <executeOn event="beforeRun" target="all" runConfigurationType="Application" runConfigurationName="Runner" />
     </buildFile>
   </component>
   <component name="BuildJarProjectSettings">
@@ -328,7 +328,7 @@
     </profiles>
   </component>
   <component name="JavacSettings">
-    <option name="DEBUGGING_INFO" value="false" />
+    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="false" />
     <option name="DEPRECATION" value="true" />
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
