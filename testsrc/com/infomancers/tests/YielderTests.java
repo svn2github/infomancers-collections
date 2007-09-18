@@ -458,6 +458,49 @@ public class YielderTests {
         }.iterator();
 
         Assert.assertEquals("Aviad", it.next());
-        Assert.assertFalse(it.hasNext());
+        Assert.assertFalse("Too many elements", it.hasNext());
+    }
+
+    @Test
+    public void saveStateInsideException() {
+        Iterator<String> it = new Yielder<String>() {
+            @Override
+            public void yieldNextCore() {
+                try {
+                    yieldReturn("Not in Exception");
+                    throw new Exception("Aviad");
+                } catch (Exception e) {
+                    yieldReturn("Before Exception!");
+                    yieldReturn(e.getMessage());
+                    yieldReturn("After Excetpion!");
+                }
+            }
+
+        }.iterator();
+
+        Assert.assertEquals("Not in Exception", it.next());
+        Assert.assertEquals("Before Exception!", it.next());
+        Assert.assertEquals("Aviad", it.next());
+        Assert.assertEquals("After Exception!", it.next());
+        Assert.assertFalse("Too many elements", it.hasNext());
+    }
+
+    @Test
+    public void callingMethodOfLocalVariable() {
+        Iterator<String> it = new Yielder<String>() {
+
+            @Override
+            protected void yieldNextCore() {
+                String s = "Aviad";
+                String[] w = s.split("i");
+                for (String z : w) {
+                    yieldReturn(z);
+                }
+            }
+        }.iterator();
+
+        Assert.assertEquals("Av", it.next());
+        Assert.assertEquals("ad", it.next());
+        Assert.assertFalse("Too many elements", it.hasNext());
     }
 }
