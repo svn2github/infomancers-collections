@@ -443,4 +443,21 @@ public class YielderTests {
         Assert.assertFalse("Too many elements", it.hasNext());
 
     }
+
+    @Test
+    public void yieldInsideException() {
+        Iterator<String> it = new Yielder<String>() {
+            @Override
+            protected void yieldNextCore() {
+                try {
+                    throw new Exception("Aviad");
+                } catch (Exception e) {
+                    yieldReturn(e.getMessage());
+                }
+            }
+        }.iterator();
+
+        Assert.assertEquals("Aviad", it.next());
+        Assert.assertFalse(it.hasNext());
+    }
 }
