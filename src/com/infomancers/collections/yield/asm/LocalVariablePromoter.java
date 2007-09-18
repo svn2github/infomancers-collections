@@ -3,6 +3,9 @@ package com.infomancers.collections.yield.asm;
 import com.infomancers.collections.yield.asm.promotion.AccessorCreators;
 import org.objectweb.asm.*;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  *
@@ -84,6 +87,9 @@ final class LocalVariablePromoter extends ClassAdapter {
     }
 
     private class MyMethodAdapter extends MethodAdapter {
+        private Collection<Label> exceptionHandlers = new HashSet<Label>();
+        private boolean specialExceptionCase = false;
+
         public MyMethodAdapter(MethodVisitor methodVisitor) {
             super(methodVisitor);
         }
@@ -92,9 +98,18 @@ final class LocalVariablePromoter extends ClassAdapter {
         public void visitLabel(final Label label) {
             super.visitLabel(label);
 
+            specialExceptionCase = exceptionHandlers.contains(label);
+
             dealWithLoads();
         }
 
+
+        @Override
+        public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
+            super.visitTryCatchBlock(start, end, handler, type);
+
+            exceptionHandlers.add(handler);
+        }
 
         @Override
         public void visitJumpInsn(final int opcode, final Label label) {
@@ -113,14 +128,22 @@ final class LocalVariablePromoter extends ClassAdapter {
 
         @Override
         public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
-            super.visitFrame(Opcodes.F_SAME, 0, local, 0, stack);
+            if (specialExceptionCase) {
+                super.visitFrame(type, nLocal, local, nStack, stack);
+            } else {
+                super.visitFrame(Opcodes.F_SAME, 0, local, 0, stack);
+            }
 
             dealWithLoads();
         }
 
 
         private void dealWithLoads() {
-            int loads = mapper.getLoads().remove();
+            dealWithLoads(0);
+        }
+
+        private void dealWithLoads(int skip) {
+            int loads = mapper.getLoads().remove() - skip;
 
             while (loads-- > 0) {
                 mv.visitVarInsn(Opcodes.ALOAD, 0);
@@ -134,8 +157,20 @@ final class LocalVariablePromoter extends ClassAdapter {
             } else {
                 NewMember newMember = searchMember(var);
 
-                if (opcode > Opcodes.ALOAD) {
-                    createPutField(opcode, newMember);
+                if (opcode > Opcodes.ALOAD) { // means its xSTORE
+                    if (specialExceptionCase && var == 1) { // if in exception handler, and this is the exception variable..
+                        NewMember member = searchMember(1);
+
+                        // dealWithLoads already added an ALOAD for us. Just dup it
+                        // above the already-existing exception.
+                        mv.visitInsn(Opcodes.DUP_X1);
+                        mv.visitInsn(Opcodes.POP);
+                        AccessorCreators.FIELD_SIMPLE.createPutFieldCode(mv, owner, TypeDescriptor.Object, member);
+
+                        specialExceptionCase = false;
+                    } else {
+                        createPutField(opcode, newMember);
+                    }
                 } else {
                     createGetField(opcode, newMember);
                 }
