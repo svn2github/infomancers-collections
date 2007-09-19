@@ -243,6 +243,19 @@ public class PriorityBlockingDequeTests {
         Assert.assertNull(pollLast(exec, deque));
     }
 
+    @Test(timeout = 5000)
+    public void allowDuplicateValues() throws ExecutionException, InterruptedException {
+        final ExecutorService exec = createExec();
+        BlockingDeque<Integer> deque = new PriorityBlockingDeque<Integer>();
+        produce(exec, deque, 5).get();
+        produce(exec, deque, 5).get();
+        produce(exec, deque, 5).get();
+
+        Assert.assertEquals(5, consumeFirst(exec, deque));
+        Assert.assertEquals(5, consumeFirst(exec, deque));
+        Assert.assertEquals(5, consumeFirst(exec, deque));
+    }
+
 
     static class ConsumerFirst<E> implements Callable<E> {
         private BlockingDeque<E> deque;

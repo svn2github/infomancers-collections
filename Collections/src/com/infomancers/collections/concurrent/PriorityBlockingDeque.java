@@ -67,7 +67,7 @@ public class PriorityBlockingDeque<E>
 
     private final int capacity;
 
-    private final NavigableSet<E> navigableSet;
+    private final LinkedList<E> list;
     /**
      * Main lock guarding all access
      */
@@ -80,6 +80,7 @@ public class PriorityBlockingDeque<E>
      * Condition for waiting puts
      */
     private final Condition notFull = lock.newCondition();
+    private Comparator<E> comparator;
 
     /**
      * Creates a <tt>PriorityBlockingDeque</tt> with a capacity of
@@ -102,7 +103,8 @@ public class PriorityBlockingDeque<E>
     public PriorityBlockingDeque(Comparator<E> comparator, int capacity) {
         if (capacity <= 0) throw new IllegalArgumentException();
         this.capacity = capacity;
-        this.navigableSet = new TreeSet<E>(comparator);
+        this.list = new LinkedList<E>();
+        this.comparator = comparator;
     }
 
     // Basic adding and removing operations, called only while holding lock
@@ -114,10 +116,11 @@ public class PriorityBlockingDeque<E>
      * @return Whether adding was successful.
      */
     private boolean innerAdd(E e) {
-        if (navigableSet.size() >= capacity)
+        if (list.size() >= capacity)
             return false;
 
-        navigableSet.add(e);
+        list.add(e);
+        Collections.sort(list, comparator);
         notEmpty.signal();
 
         return true;
@@ -129,7 +132,7 @@ public class PriorityBlockingDeque<E>
      * @return The removed element.
      */
     private E innerRemoveFirst() {
-        E f = navigableSet.pollFirst();
+        E f = list.pollFirst();
         if (f == null)
             return null;
 
@@ -144,7 +147,7 @@ public class PriorityBlockingDeque<E>
      * @return The removed element.
      */
     private E innerRemoveLast() {
-        E l = navigableSet.pollLast();
+        E l = list.pollLast();
         if (l == null)
             return null;
 
@@ -389,7 +392,7 @@ public class PriorityBlockingDeque<E>
     public E peekFirst() {
         lock.lock();
         try {
-            return (navigableSet.size() == 0 ? null : navigableSet.first());
+            return list.size() == 0 ? null : list.peekFirst();
         } finally {
             lock.unlock();
         }
@@ -398,7 +401,7 @@ public class PriorityBlockingDeque<E>
     public E peekLast() {
         lock.lock();
         try {
-            return navigableSet.size() == 0 ? null : navigableSet.last();
+            return list.size() == 0 ? null : list.peekLast();
         } finally {
             lock.unlock();
         }
@@ -408,7 +411,7 @@ public class PriorityBlockingDeque<E>
         if (o == null) return false;
         lock.lock();
         try {
-            for (Iterator<E> it = navigableSet.iterator(); it.hasNext();) {
+            for (Iterator<E> it = list.iterator(); it.hasNext();) {
                 E e = it.next();
                 if (o.equals(e)) {
                     it.remove();
@@ -425,7 +428,7 @@ public class PriorityBlockingDeque<E>
         if (o == null) return false;
         lock.lock();
         try {
-            for (Iterator<E> it = navigableSet.descendingIterator(); it.hasNext();) {
+            for (Iterator<E> it = list.descendingIterator(); it.hasNext();) {
                 E e = it.next();
                 if (o.equals(e)) {
                     it.remove();
@@ -541,7 +544,7 @@ public class PriorityBlockingDeque<E>
     public int remainingCapacity() {
         lock.lock();
         try {
-            return capacity - navigableSet.size();
+            return capacity - list.size();
         } finally {
             lock.unlock();
         }
@@ -560,11 +563,11 @@ public class PriorityBlockingDeque<E>
             throw new IllegalArgumentException();
         lock.lock();
         try {
-            for (E e : navigableSet) {
+            for (E e : list) {
                 c.add(e);
             }
-            int n = navigableSet.size();
-            navigableSet.clear();
+            int n = list.size();
+            list.clear();
             notFull.signalAll();
             return n;
         } finally {
@@ -586,7 +589,7 @@ public class PriorityBlockingDeque<E>
         lock.lock();
         try {
             int n = 0;
-            for (Iterator<E> it = navigableSet.iterator(); n < maxElements && it.hasNext();) {
+            for (Iterator<E> it = list.iterator(); n < maxElements && it.hasNext();) {
                 E e = it.next();
                 c.add(e);
                 it.remove();
@@ -647,7 +650,7 @@ public class PriorityBlockingDeque<E>
     public int size() {
         lock.lock();
         try {
-            return navigableSet.size();
+            return list.size();
         } finally {
             lock.unlock();
         }
@@ -666,7 +669,7 @@ public class PriorityBlockingDeque<E>
         if (o == null) return false;
         lock.lock();
         try {
-            return navigableSet.contains(o);
+            return list.contains(o);
         } finally {
             lock.unlock();
         }
@@ -689,7 +692,7 @@ public class PriorityBlockingDeque<E>
     public Object[] toArray() {
         lock.lock();
         try {
-            return navigableSet.toArray();
+            return list.toArray();
         } finally {
             lock.unlock();
         }
@@ -735,7 +738,7 @@ public class PriorityBlockingDeque<E>
     public <T> T[] toArray(T[] a) {
         lock.lock();
         try {
-            return navigableSet.toArray(a);
+            return list.toArray(a);
         } finally {
             lock.unlock();
         }
@@ -759,7 +762,7 @@ public class PriorityBlockingDeque<E>
     public void clear() {
         lock.lock();
         try {
-            navigableSet.clear();
+            list.clear();
             notFull.signalAll();
         } finally {
             lock.unlock();
@@ -768,10 +771,10 @@ public class PriorityBlockingDeque<E>
 
     @Override
     public Iterator<E> iterator() {
-        return navigableSet.iterator();
+        return list.iterator();
     }
 
     public Iterator<E> descendingIterator() {
-        return navigableSet.descendingIterator();
+        return list.descendingIterator();
     }
 }
