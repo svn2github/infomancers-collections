@@ -97,8 +97,8 @@ public final class YielderTransformer implements ClassFileTransformer {
         }
 
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-
-        StateKeeper stateKeeper = new StateKeeper(writer, counter);
+        CastChecker caster = new CastChecker(writer);
+        StateKeeper stateKeeper = new StateKeeper(caster, counter);
         LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, mapper);
         reader.accept(promoter, 0);
 
