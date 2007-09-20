@@ -113,12 +113,12 @@ final class StateKeeper extends ClassAdapter {
 
             // the first thing in the method should be switching to the previous state.
             // so, load the state member
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, owner, STATE_FIELD_NAME, STATE_FIELD_DESC);
+            super.visitVarInsn(Opcodes.ALOAD, 0);
+            super.visitFieldInsn(Opcodes.GETFIELD, owner, STATE_FIELD_NAME, STATE_FIELD_DESC);
             // then, lookup the next line of code
-            mv.visitTableSwitchInsn(1, counter.getCounter(), dflt, labels);
+            super.visitTableSwitchInsn(1, counter.getCounter(), dflt, labels);
             // write the default label.
-            mv.visitLabel(dflt);
+            super.visitLabel(dflt);
         }
 
         @Override
@@ -127,20 +127,20 @@ final class StateKeeper extends ClassAdapter {
 
             if (Util.isInvokeYieldReturn(opcode, name, desc)) {
                 // save the current state, first load this
-                mv.visitVarInsn(Opcodes.ALOAD, 0);
+                super.visitVarInsn(Opcodes.ALOAD, 0);
                 // push value <stateIndex>
-                mv.visitIntInsn(Opcodes.BIPUSH, stateIndex);
+                super.visitIntInsn(Opcodes.BIPUSH, stateIndex);
                 // set this.state
-                mv.visitFieldInsn(Opcodes.PUTFIELD, owner, STATE_FIELD_NAME, "B");
+                super.visitFieldInsn(Opcodes.PUTFIELD, owner, STATE_FIELD_NAME, "B");
                 // quit method
-                mv.visitInsn(Opcodes.RETURN);
+                super.visitInsn(Opcodes.RETURN);
                 // now mark the label for coming back here
-                mv.visitLabel(labels[stateIndex - 1]);
+                super.visitLabel(labels[stateIndex - 1]);
 
                 // advance stateIndex
                 stateIndex++;
             } else if (Util.isInvokeYieldBreak(opcode, name, desc)) {
-                mv.visitInsn(Opcodes.RETURN);
+                super.visitInsn(Opcodes.RETURN);
             }
         }
     }

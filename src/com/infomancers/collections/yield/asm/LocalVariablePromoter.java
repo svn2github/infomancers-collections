@@ -146,14 +146,14 @@ final class LocalVariablePromoter extends ClassAdapter {
             int loads = mapper.getLoads().remove() - skip;
 
             while (loads-- > 0) {
-                mv.visitVarInsn(Opcodes.ALOAD, 0);
+                super.visitVarInsn(Opcodes.ALOAD, 0);
             }
         }
 
         @Override
         public void visitVarInsn(final int opcode, final int var) {
             if (var == 0) {
-                mv.visitVarInsn(opcode, var);
+                super.visitVarInsn(opcode, var);
             } else {
                 NewMember newMember = searchMember(var);
 
@@ -163,8 +163,8 @@ final class LocalVariablePromoter extends ClassAdapter {
 
                         // dealWithLoads already added an ALOAD for us. Just dup it
                         // above the already-existing exception.
-                        mv.visitInsn(Opcodes.DUP_X1);
-                        mv.visitInsn(Opcodes.POP);
+                        super.visitInsn(Opcodes.DUP_X1);
+                        super.visitInsn(Opcodes.POP);
                         AccessorCreators.FIELD_SIMPLE.createPutFieldCode(mv, owner, TypeDescriptor.Object, member);
 
                         specialExceptionCase = false;
@@ -203,10 +203,10 @@ final class LocalVariablePromoter extends ClassAdapter {
         public void visitIincInsn(final int var, final int increment) {
             NewMember newMember = searchMember(var);
 
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            super.visitVarInsn(Opcodes.ALOAD, 0);
             createGetField(Opcodes.ILOAD, newMember);
-            mv.visitIntInsn(Opcodes.BIPUSH, Math.abs(increment));
-            mv.visitInsn(increment > 0 ? Opcodes.IADD : Opcodes.ISUB);
+            super.visitIntInsn(Opcodes.BIPUSH, Math.abs(increment));
+            super.visitInsn(increment > 0 ? Opcodes.IADD : Opcodes.ISUB);
             createPutField(Opcodes.ISTORE, newMember);
         }
 
@@ -214,7 +214,7 @@ final class LocalVariablePromoter extends ClassAdapter {
         @Override
         public void visitInsn(final int opcode) {
             if (opcode == Opcodes.ARRAYLENGTH) {
-                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
+                super.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
             } else if (opcode >= Opcodes.IALOAD && opcode <= Opcodes.SALOAD) {
                 int offset = opcode - Opcodes.IALOAD;
                 TypeDescriptor type = Util.typeForOffset(offset);
