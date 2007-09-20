@@ -92,7 +92,7 @@ public class DelayedMethodVisitor extends MethodAdapter {
                         "Probably missing popping/pushing instruction");
             }
             currentMiniFrame.stackSize--;
-        } else {
+        } else if (pushingCodes.contains(opcode)) {
             currentMiniFrame.stackSize++;
         }
     }
