@@ -1,9 +1,10 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asm.delayed.DelayedMethodVisitor;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -57,8 +58,7 @@ public class CastChecker extends ClassAdapter {
         }
     }
 
-    private class MyMethodAdapter extends MethodAdapter {
-
+    private class MyMethodAdapter extends DelayedMethodVisitor {
         /**
          * Constructs a new {@link org.objectweb.asm.MethodAdapter} object.
          *
@@ -68,14 +68,23 @@ public class CastChecker extends ClassAdapter {
             super(mv);
         }
 
-
+        /**
+         * When a virtual method is encountered, emit all previously cached code with the exception
+         * that the first emition, which will be (has to be!) the GETFIELD code, will be followed by a
+         * CHECKCAST with the owner of the method invocation.
+         */
         @Override
         public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
-//            if (Opcodes.INVOKEVIRTUAL == opcode) {
-//                mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
-//            }
+            if (Opcodes.INVOKEVIRTUAL == opcode) {
+                emit(mv, 1);
+                super.visitTypeInsn(Opcodes.CHECKCAST, owner);
+
+                emitAll(mv);
+                endMiniFrame();
+            }
 
             super.visitMethodInsn(opcode, owner, name, desc);
         }
     }
+
 }
