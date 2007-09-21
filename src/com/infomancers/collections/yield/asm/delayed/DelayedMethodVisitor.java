@@ -3,7 +3,6 @@ package com.infomancers.collections.yield.asm.delayed;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -43,9 +42,6 @@ public class DelayedMethodVisitor extends MethodAdapter {
         int stackSize = 0;
     }
 
-    private static HashSet<Integer> poppingCodes = new HashSet<Integer>();
-    private static HashSet<Integer> pushingCodes = new HashSet<Integer>();
-
     private Stack<MiniFrame> miniFrames = new Stack<MiniFrame>();
     private MiniFrame currentMiniFrame = null;
 
@@ -64,7 +60,7 @@ public class DelayedMethodVisitor extends MethodAdapter {
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
         super.visitMethodInsn(opcode, owner, name, desc);
 
-        delayInsn(opcode, DelayedInstruction.METHOD.createEmitter(opcode, owner, name, desc));
+        delayInsn(DelayedInstruction.METHOD.createEmitter(opcode, owner, name, desc));
     }
 
 
@@ -72,7 +68,7 @@ public class DelayedMethodVisitor extends MethodAdapter {
     public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
         super.visitFieldInsn(opcode, owner, name, desc);
 
-        delayInsn(opcode, DelayedInstruction.FIELD.createEmitter(opcode, owner, name, desc));
+        delayInsn(DelayedInstruction.FIELD.createEmitter(opcode, owner, name, desc));
     }
 
     protected final void startMiniFrame() {
@@ -83,17 +79,13 @@ public class DelayedMethodVisitor extends MethodAdapter {
         currentMiniFrame = new MiniFrame();
     }
 
-    private void delayInsn(int opcode, DelayedInstructionEmitter emitter) {
+    private void delayInsn(DelayedInstructionEmitter emitter) {
         currentMiniFrame.workQueue.offer(emitter);
 
-        if (poppingCodes.contains(opcode)) {
-            if (currentMiniFrame.stackSize == 0) {
-                throw new IllegalStateException("Popping from stack when the stack is empty? " +
-                        "Probably missing popping/pushing instruction");
-            }
-            currentMiniFrame.stackSize--;
-        } else if (pushingCodes.contains(opcode)) {
-            currentMiniFrame.stackSize++;
+        currentMiniFrame.stackSize += emitter.pushAmount() - emitter.popAmount();
+
+        if (currentMiniFrame.stackSize < 0) {
+            throw new IllegalStateException("Mini frame's stack <= 0 - must be a missing push");
         }
     }
 

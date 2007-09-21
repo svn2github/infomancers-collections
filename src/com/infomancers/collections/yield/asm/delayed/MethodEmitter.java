@@ -2,6 +2,9 @@ package com.infomancers.collections.yield.asm.delayed;
 
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  * <p/>
@@ -31,7 +34,14 @@ import org.objectweb.asm.MethodVisitor;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 public class MethodEmitter extends DelayedInstructionEmitter {
+    private Pattern pattern = Pattern.compile("[IZBSLDF]|L.*;");
+
+    /**
+     * @param insn
+     * @param params Should be: [owner, name, desc]
+     */
     public MethodEmitter(int insn, Object... params) {
         super(insn, params);
     }
@@ -39,5 +49,26 @@ public class MethodEmitter extends DelayedInstructionEmitter {
     @Override
     public void emit(MethodVisitor mv) {
         mv.visitMethodInsn(insn, (String) params[0], (String) params[1], (String) params[2]);
+    }
+
+    @Override
+    public int pushAmount() {
+        return getDesc().substring(getDesc().lastIndexOf(')') + 1).equals("V") ? 0 : 1;
+    }
+
+    @Override
+    public int popAmount() {
+        String desc = getDesc().substring(1, getDesc().lastIndexOf(')'));
+        int res = 0;
+        Matcher m = pattern.matcher(desc);
+        while (m.find()) {
+            res++;
+        }
+
+        return res;
+    }
+
+    private String getDesc() {
+        return (String) params[2];
     }
 }

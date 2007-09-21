@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asm.delayed;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -39,5 +40,15 @@ public class FieldEmitter extends DelayedInstructionEmitter {
     @Override
     public void emit(MethodVisitor mv) {
         mv.visitFieldInsn(insn, (String) params[0], (String) params[1], (String) params[2]);
+    }
+
+    @Override
+    public int pushAmount() {
+        return insn == Opcodes.PUTFIELD ? 0 : 1;
+    }
+
+    @Override
+    public int popAmount() {
+        return insn == Opcodes.PUTFIELD ? 2 : 1;
     }
 }

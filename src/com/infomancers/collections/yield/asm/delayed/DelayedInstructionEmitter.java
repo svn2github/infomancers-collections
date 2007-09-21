@@ -41,4 +41,8 @@ public abstract class DelayedInstructionEmitter {
     }
 
     public abstract void emit(MethodVisitor mv);
+
+    public abstract int pushAmount();
+
+    public abstract int popAmount();
 }
