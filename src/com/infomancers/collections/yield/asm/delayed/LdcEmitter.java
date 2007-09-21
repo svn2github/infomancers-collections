@@ -1,5 +1,7 @@
 package com.infomancers.collections.yield.asm.delayed;
 
+import org.objectweb.asm.MethodVisitor;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  * <p/>
@@ -29,36 +31,23 @@ package com.infomancers.collections.yield.asm.delayed;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public enum DelayedInstruction {
-    FIELD {
-        @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
-            return new FieldEmitter(insn, params);
-        }
-    },
-    METHOD {
-        @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
-            return new MethodEmitter(insn, params);
-        }
-    },
-    INSN {
-        @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
-            return new InsnEmitter(insn);
-        }
-    },
-    TABLESWITCH {
-        @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
-            return new TableSwitchEmitter(params);
-        }
-    },
-    LDC {
-        @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
-            return new LdcEmitter(params);
-        }};
+public class LdcEmitter extends DelayedInstructionEmitter {
+    public LdcEmitter(Object[] params) {
+        super(-1, params);
+    }
 
-    abstract DelayedInstructionEmitter createEmitter(int insn, Object... params);
+    @Override
+    public void emit(MethodVisitor mv) {
+        mv.visitLdcInsn(params[0]);
+    }
+
+    @Override
+    public int pushAmount() {
+        return 1;
+    }
+
+    @Override
+    public int popAmount() {
+        return 0;
+    }
 }

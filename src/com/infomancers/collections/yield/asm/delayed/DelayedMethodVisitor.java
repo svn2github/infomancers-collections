@@ -1,11 +1,11 @@
 package com.infomancers.collections.yield.asm.delayed;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Stack;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -42,7 +42,6 @@ public class DelayedMethodVisitor extends MethodAdapter {
         int stackSize = 0;
     }
 
-    private Stack<MiniFrame> miniFrames = new Stack<MiniFrame>();
     private MiniFrame currentMiniFrame = null;
 
 
@@ -55,28 +54,136 @@ public class DelayedMethodVisitor extends MethodAdapter {
         super(mv);
     }
 
+    /////////////////////////////////////////////////////////////////
+    // All the visitXXX methods are here.
 
     @Override
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
-        super.visitMethodInsn(opcode, owner, name, desc);
-
-        delayInsn(DelayedInstruction.METHOD.createEmitter(opcode, owner, name, desc));
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.METHOD.createEmitter(opcode, owner, name, desc));
+        } else {
+            super.visitMethodInsn(opcode, owner, name, desc);
+        }
     }
-
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
-        super.visitFieldInsn(opcode, owner, name, desc);
-
-        delayInsn(DelayedInstruction.FIELD.createEmitter(opcode, owner, name, desc));
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.FIELD.createEmitter(opcode, owner, name, desc));
+        } else {
+            super.visitFieldInsn(opcode, owner, name, desc);
+        }
     }
 
-    protected final void startMiniFrame() {
-        if (currentMiniFrame != null) {
-            miniFrames.push(currentMiniFrame);
+    @Override
+    public void visitInsn(final int opcode) {
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.INSN.createEmitter(opcode));
         }
+    }
 
-        currentMiniFrame = new MiniFrame();
+    @Override
+    public void visitIntInsn(final int opcode, final int operand) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitIntInsn(opcode, operand);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitFrame(type, nLocal, local, nStack, stack);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitVarInsn(final int opcode, final int var) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitVarInsn(opcode, var);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitTypeInsn(final int opcode, final String desc) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitTypeInsn(opcode, desc);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitJumpInsn(final int opcode, final Label label) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitJumpInsn(opcode, label);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitLdcInsn(final Object cst) {
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.LDC.createEmitter(-1, cst));
+        } else {
+            super.visitLdcInsn(cst);
+        }
+    }
+
+    @Override
+    public void visitLabel(final Label label) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitLabel(label);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitIincInsn(final int var, final int increment) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitIincInsn(var, increment);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitTableSwitchInsn(final int min, final int max, final Label dflt, final Label labels[]) {
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.TABLESWITCH.createEmitter(-1, min, max, dflt, labels));
+        } else {
+            super.visitTableSwitchInsn(min, max, dflt, labels);    //To change body of overridden methods use File | Settings | File Templates.
+        }
+    }
+
+    @Override
+    public void visitLookupSwitchInsn(final Label dflt, final int keys[], final Label labels[]) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitLookupSwitchInsn(dflt, keys, labels);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitMultiANewArrayInsn(final String desc, final int dims) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitMultiANewArrayInsn(desc, dims);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitTryCatchBlock(start, end, handler, type);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitLocalVariable(name, desc, signature, start, end, index);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void visitLineNumber(final int line, final Label start) {
+        if (insideMiniFrame()) throw new IllegalStateException();
+        super.visitLineNumber(line, start);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    /////////////////////////////////////////////////////////////////
+    // Mini-frame management and manipulations here.
+
+    protected final void startMiniFrame() {
+        startMiniFrame(0);
+    }
+
+    protected final void startMiniFrame(int initialStack) {
+        if (!insideMiniFrame()) {
+            currentMiniFrame = new MiniFrame();
+            currentMiniFrame.stackSize = initialStack;
+        }
     }
 
     private void delayInsn(DelayedInstructionEmitter emitter) {
@@ -86,6 +193,8 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
         if (currentMiniFrame.stackSize < 0) {
             throw new IllegalStateException("Mini frame's stack <= 0 - must be a missing push");
+        } else if (currentMiniFrame.stackSize == 0) {
+            handleEmptyStack();
         }
     }
 
@@ -103,11 +212,18 @@ public class DelayedMethodVisitor extends MethodAdapter {
         emit(mv, currentMiniFrame.workQueue.size());
     }
 
-    protected final void endMiniFrame() {
-        if (currentMiniFrame.stackSize > 0) {
-            throw new IllegalStateException("Ending mini-frame when stack still has values!");
-        }
+    protected void handleEmptyStack() {
+    }
 
-        currentMiniFrame = miniFrames.isEmpty() ? null : miniFrames.pop();
+    protected final void endMiniFrame() {
+//        if (currentMiniFrame.stackSize > 0) {
+//            throw new IllegalStateException("Ending mini-frame when stack still has values!");
+//        }
+
+        currentMiniFrame = null;
+    }
+
+    protected final boolean insideMiniFrame() {
+        return currentMiniFrame != null;
     }
 }

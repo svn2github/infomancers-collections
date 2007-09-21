@@ -192,7 +192,7 @@ public class YielderTests {
         Assert.assertFalse("Did not break", it.hasNext());
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 2000)
     public void stopConditionTest() {
         final int stop = 10;
 

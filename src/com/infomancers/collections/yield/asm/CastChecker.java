@@ -68,6 +68,23 @@ public class CastChecker extends ClassAdapter {
             super(mv);
         }
 
+
+        @Override
+        public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
+            if (opcode == Opcodes.GETFIELD) {
+                startMiniFrame(1); // for ALOAD 0
+            }
+
+            super.visitFieldInsn(opcode, owner, name, desc);
+        }
+
+
+        @Override
+        protected void handleEmptyStack() {
+            emitAll(mv);
+            endMiniFrame();
+        }
+
         /**
          * When a virtual method is encountered, emit all previously cached code with the exception
          * that the first emition, which will be (has to be!) the GETFIELD code, will be followed by a
@@ -75,15 +92,15 @@ public class CastChecker extends ClassAdapter {
          */
         @Override
         public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
-            if (Opcodes.INVOKEVIRTUAL == opcode) {
+            super.visitMethodInsn(opcode, owner, name, desc);
+
+            if (Opcodes.INVOKEVIRTUAL == opcode && insideMiniFrame()) {
                 emit(mv, 1);
-                super.visitTypeInsn(Opcodes.CHECKCAST, owner);
+                mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
 
                 emitAll(mv);
                 endMiniFrame();
             }
-
-            super.visitMethodInsn(opcode, owner, name, desc);
         }
     }
 
