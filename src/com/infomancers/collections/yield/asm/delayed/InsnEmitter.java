@@ -46,6 +46,10 @@ public class InsnEmitter extends DelayedInstructionEmitter {
     public int pushAmount() {
         if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
             return 1;
+        } else if (insn >= Opcodes.IRETURN && insn <= Opcodes.RETURN) {
+            return 0;
+        } else if (insn >= Opcodes.IADD && insn <= Opcodes.DREM) {
+            return 1;
         }
 
         throw new IllegalStateException("Don't know what to do with instruction " + insn);
@@ -55,7 +59,14 @@ public class InsnEmitter extends DelayedInstructionEmitter {
     public int popAmount() {
         if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
             return 0;
+        } else if (insn >= Opcodes.IRETURN && insn <= Opcodes.ARETURN) {
+            return 1;
+        } else if (insn == Opcodes.RETURN) {
+            return 0;
+        } else if (insn >= Opcodes.IADD && insn <= Opcodes.DREM) {
+            return 2;
         }
+
         throw new IllegalStateException("Don't know what to do with instruction " + insn);
     }
 }

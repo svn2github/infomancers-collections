@@ -68,17 +68,29 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
     @Override
     public void visitEnd() {
-        super.visitEnd();
-
         if (!insideMiniFrame()) {
             throw new IllegalStateException("Should have the bounding frame by the end of code!");
         }
 
+        // converge all miniframes into one.
+        while (miniFrames.size() > 1) {
+            endMiniFrame();
+        }
+
+        // emit the miniframe and end it.
         emitAll(mv);
         endMiniFrame();
 
+        super.visitEnd();
+    }
+
+
+    @Override
+    public void visitMaxs(final int maxStack, final int maxLocals) {
         if (insideMiniFrame()) {
-            throw new IllegalStateException("Too many mini-frames by the end of code!");
+            delayInsn(DelayedInstruction.MAXS.createEmitter(-1, maxStack, maxLocals));
+        } else {
+            super.visitMaxs(maxStack, maxLocals);
         }
     }
 
@@ -204,8 +216,11 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
     @Override
     public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitLocalVariable(name, desc, signature, start, end, index);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.LOCALVAR.createEmitter(-1, name, desc, signature, start, end, index));
+        } else {
+            super.visitLocalVariable(name, desc, signature, start, end, index);    //To change body of overridden methods use File | Settings | File Templates.
+        }
     }
 
     @Override

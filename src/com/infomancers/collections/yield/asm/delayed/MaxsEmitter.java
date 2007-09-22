@@ -1,7 +1,6 @@
 package com.infomancers.collections.yield.asm.delayed;
 
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -32,37 +31,23 @@ import org.objectweb.asm.Opcodes;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class TypeEmitter extends DelayedInstructionEmitter {
-    public TypeEmitter(int insn, Object[] params) {
-        super(insn, params);
+public class MaxsEmitter extends DelayedInstructionEmitter {
+    public MaxsEmitter(Object[] params) {
+        super(-1, params);
     }
 
     @Override
     public void emit(MethodVisitor mv) {
-        mv.visitTypeInsn(insn, (String) params[0]);
+        mv.visitMaxs((Integer) params[0], (Integer) params[1]);
     }
 
     @Override
     public int pushAmount() {
-        switch (insn) {
-            case Opcodes.CHECKCAST:
-                return 0;
-            case Opcodes.INSTANCEOF:
-                return 1;
-            default:
-                throw new IllegalStateException();
-        }
+        return 0;
     }
 
     @Override
     public int popAmount() {
-        switch (insn) {
-            case Opcodes.CHECKCAST:
-                return 0;
-            case Opcodes.INSTANCEOF:
-                return 2;
-            default:
-                throw new IllegalStateException();
-        }
+        return 0;
     }
 }

@@ -101,6 +101,17 @@ public enum DelayedInstruction {
         @Override
         public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
             return new JumpEmitter(insn, params);
+        }},
+    LOCALVAR {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new LocalVariableEmitter(params);
+        }
+    },
+    MAXS {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new MaxsEmitter(params);
         }};
 
     public abstract DelayedInstructionEmitter createEmitter(int insn, Object... params);
