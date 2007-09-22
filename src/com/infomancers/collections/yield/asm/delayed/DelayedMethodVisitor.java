@@ -4,8 +4,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -38,11 +39,11 @@ import java.util.Queue;
  */
 public class DelayedMethodVisitor extends MethodAdapter {
     private static class MiniFrame {
-        public Queue<DelayedInstructionEmitter> workQueue = new LinkedList<DelayedInstructionEmitter>();
+        public Deque<DelayedInstructionEmitter> workQueue = new LinkedList<DelayedInstructionEmitter>();
         int stackSize = 0;
     }
 
-    private MiniFrame currentMiniFrame = null;
+    private Stack<MiniFrame> miniFrames = new Stack<MiniFrame>();
 
 
     /**
@@ -56,6 +57,30 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
     /////////////////////////////////////////////////////////////////
     // All the visitXXX methods are here.
+
+
+    @Override
+    public void visitCode() {
+        super.visitCode();
+
+        startMiniFrame();
+    }
+
+    @Override
+    public void visitEnd() {
+        super.visitEnd();
+
+        if (!insideMiniFrame()) {
+            throw new IllegalStateException("Should have the bounding frame by the end of code!");
+        }
+
+        emitAll(mv);
+        endMiniFrame();
+
+        if (insideMiniFrame()) {
+            throw new IllegalStateException("Too many mini-frames by the end of code!");
+        }
+    }
 
     @Override
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
@@ -79,25 +104,36 @@ public class DelayedMethodVisitor extends MethodAdapter {
     public void visitInsn(final int opcode) {
         if (insideMiniFrame()) {
             delayInsn(DelayedInstruction.INSN.createEmitter(opcode));
+        } else {
+            super.visitInsn(opcode);
         }
     }
 
     @Override
     public void visitIntInsn(final int opcode, final int operand) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitIntInsn(opcode, operand);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.INT.createEmitter(opcode, operand));
+        } else {
+            super.visitIntInsn(opcode, operand);
+        }
     }
 
     @Override
     public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitFrame(type, nLocal, local, nStack, stack);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.FRAME.createEmitter(-1, type, nLocal, local, nStack, stack));
+        } else {
+            super.visitFrame(type, nLocal, local, nStack, stack);
+        }
     }
 
     @Override
     public void visitVarInsn(final int opcode, final int var) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitVarInsn(opcode, var);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.VAR.createEmitter(opcode, var));
+        } else {
+            super.visitVarInsn(opcode, var);
+        }
     }
 
     @Override
@@ -108,8 +144,11 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
     @Override
     public void visitJumpInsn(final int opcode, final Label label) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitJumpInsn(opcode, label);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.JUMP.createEmitter(opcode, label));
+        } else {
+            super.visitJumpInsn(opcode, label);
+        }
     }
 
     @Override
@@ -123,8 +162,11 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
     @Override
     public void visitLabel(final Label label) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitLabel(label);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.LABEL.createEmitter(-1, label));
+        } else {
+            super.visitLabel(label);
+        }
     }
 
     @Override
@@ -168,62 +210,96 @@ public class DelayedMethodVisitor extends MethodAdapter {
 
     @Override
     public void visitLineNumber(final int line, final Label start) {
-        if (insideMiniFrame()) throw new IllegalStateException();
-        super.visitLineNumber(line, start);    //To change body of overridden methods use File | Settings | File Templates.
+        if (insideMiniFrame()) {
+            delayInsn(DelayedInstruction.LINE.createEmitter(-1, line, start));
+        } else {
+            super.visitLineNumber(line, start);
+        }
     }
 
     /////////////////////////////////////////////////////////////////
     // Mini-frame management and manipulations here.
 
     protected final void startMiniFrame() {
-        startMiniFrame(0);
+        startMiniFrame(insideMiniFrame() ? getCurrentMiniFrame().stackSize : 0);
     }
 
-    protected final void startMiniFrame(int initialStack) {
-        if (!insideMiniFrame()) {
-            currentMiniFrame = new MiniFrame();
-            currentMiniFrame.stackSize = initialStack;
-        }
+    private final void startMiniFrame(int initialStack) {
+        miniFrames.push(new MiniFrame());
+        getCurrentMiniFrame().stackSize = initialStack;
     }
 
     private void delayInsn(DelayedInstructionEmitter emitter) {
-        currentMiniFrame.workQueue.offer(emitter);
+        getCurrentMiniFrame().workQueue.offer(emitter);
 
-        currentMiniFrame.stackSize += emitter.pushAmount() - emitter.popAmount();
+        handleStack(emitter);
+    }
 
-        if (currentMiniFrame.stackSize < 0) {
+    protected final void delayPriorityInsn(DelayedInstructionEmitter emitter) {
+        getCurrentMiniFrame().workQueue.offerFirst(emitter);
+
+        handleStack(emitter);
+    }
+
+    private void handleStack(DelayedInstructionEmitter emitter) {
+        final int stackChange = emitter.pushAmount() - emitter.popAmount();
+        getCurrentMiniFrame().stackSize += stackChange;
+        boolean changedStackSize = stackChange != 0;
+
+        if (getCurrentMiniFrame().stackSize < 0) {
             throw new IllegalStateException("Mini frame's stack <= 0 - must be a missing push");
-        } else if (currentMiniFrame.stackSize == 0) {
+        } else if (changedStackSize && getCurrentMiniFrame().stackSize == 0) {
             handleEmptyStack();
         }
     }
 
     protected final void emit(MethodVisitor mv, int count) {
+        // pops the current mini frame, and emit the instructions
+        // into the previous mini-frame, unless this is the last
+        // mini frame available in which case, a real emition is made.
         if (count <= 0) {
             throw new IllegalArgumentException("count <= 0");
         }
 
+        MiniFrame miniFrame = miniFrames.pop();
+
         while (count-- > 0) {
-            currentMiniFrame.workQueue.poll().emit(mv);
+            if (insideMiniFrame()) {
+                getCurrentMiniFrame().workQueue.offer(miniFrame.workQueue.poll());
+            } else {
+                miniFrame.workQueue.poll().emit(mv);
+            }
         }
+
+        miniFrames.push(miniFrame);
     }
 
     protected final void emitAll(MethodVisitor mv) {
-        emit(mv, currentMiniFrame.workQueue.size());
+        emit(mv, getCurrentMiniFrame().workQueue.size());
     }
 
     protected void handleEmptyStack() {
     }
 
     protected final void endMiniFrame() {
-//        if (currentMiniFrame.stackSize > 0) {
-//            throw new IllegalStateException("Ending mini-frame when stack still has values!");
-//        }
+        MiniFrame previous = miniFrames.pop();
 
-        currentMiniFrame = null;
+        if (insideMiniFrame()) {
+            // the stack size of the mini frame previous to the one being popped now was added
+            // when it was created.
+            getCurrentMiniFrame().stackSize += previous.stackSize - getCurrentMiniFrame().stackSize;
+
+            while (previous.workQueue.size() > 0) {
+                getCurrentMiniFrame().workQueue.offer(previous.workQueue.poll());
+            }
+        }
     }
 
     protected final boolean insideMiniFrame() {
-        return currentMiniFrame != null;
+        return !miniFrames.isEmpty();
+    }
+
+    private MiniFrame getCurrentMiniFrame() {
+        return insideMiniFrame() ? miniFrames.peek() : null;
     }
 }

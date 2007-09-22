@@ -32,30 +32,35 @@ import org.objectweb.asm.Opcodes;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class InsnEmitter extends DelayedInstructionEmitter {
-    public InsnEmitter(int insn) {
-        super(insn);
+public class VarEmitter extends DelayedInstructionEmitter {
+    public VarEmitter(int insn, Object[] params) {
+        super(insn, params);
     }
 
     @Override
     public void emit(MethodVisitor mv) {
-        mv.visitInsn(insn);
+        mv.visitVarInsn(insn, (Integer) params[0]);
     }
 
     @Override
     public int pushAmount() {
-        if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
+        if (insn >= Opcodes.ILOAD && insn <= Opcodes.ALOAD) {
             return 1;
+        } else if (insn >= Opcodes.ISTORE && insn <= Opcodes.ASTORE) {
+            return 0;
+        } else {
+            throw new IllegalStateException("Unknown instruction: " + insn);
         }
-
-        throw new IllegalStateException("Don't know what to do with instruction " + insn);
     }
 
     @Override
     public int popAmount() {
-        if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
+        if (insn >= Opcodes.ILOAD && insn <= Opcodes.ALOAD) {
             return 0;
+        } else if (insn >= Opcodes.ISTORE && insn <= Opcodes.ASTORE) {
+            return 1;
+        } else {
+            throw new IllegalStateException("Unknown instruction: " + insn);
         }
-        throw new IllegalStateException("Don't know what to do with instruction " + insn);
     }
 }

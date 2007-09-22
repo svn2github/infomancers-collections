@@ -1,7 +1,6 @@
 package com.infomancers.collections.yield.asm.delayed;
 
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -32,30 +31,23 @@ import org.objectweb.asm.Opcodes;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class InsnEmitter extends DelayedInstructionEmitter {
-    public InsnEmitter(int insn) {
-        super(insn);
+public class FrameEmitter extends DelayedInstructionEmitter {
+    public FrameEmitter(Object[] params) {
+        super(-1, params);
     }
 
     @Override
     public void emit(MethodVisitor mv) {
-        mv.visitInsn(insn);
+        mv.visitFrame((Integer) params[0], (Integer) params[1], (Object[]) params[2], (Integer) params[3], (Object[]) params[4]);
     }
 
     @Override
     public int pushAmount() {
-        if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
-            return 1;
-        }
-
-        throw new IllegalStateException("Don't know what to do with instruction " + insn);
+        return 0;
     }
 
     @Override
     public int popAmount() {
-        if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
-            return 0;
-        }
-        throw new IllegalStateException("Don't know what to do with instruction " + insn);
+        return 0;
     }
 }

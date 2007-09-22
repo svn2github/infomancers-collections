@@ -32,30 +32,37 @@ import org.objectweb.asm.Opcodes;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class InsnEmitter extends DelayedInstructionEmitter {
-    public InsnEmitter(int insn) {
-        super(insn);
+public class TypeEmitter extends DelayedInstructionEmitter {
+    public TypeEmitter(int insn, Object[] params) {
+        super(insn, params);
     }
 
     @Override
     public void emit(MethodVisitor mv) {
-        mv.visitInsn(insn);
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public int pushAmount() {
-        if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
-            return 1;
+        switch (insn) {
+            case Opcodes.CHECKCAST:
+                return 0;
+            case Opcodes.INSTANCEOF:
+                return 1;
+            default:
+                throw new IllegalStateException();
         }
-
-        throw new IllegalStateException("Don't know what to do with instruction " + insn);
     }
 
     @Override
     public int popAmount() {
-        if (insn >= Opcodes.ACONST_NULL && insn <= Opcodes.ICONST_5) {
-            return 0;
+        switch (insn) {
+            case Opcodes.CHECKCAST:
+                return 0;
+            case Opcodes.INSTANCEOF:
+                return 2;
+            default:
+                throw new IllegalStateException();
         }
-        throw new IllegalStateException("Don't know what to do with instruction " + insn);
     }
 }

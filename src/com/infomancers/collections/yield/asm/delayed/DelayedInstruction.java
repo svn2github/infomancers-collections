@@ -32,33 +32,76 @@ package com.infomancers.collections.yield.asm.delayed;
 public enum DelayedInstruction {
     FIELD {
         @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
             return new FieldEmitter(insn, params);
         }
     },
     METHOD {
         @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
             return new MethodEmitter(insn, params);
         }
     },
     INSN {
         @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
             return new InsnEmitter(insn);
         }
     },
     TABLESWITCH {
         @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
             return new TableSwitchEmitter(params);
         }
     },
     LDC {
         @Override
-        DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
             return new LdcEmitter(params);
+        }
+    },
+    VAR {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new VarEmitter(insn, params);
+        }
+    },
+    LABEL {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new LabelEmitter(params);
+        }
+    },
+    LINE {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new LineEmitter(params);
+        }
+    },
+    TYPE {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new TypeEmitter(insn, params);
+        }},
+    FRAME {
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new FrameEmitter(params);
+        }},
+    INT {
+
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new IntEmitter(insn, params);
+        }
+
+    },
+    JUMP {
+
+        @Override
+        public DelayedInstructionEmitter createEmitter(int insn, Object... params) {
+            return new JumpEmitter(insn, params);
         }};
 
-    abstract DelayedInstructionEmitter createEmitter(int insn, Object... params);
+    public abstract DelayedInstructionEmitter createEmitter(int insn, Object... params);
 }

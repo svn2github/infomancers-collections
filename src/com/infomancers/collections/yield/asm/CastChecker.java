@@ -1,5 +1,6 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asm.delayed.DelayedInstruction;
 import com.infomancers.collections.yield.asm.delayed.DelayedMethodVisitor;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
@@ -37,6 +38,8 @@ import org.objectweb.asm.Opcodes;
  */
 public class CastChecker extends ClassAdapter {
 
+    private int getFields = 0;
+
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
@@ -72,7 +75,8 @@ public class CastChecker extends ClassAdapter {
         @Override
         public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
             if (opcode == Opcodes.GETFIELD) {
-                startMiniFrame(1); // for ALOAD 0
+                startMiniFrame();
+                getFields++;
             }
 
             super.visitFieldInsn(opcode, owner, name, desc);
@@ -81,8 +85,11 @@ public class CastChecker extends ClassAdapter {
 
         @Override
         protected void handleEmptyStack() {
-            emitAll(mv);
-            endMiniFrame();
+            if (getFields > 0) {
+                emitAll(mv);
+                endMiniFrame();
+                getFields--;
+            }
         }
 
         /**
@@ -96,10 +103,11 @@ public class CastChecker extends ClassAdapter {
 
             if (Opcodes.INVOKEVIRTUAL == opcode && insideMiniFrame()) {
                 emit(mv, 1);
-                mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
+                delayPriorityInsn(DelayedInstruction.TYPE.createEmitter(Opcodes.CHECKCAST, owner));
 
                 emitAll(mv);
                 endMiniFrame();
+                getFields--;
             }
         }
     }
