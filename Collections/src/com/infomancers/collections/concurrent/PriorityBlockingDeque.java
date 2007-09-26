@@ -119,8 +119,14 @@ public class PriorityBlockingDeque<E>
         if (list.size() >= capacity)
             return false;
 
-        list.add(e);
-        Collections.sort(list, comparator);
+        int insertionPoint = Collections.binarySearch(list, e, comparator);
+        if (insertionPoint < 0) {
+            // this means the key didn't exist, so the insertion point is negative minus 1.
+            insertionPoint = -insertionPoint - 1;
+        }
+
+        list.add(insertionPoint, e);
+//        Collections.sort(list, comparator);
         notEmpty.signal();
 
         return true;

@@ -126,7 +126,7 @@ public class GraphTests {
         Assert.assertFalse("Too many elements", it.hasNext());
     }
 
-    @Test
+    @Test(timeout = 2000)
     public void dfsTwoElements() {
         GraphNode node1 = new GraphNode(1);
         GraphNode node2 = new GraphNode(2);
