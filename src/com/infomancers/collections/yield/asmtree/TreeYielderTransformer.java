@@ -60,6 +60,8 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
             node.fields.add(newField);
         }
 
+        node.fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "state$", "B", null, (byte) 0));
+
         MethodNode method = findMethod(node);
 
         for (AbstractInsnNode instruction = method.instructions.getFirst();

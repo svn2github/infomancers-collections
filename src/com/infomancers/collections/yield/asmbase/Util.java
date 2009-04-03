@@ -45,7 +45,7 @@ public final class Util {
         return "yieldNextCore".equals(name) && "()V".equals(desc);
     }
 
-    static boolean isInvokeYieldReturn(int opcode, String name, String desc) {
+    public static boolean isInvokeYieldReturn(int opcode, String name, String desc) {
         return opcode == Opcodes.INVOKEVIRTUAL && "yieldReturn".equals(name) && "(Ljava/lang/Object;)V".equals(desc);
     }
 

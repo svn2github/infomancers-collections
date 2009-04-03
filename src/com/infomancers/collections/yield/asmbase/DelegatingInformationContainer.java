@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asmbase;
 
 import com.infomancers.collections.yield.asm.NewMember;
+import org.objectweb.asm.Label;
 
 import java.util.Queue;
 
@@ -36,10 +37,18 @@ import java.util.Queue;
 final class DelegatingInformationContainer implements YielderInformationContainer {
     private final YieldReturnCounter counter;
     private final LocalVariableMapper mapper;
+    private int currentState;
+    private final Label[] labels;
 
     public DelegatingInformationContainer(YieldReturnCounter counter, LocalVariableMapper mapper) {
         this.counter = counter;
         this.mapper = mapper;
+        this.currentState = counter.getCounter();
+
+        this.labels = new Label[counter.getCounter()];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = new Label();
+        }
     }
 
     public int getCounter() {
@@ -56,6 +65,18 @@ final class DelegatingInformationContainer implements YielderInformationContaine
 
     public NewMember getSlot(int var) {
         return mapper.getSlot(var);
+    }
+
+    public Label getStateLabel(int state) {
+        return labels[state - 1];
+    }
+
+    public int takeState() {
+        return currentState--;
+    }
+
+    public void setStateLabel(int state, Label label) {
+        labels[state - 1] = label;
     }
 
     public String toString() {

@@ -2,6 +2,7 @@ package com.infomancers.tests;
 
 import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import org.objectweb.asm.Label;
 
 import java.util.Arrays;
 import java.util.Queue;
@@ -14,7 +15,7 @@ import java.util.Queue;
  * To change this template use File | Settings | File Templates.
  */
 public class TestYIC implements YielderInformationContainer {
-    private final int counter;
+    private int counter;
     private final NewMember[] slots;
 
     public TestYIC(int counter, NewMember... slots) {
@@ -42,5 +43,17 @@ public class TestYIC implements YielderInformationContainer {
         }
 
         return null;
+    }
+
+    public int takeState() {
+        return counter--;
+    }
+
+    public void setStateLabel(int state, Label label) {
+
+    }
+
+    public Label getStateLabel(int state) {
+        return new Label();
     }
 }

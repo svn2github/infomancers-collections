@@ -41,7 +41,8 @@ public final class EnhancersFactory {
     private static final NullEnhancer nullEnhancer = new NullEnhancer();
 
     public static EnhancersFactory instnace() {
-        return new EnhancersFactory(new StoreEnhancer(), new LoadEnhancer());
+        return new EnhancersFactory(new YieldReturnEnhancer(),
+                new StoreEnhancer(), new LoadEnhancer());
     }
 
     private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {

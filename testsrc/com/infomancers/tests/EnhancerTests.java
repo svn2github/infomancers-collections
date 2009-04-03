@@ -6,7 +6,9 @@ import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
 import com.infomancers.collections.yield.asmtree.enhancers.LoadEnhancer;
 import com.infomancers.collections.yield.asmtree.enhancers.StoreEnhancer;
+import com.infomancers.collections.yield.asmtree.enhancers.YieldReturnEnhancer;
 import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
@@ -79,6 +81,62 @@ public class EnhancerTests {
         compareLists(expected, original);
     }
 
+    @Test
+    public void yieldReturn() {
+        YielderInformationContainer info = new TestYIC(1);
+
+        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()");
+        InsnList original = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                insn
+        );
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()"),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new IntInsnNode(Opcodes.BIPUSH, 1),
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, "state$", "B"),
+                new InsnNode(Opcodes.RETURN),
+                new LabelNode()
+        );
+
+        InsnEnhancer enhancer = new YieldReturnEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
+    @Test
+    public void yieldReturn_afterwardsHasLabel() {
+        YielderInformationContainer info = new TestYIC(1);
+
+        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()");
+        InsnList original = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                insn,
+                new LabelNode()
+        );
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()"),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new IntInsnNode(Opcodes.BIPUSH, 1),
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, "state$", "B"),
+                new InsnNode(Opcodes.RETURN),
+                new LabelNode()
+        );
+
+
+        InsnEnhancer enhancer = new YieldReturnEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
     // ---------------------------------------
     // ------------- Utility -----------------
     // ---------------------------------------
@@ -90,6 +148,8 @@ public class EnhancerTests {
         originalNode = original.getFirst();
 
         while (originalNode != null) {
+            Assert.assertNotNull("expected is null", expectedNode);
+
             compareNodes(expectedNode, originalNode);
 
             originalNode = originalNode.getNext();
@@ -115,13 +175,24 @@ public class EnhancerTests {
     }
 
     private static void compareNodes(AbstractInsnNode expectedNode, AbstractInsnNode originalNode) {
-        Assert.assertEquals("opcode", expectedNode.getOpcode(), originalNode.getOpcode());
+        assertEquals("opcode", expectedNode.getOpcode(), originalNode.getOpcode());
 
         if (expectedNode instanceof VarInsnNode) {
             VarInsnNode eVarNode = (VarInsnNode) expectedNode;
             VarInsnNode oVarNode = (VarInsnNode) originalNode;
 
-            Assert.assertEquals("var", eVarNode.var, oVarNode.var);
+            assertEquals("var", eVarNode.var, oVarNode.var);
+        } else if (expectedNode instanceof FieldInsnNode) {
+            FieldInsnNode eFieldNode = (FieldInsnNode) expectedNode;
+            FieldInsnNode oFieldNode = (FieldInsnNode) originalNode;
+
+            assertEquals("name", eFieldNode.name, oFieldNode.name);
+            assertEquals("desc", eFieldNode.desc, oFieldNode.desc);
+        } else if (expectedNode instanceof IntInsnNode) {
+            IntInsnNode eIntNode = (IntInsnNode) expectedNode;
+            IntInsnNode oIntNode = (IntInsnNode) originalNode;
+
+            assertEquals("operand", eIntNode.operand, oIntNode.operand);
         }
     }
 
