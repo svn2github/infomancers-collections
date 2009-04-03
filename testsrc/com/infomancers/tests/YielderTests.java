@@ -126,6 +126,23 @@ public class YielderTests {
     }
 
     @Test
+    public void oneNumber() {
+        final int i1 = 2;
+
+        Iterator<Integer> it = new Yielder<Integer>() {
+            @Override
+            protected void yieldNextCore() {
+                int ii1 = i1;
+
+                yieldReturn(ii1);
+            }
+        }.iterator();
+
+        Assert.assertEquals(i1, (int) it.next());
+        Assert.assertFalse(it.hasNext());
+    }
+
+    @Test
     public void someNumbers() {
         final int i1 = 2;
         final int i2 = 4;

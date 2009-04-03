@@ -67,9 +67,9 @@ public class YieldReturnEnhancer implements PredicatedInsnEnhancer {
         if (ret.getNext() != null &&
                 ret.getNext().getType() == AbstractInsnNode.LABEL) {
             label = (LabelNode) ret.getNext();
-            info.setStateLabel(state, label.getLabel());
+            info.setStateLabel(state, label);
         } else {
-            label = new LabelNode(info.getStateLabel(state));
+            label = info.getStateLabel(state);
             instructions.insert(ret, label);
         }
 

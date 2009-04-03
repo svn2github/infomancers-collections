@@ -1,7 +1,7 @@
 package com.infomancers.collections.yield.asmbase;
 
 import com.infomancers.collections.yield.asm.NewMember;
-import org.objectweb.asm.Label;
+import org.objectweb.asm.tree.LabelNode;
 
 import java.util.Queue;
 
@@ -21,9 +21,12 @@ public interface YielderInformationContainer {
 
     NewMember getSlot(int var);
 
-    Label getStateLabel(int state);
+    LabelNode getStateLabel(int state);
 
     int takeState();
 
-    void setStateLabel(int state, Label label);
+    void setStateLabel(int state, LabelNode label);
+
+    LabelNode[] getStateLabels();
+
 }

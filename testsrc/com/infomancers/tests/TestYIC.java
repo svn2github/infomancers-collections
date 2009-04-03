@@ -2,7 +2,7 @@ package com.infomancers.tests;
 
 import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
-import org.objectweb.asm.Label;
+import org.objectweb.asm.tree.LabelNode;
 
 import java.util.Arrays;
 import java.util.Queue;
@@ -17,10 +17,12 @@ import java.util.Queue;
 public class TestYIC implements YielderInformationContainer {
     private int counter;
     private final NewMember[] slots;
+    private final LabelNode[] labels;
 
     public TestYIC(int counter, NewMember... slots) {
         this.counter = counter;
         this.slots = slots;
+        this.labels = new LabelNode[counter];
     }
 
     public int getCounter() {
@@ -49,11 +51,19 @@ public class TestYIC implements YielderInformationContainer {
         return counter--;
     }
 
-    public void setStateLabel(int state, Label label) {
-
+    public void setStateLabel(int state, LabelNode label) {
+        labels[state - 1] = label;
     }
 
-    public Label getStateLabel(int state) {
-        return new Label();
+    public LabelNode[] getStateLabels() {
+        return labels;
+    }
+
+    public LabelNode getStateLabel(int state) {
+        if (labels[state - 1] == null) {
+            labels[state - 1] = new LabelNode();
+        }
+
+        return labels[state - 1];
     }
 }

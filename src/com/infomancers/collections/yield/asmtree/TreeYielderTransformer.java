@@ -8,10 +8,10 @@ import com.infomancers.collections.yield.asmtree.enhancers.EnhancersFactory;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.TraceMethodVisitor;
+
+import java.util.Iterator;
 
 /**
  * Copyright (c) 2009, Aviad Ben Dov
@@ -54,16 +54,30 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
         ClassNode node = new ClassNode();
         reader.accept(node, 0);
 
+        // promote local variables to members
         for (NewMember newMember : info.getSlots()) {
             FieldNode newField = new FieldNode(Opcodes.ACC_PRIVATE, newMember.getName(), newMember.getDesc(), null, null);
 
             node.fields.add(newField);
         }
 
+        // create the state member
         node.fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "state$", "B", null, (byte) 0));
+
 
         MethodNode method = findMethod(node);
 
+        // remove local variables from method
+        if (method.localVariables != null) {
+            for (Iterator it = method.localVariables.iterator(); it.hasNext();) {
+                LocalVariableNode localVariable = (LocalVariableNode) it.next();
+                if (!"this".equals(localVariable.name)) {
+                    it.remove();
+                }
+            }
+        }
+
+        // enhance lines as required
         for (AbstractInsnNode instruction = method.instructions.getFirst();
              instruction != null;
              instruction = instruction.getNext()) {
@@ -72,7 +86,24 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
             instruction = enhancer.enhance(node, method.instructions, info, instruction);
         }
 
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        // create the state-switcher at the beginning of the method
+        LabelNode dflt = getFirstLabel(method);
+        LabelNode start = new LabelNode();
+        AbstractInsnNode aload0 = new VarInsnNode(Opcodes.ALOAD, 0);
+        AbstractInsnNode getstate = new FieldInsnNode(Opcodes.GETFIELD, node.name, "state$", "B");
+        AbstractInsnNode tableswitch = new TableSwitchInsnNode(1, info.getCounter(), dflt, info.getStateLabels());
+
+        method.instructions.insertBefore(dflt, start);
+        method.instructions.insert(start, aload0);
+        method.instructions.insert(aload0, getstate);
+        method.instructions.insert(getstate, tableswitch);
+
+        TraceMethodVisitor trace = new TraceMethodVisitor();
+        method.accept(trace);
+        System.out.println("After:");
+        System.out.println(trace.getText());
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
         node.accept(writer);
 
@@ -88,5 +119,15 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
         }
 
         return null;
+    }
+
+    private LabelNode getFirstLabel(MethodNode method) {
+        AbstractInsnNode result = method.instructions.getFirst();
+
+        while (result != null && result.getType() != AbstractInsnNode.LABEL) {
+            result = result.getNext();
+        }
+
+        return (LabelNode) result;
     }
 }

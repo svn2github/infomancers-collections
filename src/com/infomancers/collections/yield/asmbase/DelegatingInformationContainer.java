@@ -1,7 +1,7 @@
 package com.infomancers.collections.yield.asmbase;
 
 import com.infomancers.collections.yield.asm.NewMember;
-import org.objectweb.asm.Label;
+import org.objectweb.asm.tree.LabelNode;
 
 import java.util.Queue;
 
@@ -38,17 +38,14 @@ final class DelegatingInformationContainer implements YielderInformationContaine
     private final YieldReturnCounter counter;
     private final LocalVariableMapper mapper;
     private int currentState;
-    private final Label[] labels;
+    private final LabelNode[] labels;
 
     public DelegatingInformationContainer(YieldReturnCounter counter, LocalVariableMapper mapper) {
         this.counter = counter;
         this.mapper = mapper;
         this.currentState = counter.getCounter();
 
-        this.labels = new Label[counter.getCounter()];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = new Label();
-        }
+        this.labels = new LabelNode[counter.getCounter()];
     }
 
     public int getCounter() {
@@ -67,7 +64,11 @@ final class DelegatingInformationContainer implements YielderInformationContaine
         return mapper.getSlot(var);
     }
 
-    public Label getStateLabel(int state) {
+    public LabelNode getStateLabel(int state) {
+        if (labels[state - 1] == null) {
+            labels[state - 1] = new LabelNode();
+        }
+
         return labels[state - 1];
     }
 
@@ -75,8 +76,12 @@ final class DelegatingInformationContainer implements YielderInformationContaine
         return currentState--;
     }
 
-    public void setStateLabel(int state, Label label) {
+    public void setStateLabel(int state, LabelNode label) {
         labels[state - 1] = label;
+    }
+
+    public LabelNode[] getStateLabels() {
+        return labels;
     }
 
     public String toString() {
