@@ -36,4 +36,8 @@ public final class NewMember {
     public TypeDescriptor getType() {
         return type;
     }
+
+    public String toString() {
+        return "NewMember: [name: " + name + ", index: " + type + ", type: " + type + "]";
+    }
 }

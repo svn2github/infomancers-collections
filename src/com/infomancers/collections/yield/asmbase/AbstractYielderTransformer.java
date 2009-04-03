@@ -42,6 +42,10 @@ public abstract class AbstractYielderTransformer implements ClassFileTransformer
 
                     YielderInformationContainer info = new DelegatingInformationContainer(counter, mapper);
 
+                    if (debug) {
+                        System.out.println("info: [" + info + "]");
+                    }
+
                     result = enhanceClass(reader, info);
 
                     trace("After", result);

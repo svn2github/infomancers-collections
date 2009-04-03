@@ -35,4 +35,8 @@ final class DelegatingInformationContainer implements YielderInformationContaine
     public NewMember getSlot(int var) {
         return mapper.getSlot(var);
     }
+
+    public String toString() {
+        return "mapper: [" + mapper + "], counter: [" + counter + ']';
+    }
 }

@@ -89,4 +89,7 @@ final class YieldReturnCounter extends ClassAdapter {
         }
     }
 
+    public String toString() {
+        return "YieldReturnCounter: [counter: " + counter + "]";
+    }
 }

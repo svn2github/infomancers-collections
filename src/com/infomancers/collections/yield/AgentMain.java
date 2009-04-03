@@ -1,8 +1,12 @@
 package com.infomancers.collections.yield;
 
 import com.infomancers.collections.yield.asm.StreamingYielderTransformer;
+import com.infomancers.collections.yield.asmtree.TreeYielderTransformer;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -43,7 +47,12 @@ import java.lang.instrument.Instrumentation;
  */
 public final class AgentMain {
     public static void premain(String agentArgs, Instrumentation inst) {
-        inst.addTransformer(new StreamingYielderTransformer("debug".equals(agentArgs)));
+        List<String> args = Arrays.asList(agentArgs.split(";"));
+
+        boolean debug = args.contains("debug");
+        ClassFileTransformer transformer = args.contains("tree") ? new TreeYielderTransformer(debug) : new StreamingYielderTransformer(debug);
+
+        inst.addTransformer(transformer);
     }
 
 }

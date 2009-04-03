@@ -137,4 +137,8 @@ final class LocalVariableMapper extends ClassAdapter {
             }
         }
     }
+
+    public String toString() {
+        return "LocalVariableMapper: [loads: " + loads + ", slots: " + slots + "]";
+    }
 }
