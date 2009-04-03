@@ -1,6 +1,6 @@
 package com.infomancers.collections.yield;
 
-import com.infomancers.collections.yield.asm.YielderTransformer;
+import com.infomancers.collections.yield.asm.StreamingYielderTransformer;
 
 import java.lang.instrument.Instrumentation;
 
@@ -43,7 +43,7 @@ import java.lang.instrument.Instrumentation;
  */
 public final class AgentMain {
     public static void premain(String agentArgs, Instrumentation inst) {
-        inst.addTransformer(new YielderTransformer("debug".equals(agentArgs)));
+        inst.addTransformer(new StreamingYielderTransformer("debug".equals(agentArgs)));
     }
 
 }

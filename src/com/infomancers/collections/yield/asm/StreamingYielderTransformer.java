@@ -1,7 +1,9 @@
 package com.infomancers.collections.yield.asm;
 
-import com.infomancers.collections.yield.Yielder;
-import org.objectweb.asm.Opcodes;
+import com.infomancers.collections.yield.asmbase.AbstractYielderTransformer;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -35,49 +37,34 @@ import org.objectweb.asm.Opcodes;
  */
 
 /**
- * Utility class for doing redundant checks on fields, variables and methods while
- * visiting different classes.
+ * A class transformation file which creates three chains of ASM visitors, all three
+ * eventually create the enhanced class which keeps state and supports the yield idea.
+ * <p/>
+ * The chains are:
+ * <p/>
+ * 1. reader (of origin) -> returnCounter -> assignMapper -> null
+ * 2. reader (of origin) -> promoter -> stateKeeper (using returnCounter) -> writer (to output1)
+ * 3. reader (of output1) -> assigner (using promoter) -> writer (to output2)
+ * <p/>
+ * And then returns output2.
+ * <p/>
+ * Also, notice that the order of the visitors is important:
+ * The promoter counts on the labels to be in the exact same order as the assignMapper sees them.
  */
-final class Util {
+public final class StreamingYielderTransformer extends AbstractYielderTransformer {
 
-    public static boolean isYieldNextCoreMethod(String name, String desc) {
-        return "yieldNextCore".equals(name) && "()V".equals(desc);
+    public StreamingYielderTransformer(boolean debug) {
+        super(debug);
     }
 
-    static boolean isInvokeYieldReturn(int opcode, String name, String desc) {
-        return opcode == Opcodes.INVOKEVIRTUAL && "yieldReturn".equals(name) && "(Ljava/lang/Object;)V".equals(desc);
-    }
+    protected byte[] enhanceClass(ClassReader reader, YielderInformationContainer info) {
+        ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        CastChecker caster = new CastChecker(writer);
+//        StateKeeper stateKeeper = new StateKeeper(writer, counter);
+        StateKeeper stateKeeper = new StateKeeper(caster, info);
+        LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, info);
+        reader.accept(promoter, 0);
 
-    public static boolean isInvokeYieldBreak(int opcode, String name, String desc) {
-        return opcode == Opcodes.INVOKEVIRTUAL && "yieldBreak".equals(name) && "()V".equals(desc);
-    }
-
-    public static boolean isYielderClassName(String name) {
-        return "com/infomancers/collections/yield/Yielder".equals(name);
-    }
-
-    public static int offsetForDesc(String desc) {
-        for (int i = 0; i < TypeDescriptor.values().length; i++) {
-            String cur = TypeDescriptor.values()[i].getDesc();
-            if (cur.equals(desc)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    public static TypeDescriptor typeForOffset(int offset) {
-        return TypeDescriptor.values()[offset];
-    }
-
-    public static boolean isYielderInHierarchyTree(String className) {
-        String name = className.replace('/', '.');
-        try {
-            return Yielder.class.isAssignableFrom(Class.forName(name));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return writer.toByteArray();
     }
 }

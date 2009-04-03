@@ -1,10 +1,10 @@
 package com.infomancers.collections.yield.asmtree;
 
+import com.infomancers.collections.yield.asmbase.AbstractYielderTransformer;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.ClassReader;
-
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.ClassNode;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,13 +13,20 @@ import java.security.ProtectionDomain;
  * Time: 8:28:50 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TreeYielderTransformer implements ClassFileTransformer {
+public class TreeYielderTransformer extends AbstractYielderTransformer {
+    public TreeYielderTransformer(boolean debug) {
+        super(debug);
+    }
+
+    protected byte[] enhanceClass(ClassReader reader, YielderInformationContainer info) {
+        ClassNode node = new ClassNode();
+        reader.accept(node, 0);
 
 
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        ClassReader reader = new ClassReader(classfileBuffer);
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 
+        node.accept(writer);
 
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return writer.toByteArray();
     }
 }
