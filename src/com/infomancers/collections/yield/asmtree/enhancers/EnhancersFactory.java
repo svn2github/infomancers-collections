@@ -1,8 +1,9 @@
-package com.infomancers.collections.yield.asmbase;
+package com.infomancers.collections.yield.asmtree.enhancers;
 
-import com.infomancers.collections.yield.asm.NewMember;
-
-import java.util.Queue;
+import com.infomancers.collections.yield.asmtree.InsnEnhancer;
+import static org.objectweb.asm.Opcodes.ASTORE;
+import static org.objectweb.asm.Opcodes.ISTORE;
+import org.objectweb.asm.tree.AbstractInsnNode;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -33,32 +34,13 @@ import java.util.Queue;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-final class DelegatingInformationContainer implements YielderInformationContainer {
-    private final YieldReturnCounter counter;
-    private final LocalVariableMapper mapper;
+public class EnhancersFactory {
 
-    public DelegatingInformationContainer(YieldReturnCounter counter, LocalVariableMapper mapper) {
-        this.counter = counter;
-        this.mapper = mapper;
-    }
-
-    public int getCounter() {
-        return counter.getCounter();
-    }
-
-    public Iterable<? extends NewMember> getSlots() {
-        return mapper.getSlots();
-    }
-
-    public Queue<Integer> getLoads() {
-        return mapper.getLoads();
-    }
-
-    public NewMember getSlot(int var) {
-        return mapper.getSlot(var);
-    }
-
-    public String toString() {
-        return "mapper: [" + mapper + "], counter: [" + counter + ']';
+    public static InsnEnhancer createEnhancer(AbstractInsnNode node) {
+        if (node.getOpcode() >= ISTORE && node.getOpcode() <= ASTORE) {
+            return new VarEnhancer();
+        } else {
+            return new NullEnhancer();
+        }
     }
 }

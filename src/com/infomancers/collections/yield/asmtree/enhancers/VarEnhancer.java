@@ -1,8 +1,11 @@
-package com.infomancers.collections.yield.asmbase;
+package com.infomancers.collections.yield.asmtree.enhancers;
 
 import com.infomancers.collections.yield.asm.NewMember;
-
-import java.util.Queue;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.CodeStack;
+import com.infomancers.collections.yield.asmtree.InsnEnhancer;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -33,32 +36,33 @@ import java.util.Queue;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-final class DelegatingInformationContainer implements YielderInformationContainer {
-    private final YieldReturnCounter counter;
-    private final LocalVariableMapper mapper;
 
-    public DelegatingInformationContainer(YieldReturnCounter counter, LocalVariableMapper mapper) {
-        this.counter = counter;
-        this.mapper = mapper;
-    }
+public final class VarEnhancer implements InsnEnhancer {
 
-    public int getCounter() {
-        return counter.getCounter();
-    }
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+        final VarInsnNode varInstruction = (VarInsnNode) instruction;
 
-    public Iterable<? extends NewMember> getSlots() {
-        return mapper.getSlots();
-    }
+        final NewMember member = info.getSlot(varInstruction.var);
+        FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.PUTFIELD, clz.name,
+                member.getName(), member.getDesc());
 
-    public Queue<Integer> getLoads() {
-        return mapper.getLoads();
-    }
+        int stackSize = 0;
+        AbstractInsnNode backNode = instruction;
+        do {
+            stackSize += CodeStack.getChange(backNode);
+            backNode = backNode.getPrevious();
+        } while (stackSize != 0);
 
-    public NewMember getSlot(int var) {
-        return mapper.getSlot(var);
-    }
+        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
+        if (backNode == null) {
+            instructions.insert(load0);
+        } else {
+            instructions.insert(backNode, load0);
+        }
 
-    public String toString() {
-        return "mapper: [" + mapper + "], counter: [" + counter + ']';
+        instructions.insert(instruction, replacementInstruction);
+        instructions.remove(instruction);
+
+        return replacementInstruction;
     }
 }

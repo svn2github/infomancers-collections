@@ -17,6 +17,12 @@ public final class NewMember {
         this.name = "slot$" + index;
     }
 
+    public NewMember(int index, TypeDescriptor type) {
+        this(index);
+
+        mergeType(type);
+    }
+
     public String getName() {
         return name;
     }
