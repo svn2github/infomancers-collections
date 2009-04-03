@@ -60,6 +60,11 @@ public class CodeStack {
             case Opcodes.GETFIELD:
                 return 0;
 
+            case Opcodes.BIPUSH:
+                return 1;
+            case Opcodes.SIPUSH:
+                return 1;
+
             case Opcodes.ILOAD:
                 return 1;
             case Opcodes.ALOAD:

@@ -1,10 +1,10 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
-import com.infomancers.collections.yield.asmtree.InsnEnhancer;
-import org.objectweb.asm.tree.AbstractInsnNode;
-
-import java.util.Arrays;
-import java.util.Collection;
+import com.infomancers.collections.yield.asm.NewMember;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.CodeStack;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -35,30 +35,37 @@ import java.util.Collection;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public final class EnhancersFactory {
 
-    private final Collection<PredicatedInsnEnhancer> enhancers;
-    private static final NullEnhancer nullEnhancer = new NullEnhancer();
+public final class StoreEnhancer implements PredicatedInsnEnhancer {
 
-    public static EnhancersFactory instnace() {
-        return new EnhancersFactory(new StoreEnhancer(), new LoadEnhancer());
-    }
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+        final VarInsnNode varInstruction = (VarInsnNode) instruction;
 
-    private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {
-        this.enhancers = enhancers;
-    }
+        final NewMember member = info.getSlot(varInstruction.var);
+        FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.PUTFIELD, clz.name,
+                member.getName(), member.getDesc());
 
-    private EnhancersFactory(PredicatedInsnEnhancer... enhancers) {
-        this(Arrays.asList(enhancers));
-    }
+        int stackSize = 0;
+        AbstractInsnNode backNode = instruction;
+        do {
+            stackSize += CodeStack.getChange(backNode);
+            backNode = backNode.getPrevious();
+        } while (stackSize != 0);
 
-    public InsnEnhancer createEnhancer(AbstractInsnNode node) {
-        for (PredicatedInsnEnhancer enhancer : enhancers) {
-            if (enhancer.shouldEnhance(node)) {
-                return enhancer;
-            }
+        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
+        if (backNode == null) {
+            instructions.insert(load0);
+        } else {
+            instructions.insert(backNode, load0);
         }
 
-        return nullEnhancer;
+        instructions.insert(instruction, replacementInstruction);
+        instructions.remove(instruction);
+
+        return replacementInstruction;
+    }
+
+    public boolean shouldEnhance(AbstractInsnNode node) {
+        return node.getOpcode() >= Opcodes.ISTORE && node.getOpcode() <= Opcodes.ASTORE;
     }
 }

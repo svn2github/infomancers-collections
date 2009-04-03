@@ -1,7 +1,7 @@
 package com.infomancers.tests;
 
 import com.infomancers.collections.yield.asmtree.enhancers.EnhancersFactory;
-import com.infomancers.collections.yield.asmtree.enhancers.VarEnhancer;
+import com.infomancers.collections.yield.asmtree.enhancers.StoreEnhancer;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,11 +26,11 @@ public class EnhancersFactoryTests {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
-                new Object[]{new VarInsnNode(Opcodes.ISTORE, 1), VarEnhancer.class},
-                new Object[]{new VarInsnNode(Opcodes.LSTORE, 1), VarEnhancer.class},
-                new Object[]{new VarInsnNode(Opcodes.DSTORE, 1), VarEnhancer.class},
-                new Object[]{new VarInsnNode(Opcodes.FSTORE, 1), VarEnhancer.class},
-                new Object[]{new VarInsnNode(Opcodes.ASTORE, 1), VarEnhancer.class},
+                new Object[]{new VarInsnNode(Opcodes.ISTORE, 1), StoreEnhancer.class},
+                new Object[]{new VarInsnNode(Opcodes.LSTORE, 1), StoreEnhancer.class},
+                new Object[]{new VarInsnNode(Opcodes.DSTORE, 1), StoreEnhancer.class},
+                new Object[]{new VarInsnNode(Opcodes.FSTORE, 1), StoreEnhancer.class},
+                new Object[]{new VarInsnNode(Opcodes.ASTORE, 1), StoreEnhancer.class},
                 new Object[]{null, null}
         );
     }
@@ -47,6 +47,6 @@ public class EnhancersFactoryTests {
     public void test() {
         if (expected == null) return;
 
-        assertEquals(expected, EnhancersFactory.createEnhancer(node).getClass());
+        assertEquals(expected, EnhancersFactory.instnace().createEnhancer(node).getClass());
     }
 }

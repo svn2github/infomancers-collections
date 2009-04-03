@@ -3,11 +3,8 @@ package com.infomancers.collections.yield.asmtree.enhancers;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
 import org.objectweb.asm.tree.AbstractInsnNode;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,30 +32,7 @@ import java.util.Collection;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public final class EnhancersFactory {
 
-    private final Collection<PredicatedInsnEnhancer> enhancers;
-    private static final NullEnhancer nullEnhancer = new NullEnhancer();
-
-    public static EnhancersFactory instnace() {
-        return new EnhancersFactory(new StoreEnhancer(), new LoadEnhancer());
-    }
-
-    private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {
-        this.enhancers = enhancers;
-    }
-
-    private EnhancersFactory(PredicatedInsnEnhancer... enhancers) {
-        this(Arrays.asList(enhancers));
-    }
-
-    public InsnEnhancer createEnhancer(AbstractInsnNode node) {
-        for (PredicatedInsnEnhancer enhancer : enhancers) {
-            if (enhancer.shouldEnhance(node)) {
-                return enhancer;
-            }
-        }
-
-        return nullEnhancer;
-    }
+public interface PredicatedInsnEnhancer extends InsnEnhancer {
+    boolean shouldEnhance(AbstractInsnNode node);
 }

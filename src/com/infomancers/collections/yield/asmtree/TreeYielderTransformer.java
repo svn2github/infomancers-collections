@@ -44,6 +44,8 @@ import org.objectweb.asm.tree.MethodNode;
  */
 
 public class TreeYielderTransformer extends AbstractYielderTransformer {
+    private final EnhancersFactory factory = EnhancersFactory.instnace();
+
     public TreeYielderTransformer(boolean debug) {
         super(debug);
     }
@@ -64,7 +66,7 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
              instruction != null;
              instruction = instruction.getNext()) {
 
-            InsnEnhancer enhancer = EnhancersFactory.createEnhancer(instruction);
+            InsnEnhancer enhancer = factory.createEnhancer(instruction);
             instruction = enhancer.enhance(node, method.instructions, info, instruction);
         }
 
