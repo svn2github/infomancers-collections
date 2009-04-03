@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asm;
 
 import com.infomancers.collections.yield.asm.promotion.AccessorCreators;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.*;
 
 import java.util.Collection;
@@ -42,26 +43,25 @@ import java.util.HashSet;
  * to class member fields.
  */
 final class LocalVariablePromoter extends ClassAdapter {
-    private final LocalVariableMapper mapper;
+    private final YielderInformationContainer info;
 
     private String owner;
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
-     * @param cv     the class visitor to which this adapter must delegate calls.
-     * @param mapper The visitor used to map where assignments to local variables
-     *               take place, so that this visitor could prepare an ALOAD_0 for the PUTFIELD
-     *               opcode.
+     * @param cv   the class visitor to which this adapter must delegate calls.
+     * @param info The visitor used to map where assignments to local variables
+     *             take place, so that this visitor could prepare an ALOAD_0 for the PUTFIELD
      */
-    public LocalVariablePromoter(ClassVisitor cv, LocalVariableMapper mapper) {
+    public LocalVariablePromoter(ClassVisitor cv, YielderInformationContainer info) {
         super(cv);
-        this.mapper = mapper;
+        this.info = info;
     }
 
     @Override
     public void visitEnd() {
-        for (NewMember newMember : mapper.getSlots()) {
+        for (NewMember newMember : info.getSlots()) {
             visitField(Opcodes.ACC_PRIVATE, newMember.getName(), newMember.getDesc(), newMember.getDesc(), null);
         }
 
@@ -79,7 +79,7 @@ final class LocalVariablePromoter extends ClassAdapter {
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
 
-        if (Util.isYieldNextCoreMethod(name, desc)) {
+        if (com.infomancers.collections.yield.asmbase.Util.isYieldNextCoreMethod(name, desc)) {
             return new MyMethodAdapter(methodVisitor);
         } else {
             return methodVisitor;
@@ -143,7 +143,7 @@ final class LocalVariablePromoter extends ClassAdapter {
         }
 
         private void dealWithLoads(int skip) {
-            int loads = mapper.getLoads().remove() - skip;
+            int loads = info.getLoads().remove() - skip;
 
             while (loads-- > 0) {
                 super.visitVarInsn(Opcodes.ALOAD, 0);
@@ -217,12 +217,12 @@ final class LocalVariablePromoter extends ClassAdapter {
                 super.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
             } else if (opcode >= Opcodes.IALOAD && opcode <= Opcodes.SALOAD) {
                 int offset = opcode - Opcodes.IALOAD;
-                TypeDescriptor type = Util.typeForOffset(offset);
+                TypeDescriptor type = com.infomancers.collections.yield.asmbase.Util.typeForOffset(offset);
 
                 type.getArrayAccessorCreator().createGetValueCode(mv, type);
             } else if (opcode >= Opcodes.IASTORE && opcode <= Opcodes.SASTORE) {
                 int offset = opcode - Opcodes.IASTORE;
-                TypeDescriptor type = Util.typeForOffset(offset);
+                TypeDescriptor type = com.infomancers.collections.yield.asmbase.Util.typeForOffset(offset);
 
                 type.getArrayAccessorCreator().createSetValueCode(mv, type);
             } else {
@@ -231,7 +231,7 @@ final class LocalVariablePromoter extends ClassAdapter {
         }
 
         private NewMember searchMember(final int var) {
-            return mapper.getSlot(var);
+            return info.getSlot(var);
         }
 
 

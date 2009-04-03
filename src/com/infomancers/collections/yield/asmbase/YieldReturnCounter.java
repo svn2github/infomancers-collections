@@ -1,20 +1,18 @@
-package com.infomancers.collections.yield.asm;
+package com.infomancers.collections.yield.asmbase;
 
-import com.infomancers.collections.yield.asm.delayed.DelayedInstruction;
-import com.infomancers.collections.yield.asm.delayed.DelayedMethodVisitor;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
- * <p/>
+ *
  * All rights reserved.
- * <p/>
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * <p/>
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this list
  * of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice, this
@@ -23,7 +21,7 @@ import org.objectweb.asm.Opcodes;
  * 3. Neither the name of Infomancers, Ltd. nor the names of its contributors may be
  * used to endorse or promote products derived from this software without specific
  * prior written permission.
- * <p/>
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -35,80 +33,59 @@ import org.objectweb.asm.Opcodes;
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
-public class CastChecker extends ClassAdapter {
 
-    private int getFields = 0;
+
+/**
+ * Visits the <code>yieldNextCore</code> method implementation
+ * and counts the number of times the <code>yieldReturn</code> method
+ * was called, to determine the amount of branches required for
+ * the state switch.
+ *
+ * @see com.infomancers.collections.yield.asm.StateKeeper
+ */
+final class YieldReturnCounter extends ClassAdapter {
+    private int counter = 0;
+
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
      * @param cv the class visitor to which this adapter must delegate calls.
      */
-    public CastChecker(ClassVisitor cv) {
+    public YieldReturnCounter(ClassVisitor cv) {
         super(cv);
     }
 
+
+    public int getCounter() {
+        return counter;
+    }
 
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
 
-        if (com.infomancers.collections.yield.asmbase.Util.isYieldNextCoreMethod(name, desc)) {
+        if (Util.isYieldNextCoreMethod(name, desc)) {
             return new MyMethodAdapter(methodVisitor);
         } else {
             return methodVisitor;
         }
     }
 
-    private class MyMethodAdapter extends DelayedMethodVisitor {
-        /**
-         * Constructs a new {@link org.objectweb.asm.MethodAdapter} object.
-         *
-         * @param mv the code visitor to which this adapter must delegate calls.
-         */
-        public MyMethodAdapter(MethodVisitor mv) {
-            super(mv);
+    private class MyMethodAdapter extends MethodAdapter {
+        public MyMethodAdapter(MethodVisitor methodVisitor) {
+            super(methodVisitor);
         }
 
-
-        @Override
-        public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
-            if (opcode == Opcodes.GETFIELD) {
-                startMiniFrame();
-                getFields++;
-            }
-
-            super.visitFieldInsn(opcode, owner, name, desc);
-        }
-
-
-        @Override
-        protected void handleEmptyStack() {
-            if (getFields > 0) {
-                emitAll(mv);
-                endMiniFrame();
-                getFields--;
-            }
-        }
-
-        /**
-         * When a virtual method is encountered, emit all previously cached code with the exception
-         * that the first emition, which will be (has to be!) the GETFIELD code, will be followed by a
-         * CHECKCAST with the owner of the method invocation.
-         */
         @Override
         public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
-            super.visitMethodInsn(opcode, owner, name, desc);
-
-            if (Opcodes.INVOKEVIRTUAL == opcode && insideMiniFrame()) {
-                emit(mv, 1);
-                delayPriorityInsn(DelayedInstruction.TYPE.createEmitter(Opcodes.CHECKCAST, owner));
-
-                emitAll(mv);
-                endMiniFrame();
-                getFields--;
+            if (Util.isInvokeYieldReturn(opcode, name, desc)) {
+                counter++;
             }
+
+            super.visitMethodInsn(opcode, owner, name, desc);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.infomancers.tests;
 
 import com.infomancers.collections.yield.asm.delayed.MethodEmitter;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 

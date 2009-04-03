@@ -1,14 +1,9 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asmbase.AbstractYielderTransformer;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.commons.EmptyVisitor;
-import org.objectweb.asm.util.TraceClassVisitor;
-
-import java.io.PrintWriter;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -56,62 +51,20 @@ import java.security.ProtectionDomain;
  * Also, notice that the order of the visitors is important:
  * The promoter counts on the labels to be in the exact same order as the assignMapper sees them.
  */
-public final class YielderTransformer implements ClassFileTransformer {
-    private final boolean debug;
-
+public final class YielderTransformer extends AbstractYielderTransformer {
 
     public YielderTransformer(boolean debug) {
-        this.debug = debug;
+        super(debug);
     }
 
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        byte[] result = classfileBuffer;
-
-        if (classBeingRedefined == null) {
-            try {
-                // first pass - gather statistics
-                ClassReader reader = new ClassReader(classfileBuffer);
-                YieldReturnCounter counter = new YieldReturnCounter(new EmptyVisitor());
-                LocalVariableMapper mapper = new LocalVariableMapper(counter);
-                YielderChecker checker = new YielderChecker(mapper);
-
-                reader.accept(checker, 0);
-
-                if (checker.isYielder()) {
-                    // second pass - write new code
-                    result = enhanceClass(reader, counter, mapper, debug);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    private byte[] enhanceClass(ClassReader reader, YieldReturnCounter counter, LocalVariableMapper mapper, boolean trace) {
-        if (trace) {
-            TraceClassVisitor traceClassVisitor = new TraceClassVisitor(new PrintWriter(System.out));
-
-            System.out.println("<------------- Before the manipulation ---------------> ");
-            new ClassReader(reader.b).accept(traceClassVisitor, 0);
-        }
-
+    protected byte[] enhanceClass(ClassReader reader, YielderInformationContainer info) {
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         CastChecker caster = new CastChecker(writer);
 //        StateKeeper stateKeeper = new StateKeeper(writer, counter);
-        StateKeeper stateKeeper = new StateKeeper(caster, counter);
-        LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, mapper);
+        StateKeeper stateKeeper = new StateKeeper(caster, info);
+        LocalVariablePromoter promoter = new LocalVariablePromoter(stateKeeper, info);
         reader.accept(promoter, 0);
 
-        byte[] result = writer.toByteArray();
-
-        if (trace) {
-            TraceClassVisitor traceClassVisitor = new TraceClassVisitor(new PrintWriter(System.out));
-
-            System.out.println("<------------- After the manipulation ---------------> ");
-            new ClassReader(result).accept(traceClassVisitor, 0);
-        }
-
-        return result;
+        return writer.toByteArray();
     }
 }

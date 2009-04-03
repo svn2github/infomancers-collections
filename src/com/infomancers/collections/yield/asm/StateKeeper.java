@@ -1,5 +1,6 @@
 package com.infomancers.collections.yield.asm;
 
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.*;
 
 /**
@@ -45,20 +46,19 @@ import org.objectweb.asm.*;
  */
 final class StateKeeper extends ClassAdapter {
     private static final String STATE_FIELD_NAME = "state";
-    private final YieldReturnCounter counter;
+    private final YielderInformationContainer info;
     private String owner;
     private static final String STATE_FIELD_DESC = "B";
 
     /**
      * Constructs a new {@link org.objectweb.asm.ClassAdapter} object.
      *
-     * @param cv      the class visitor to which this adapter must delegate calls.
-     * @param counter The counter visitor counting the amount of yieldReturn calls in a
-     *                yieldNextCore method.
+     * @param cv   the class visitor to which this adapter must delegate calls.
+     * @param info The counter visitor counting the amount of yieldReturn calls in a
      */
-    public StateKeeper(ClassVisitor cv, YieldReturnCounter counter) {
+    public StateKeeper(ClassVisitor cv, YielderInformationContainer info) {
         super(cv);
-        this.counter = counter;
+        this.info = info;
     }
 
 
@@ -73,7 +73,7 @@ final class StateKeeper extends ClassAdapter {
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, desc, signature, exceptions);
 
-        if (Util.isYieldNextCoreMethod(name, desc)) {
+        if (com.infomancers.collections.yield.asmbase.Util.isYieldNextCoreMethod(name, desc)) {
             return new MyMethodAdapter(methodVisitor);
         } else {
             return methodVisitor;
@@ -106,8 +106,8 @@ final class StateKeeper extends ClassAdapter {
             Label dflt = new Label();
 
             // Create the labels for the rest of the elements.
-            labels = new Label[counter.getCounter()];
-            for (int i = 0; i < counter.getCounter(); i++) {
+            labels = new Label[info.getCounter()];
+            for (int i = 0; i < info.getCounter(); i++) {
                 labels[i] = new Label();
             }
 
@@ -116,7 +116,7 @@ final class StateKeeper extends ClassAdapter {
             super.visitVarInsn(Opcodes.ALOAD, 0);
             super.visitFieldInsn(Opcodes.GETFIELD, owner, STATE_FIELD_NAME, STATE_FIELD_DESC);
             // then, lookup the next line of code
-            super.visitTableSwitchInsn(1, counter.getCounter(), dflt, labels);
+            super.visitTableSwitchInsn(1, info.getCounter(), dflt, labels);
             // write the default label.
             super.visitLabel(dflt);
         }
@@ -139,7 +139,7 @@ final class StateKeeper extends ClassAdapter {
 
                 // advance stateIndex
                 stateIndex++;
-            } else if (Util.isInvokeYieldBreak(opcode, name, desc)) {
+            } else if (com.infomancers.collections.yield.asmbase.Util.isInvokeYieldBreak(opcode, name, desc)) {
                 super.visitInsn(Opcodes.RETURN);
             }
         }
