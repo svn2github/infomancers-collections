@@ -41,7 +41,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * Stack should be [..., array, index].
  */
 public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
-    private static final String[] descs = "[I;[L;[F;[D;[A;[B;[C;[S".split(";");
+    private static final String[] descs = "[I,[J,[F,[D,[Ljava/lang/Object;,[B,[C,[S".split(",");
 
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
         AbstractInsnNode aload = EnhancersUtil.backUntilStackSizedAt(instruction, 0);
