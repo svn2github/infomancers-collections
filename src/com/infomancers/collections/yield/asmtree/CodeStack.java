@@ -2,6 +2,10 @@ package com.infomancers.collections.yield.asmtree;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -53,7 +57,6 @@ public final class CodeStack {
     public static int getChange(AbstractInsnNode node) {
         switch (node.getOpcode()) {
             case Opcodes.ARRAYLENGTH:
-                return 0;
             case Opcodes.CHECKCAST:
                 return 0;
 
@@ -63,64 +66,81 @@ public final class CodeStack {
                 return 0;
 
             case Opcodes.BIPUSH:
-                return 1;
             case Opcodes.SIPUSH:
                 return 1;
 
             case Opcodes.ILOAD:
-                return 1;
             case Opcodes.ALOAD:
-                return 1;
             case Opcodes.DLOAD:
-                return 1;
             case Opcodes.FLOAD:
-                return 1;
             case Opcodes.LLOAD:
                 return 1;
 
             case Opcodes.IALOAD:
-                return -1;
             case Opcodes.AALOAD:
-                return -1;
             case Opcodes.DALOAD:
-                return -1;
             case Opcodes.FALOAD:
-                return -1;
             case Opcodes.LALOAD:
-                return -1;
             case Opcodes.BALOAD:
-                return -1;
             case Opcodes.CALOAD:
-                return -1;
             case Opcodes.SALOAD:
                 return -1;
 
             case Opcodes.ISTORE:
-                return -1;
             case Opcodes.ASTORE:
-                return -1;
             case Opcodes.DSTORE:
-                return -1;
             case Opcodes.FSTORE:
-                return -1;
             case Opcodes.LSTORE:
                 return -1;
 
             case Opcodes.ICONST_0:
-                return 1;
             case Opcodes.ICONST_1:
-                return 1;
             case Opcodes.ICONST_2:
-                return 1;
             case Opcodes.ICONST_3:
-                return 1;
             case Opcodes.ICONST_4:
-                return 1;
             case Opcodes.ICONST_5:
                 return 1;
+
+            case Opcodes.INVOKEINTERFACE:
+            case Opcodes.INVOKESPECIAL:
+            case Opcodes.INVOKEVIRTUAL: {
+                int result = -1;
+                MethodInsnNode method = (MethodInsnNode) node;
+
+                if (!method.desc.contains("V")) {
+                    result++;
+                }
+
+                result -= countParams(method.desc);
+
+                return result;
+            }
+            case Opcodes.INVOKESTATIC: {
+                int result = 0;
+                MethodInsnNode method = (MethodInsnNode) node;
+
+                if (!method.desc.contains("V")) {
+                    result++;
+                }
+
+                result -= countParams(method.desc);
+
+                return result;
+            }
             default:
                 System.err.println("Returned default for node: " + node + ", opcode: " + node.getOpcode());
                 return 0;
         }
+    }
+
+    private static int countParams(String desc) {
+        final Pattern params = Pattern.compile("[BCDFIJSZ]|L[\\w\\d_]+(?:/[\\w\\d_]+)*;");
+        int counter = 0;
+        Matcher m = params.matcher(desc.split("\\)")[0]);
+        while (m.find()) {
+            counter++;
+        }
+
+        return counter;
     }
 }

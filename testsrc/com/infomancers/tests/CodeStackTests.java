@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,6 +64,156 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.ICONST_3), 1},
                 new Object[]{new InsnNode(Opcodes.ICONST_4), 1},
                 new Object[]{new InsnNode(Opcodes.ICONST_5), 1},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()B"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()C"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()D"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()F"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()I"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()J"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()S"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()Z"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()Ljava/lang/Object;"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)B"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)C"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)D"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)F"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)I"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)J"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)S"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)Z"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(I)Ljava/lang/Object;"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(B)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(C)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(D)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(F)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(J)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(S)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(Z)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(Ljava/lang/Object;)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(Ljava/lang/Object;Ljava/lang/Object;)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(Ljava/lang/String;Ljava/lang/Object;)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(III)V"), -4},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "(III)I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "([III)I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "([III)[I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "([III)V"), -4},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()[I"), 0},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()B"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()C"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()D"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()F"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()I"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()J"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()S"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()Z"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()Ljava/lang/Object;"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)B"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)C"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)D"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)F"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)I"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)J"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)S"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)Z"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(I)Ljava/lang/Object;"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(B)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(C)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(D)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(F)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(J)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(S)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(Z)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(Ljava/lang/Object;)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(Ljava/lang/Object;Ljava/lang/Object;)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(Ljava/lang/String;Ljava/lang/Object;)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(III)V"), -4},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "(III)I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "([III)I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "([III)[I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "([III)V"), -4},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESPECIAL, "owner", "method", "()[I"), 0},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()B"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()C"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()D"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()F"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()I"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()J"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()S"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()Z"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()Ljava/lang/Object;"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)B"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)C"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)D"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)F"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)I"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)J"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)S"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)Z"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(I)Ljava/lang/Object;"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(B)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(C)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(D)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(F)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(J)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(S)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(Z)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(Ljava/lang/Object;)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(Ljava/lang/Object;Ljava/lang/Object;)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(Ljava/lang/String;Ljava/lang/Object;)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(III)V"), -4},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "(III)I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "([III)I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "([III)[I"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "([III)V"), -4},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "owner", "method", "()[I"), 0},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()V"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()B"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()C"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()D"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()F"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()I"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()J"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()S"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()Z"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()Ljava/lang/Object;"), 1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)B"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)C"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)D"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)F"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)I"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)J"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)S"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)Z"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(I)Ljava/lang/Object;"), 0},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(B)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(C)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(D)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(F)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(J)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(S)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(Z)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(Ljava/lang/Object;)V"), -1},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(Ljava/lang/Object;Ljava/lang/Object;)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(Ljava/lang/String;Ljava/lang/Object;)V"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(III)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "(III)I"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "([III)I"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "([III)[I"), -2},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "([III)V"), -3},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "owner", "method", "()[I"), 1},
+
+
                 new Object[]{null, 0}
         );
     }
@@ -76,7 +227,18 @@ public class CodeStackTests {
     public void test() {
         if (node == null) return;
 
-        Assert.assertEquals("node: " + node.getClass() + ", opcode: " + node.getOpcode(), expected, CodeStack.getChange(node));
+        Assert.assertEquals(toString(node), expected, CodeStack.getChange(node));
+    }
+
+    private String toString(AbstractInsnNode node) {
+        String s = "opcode: " + node.getOpcode() + ", type: " + node.getClass().getSimpleName();
+
+        if (node instanceof MethodInsnNode) {
+            MethodInsnNode methodInsnNode = (MethodInsnNode) node;
+            s += ", desc: " + methodInsnNode.desc;
+        }
+
+        return s;
     }
 
 }
