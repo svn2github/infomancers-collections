@@ -38,22 +38,6 @@ import java.util.regex.Pattern;
  */
 
 public final class CodeStack {
-    private static interface Change {
-        int change();
-    }
-
-    private static class StaticChange implements Change {
-        private final int change;
-
-        public StaticChange(int change) {
-            this.change = change;
-        }
-
-        public int change() {
-            return change;
-        }
-    }
-
     public static int getChange(AbstractInsnNode node) {
         switch (node.getOpcode()) {
 
@@ -98,6 +82,17 @@ public final class CodeStack {
             case Opcodes.ICONST_3:
             case Opcodes.ICONST_4:
             case Opcodes.ICONST_5:
+
+            case Opcodes.LCONST_0:
+            case Opcodes.LCONST_1:
+
+            case Opcodes.DCONST_0:
+            case Opcodes.DCONST_1:
+
+            case Opcodes.FCONST_0:
+            case Opcodes.FCONST_1:
+            case Opcodes.FCONST_2:
+
 
             case Opcodes.LDC:
                 return 1;

@@ -1,9 +1,12 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
 import com.infomancers.collections.yield.asm.NewMember;
+import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+
+import java.text.MessageFormat;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -37,6 +40,17 @@ import org.objectweb.asm.tree.*;
 
 public final class StoreEnhancer implements PredicatedInsnEnhancer {
 
+    private static final String[] wrappers = new String[]{
+            "java/lang/Integer",
+            "java/lang/Long",
+            "java/lang/Float",
+            "java/lang/Double"
+    };
+
+    private static final String sigTypes = "IJFD";
+
+    private static MessageFormat valueOfSignatureFormat = new MessageFormat("({0})L{1};");
+
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
         final VarInsnNode varInstruction = (VarInsnNode) instruction;
 
@@ -55,6 +69,21 @@ public final class StoreEnhancer implements PredicatedInsnEnhancer {
 
         instructions.insert(instruction, replacementInstruction);
         instructions.remove(instruction);
+
+        // Dealing with case when the member is an object due to local variable merge,
+        // but the store code is for a primitive - in these cases, box the primitive
+        // value in an object.
+        // Todo: Maybe the slots can have different types, for example slot$2_i and slot$2_a?
+        if (varInstruction.getOpcode() != Opcodes.ASTORE &&
+                member.getType() == TypeDescriptor.Object) {
+
+            final int offset = varInstruction.getOpcode() - Opcodes.ISTORE;
+
+            final String desc = valueOfSignatureFormat.format(new Object[]{sigTypes.charAt(offset), wrappers[offset]});
+
+            instructions.insertBefore(replacementInstruction,
+                    new MethodInsnNode(Opcodes.INVOKESTATIC, wrappers[offset], "valueOf", desc));
+        }
 
         return replacementInstruction;
     }

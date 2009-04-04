@@ -62,6 +62,16 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.ICONST_4), 1},
                 new Object[]{new InsnNode(Opcodes.ICONST_5), 1},
 
+                new Object[]{new InsnNode(Opcodes.LCONST_0), 1},
+                new Object[]{new InsnNode(Opcodes.LCONST_1), 1},
+
+                new Object[]{new InsnNode(Opcodes.DCONST_0), 1},
+                new Object[]{new InsnNode(Opcodes.DCONST_1), 1},
+
+                new Object[]{new InsnNode(Opcodes.FCONST_0), 1},
+                new Object[]{new InsnNode(Opcodes.FCONST_1), 1},
+                new Object[]{new InsnNode(Opcodes.FCONST_2), 1},
+
                 new Object[]{new LdcInsnNode(null), 1},
 
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()V"), -1},
