@@ -89,6 +89,34 @@ public class IincEnhancerTests extends EnhancerTestsBase {
         enhancer.enhance(owner, original, info, insn);
 
         compareLists(expected, original);
+    }
 
+    @Test
+    public void inc_memberIsObject() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object));
+
+        final AbstractInsnNode insn = new IincInsnNode(1, inc);
+
+        InsnList original = createList(insn);
+
+        final NewMember slot = info.getSlot(1);
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Integer"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I"),
+                new IntInsnNode(Opcodes.BIPUSH, inc),
+                new InsnNode(Opcodes.IADD),
+                new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;"),
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slot.getName(), slot.getDesc())
+        );
+
+        InsnEnhancer enhancer = new IincEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
     }
 }

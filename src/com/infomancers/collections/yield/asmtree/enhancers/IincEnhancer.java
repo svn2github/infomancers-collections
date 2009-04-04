@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
 import com.infomancers.collections.yield.asm.NewMember;
+import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -44,6 +45,7 @@ public final class IincEnhancer implements PredicatedInsnEnhancer {
         AbstractInsnNode aload0_0 = new VarInsnNode(Opcodes.ALOAD, 0);
         AbstractInsnNode aload0_1 = new VarInsnNode(Opcodes.ALOAD, 0);
         AbstractInsnNode getfield_2 = new FieldInsnNode(Opcodes.GETFIELD, clz.name, member.getName(), member.getDesc());
+
         AbstractInsnNode bipush_3 = new IntInsnNode(Opcodes.BIPUSH, iinc.incr);
         AbstractInsnNode iadd_4 = new InsnNode(Opcodes.IADD);
         AbstractInsnNode putfield_5 = new FieldInsnNode(Opcodes.PUTFIELD, clz.name, member.getName(), member.getDesc());
@@ -54,6 +56,19 @@ public final class IincEnhancer implements PredicatedInsnEnhancer {
         instructions.insert(getfield_2, bipush_3);
         instructions.insert(bipush_3, iadd_4);
         instructions.insert(iadd_4, putfield_5);
+
+        // should we unbox and re-box the value?
+        if (member.getType() == TypeDescriptor.Object) {
+            AbstractInsnNode unbox_0 = new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Integer");
+            AbstractInsnNode unbox_1 = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I");
+
+            AbstractInsnNode rebox_0 = new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+
+            instructions.insert(getfield_2, unbox_0);
+            instructions.insert(unbox_0, unbox_1);
+
+            instructions.insert(iadd_4, rebox_0);
+        }
 
         instructions.remove(instruction);
 
