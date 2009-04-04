@@ -35,7 +35,7 @@ import org.objectweb.asm.tree.*;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class IincEnhancer implements PredicatedInsnEnhancer {
+public final class IincEnhancer implements PredicatedInsnEnhancer {
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
         IincInsnNode iinc = (IincInsnNode) instruction;
 

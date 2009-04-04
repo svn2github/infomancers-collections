@@ -1,10 +1,16 @@
-package com.infomancers.collections.yield.asmtree.enhancers;
+package com.infomancers.tests.enhancers;
 
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.InsnEnhancer;
+import com.infomancers.collections.yield.asmtree.enhancers.YieldBreakEnhancer;
+import com.infomancers.tests.TestYIC;
+import static com.infomancers.tests.enhancers.TestUtil.compareLists;
+import static com.infomancers.tests.enhancers.TestUtil.createList;
+import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 /**
@@ -37,18 +43,24 @@ import org.objectweb.asm.tree.MethodInsnNode;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public final class ArraylengthEnhancer implements PredicatedInsnEnhancer {
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        MethodInsnNode getlength = new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
+public class YieldBreakTests extends EnhancerTestsBase {
 
-        instructions.insert(instruction, getlength);
+    @Test
+    public void yieldBreak() {
+        YielderInformationContainer info = new TestYIC(1);
 
-        instructions.remove(instruction);
+        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldBreak", "()V");
+        InsnList original = createList(insn);
 
-        return getlength;
-    }
+        InsnList expected = createList(
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldBreak", "()V"),
+                new InsnNode(Opcodes.RETURN)
+        );
 
-    public boolean shouldEnhance(AbstractInsnNode node) {
-        return node.getOpcode() == Opcodes.ARRAYLENGTH;
+        InsnEnhancer enhancer = new YieldBreakEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
     }
 }

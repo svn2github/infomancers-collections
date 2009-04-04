@@ -45,7 +45,7 @@ public class YieldReturnTests extends EnhancerTestsBase {
     public void yieldReturn() {
         YielderInformationContainer info = new TestYIC(1);
 
-        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()");
+        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturn", "(Ljava/lang/Object;)V");
         InsnList original = createList(
                 new VarInsnNode(Opcodes.ALOAD, 0),
                 insn
@@ -53,7 +53,7 @@ public class YieldReturnTests extends EnhancerTestsBase {
 
         InsnList expected = createList(
                 new VarInsnNode(Opcodes.ALOAD, 0),
-                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturn", "(Ljava/lang/Object;)V"),
                 new VarInsnNode(Opcodes.ALOAD, 0),
                 new IntInsnNode(Opcodes.BIPUSH, 1),
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, "state$", "B"),
@@ -72,7 +72,7 @@ public class YieldReturnTests extends EnhancerTestsBase {
     public void yieldReturn_afterwardsHasLabel() {
         YielderInformationContainer info = new TestYIC(1);
 
-        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()");
+        final AbstractInsnNode insn = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturn", "(Ljava/lang/Object;)V");
         InsnList original = createList(
                 new VarInsnNode(Opcodes.ALOAD, 0),
                 insn,
@@ -81,7 +81,7 @@ public class YieldReturnTests extends EnhancerTestsBase {
 
         InsnList expected = createList(
                 new VarInsnNode(Opcodes.ALOAD, 0),
-                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturnCore", "V()"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, owner.name, "yieldReturn", "(Ljava/lang/Object;)V"),
                 new VarInsnNode(Opcodes.ALOAD, 0),
                 new IntInsnNode(Opcodes.BIPUSH, 1),
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, "state$", "B"),

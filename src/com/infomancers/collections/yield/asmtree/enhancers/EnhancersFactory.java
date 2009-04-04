@@ -43,6 +43,7 @@ public final class EnhancersFactory {
     public static EnhancersFactory instnace() {
         return new EnhancersFactory(
                 new YieldReturnEnhancer(),
+                new YieldBreakEnhancer(),
                 new StoreEnhancer(),
                 new LoadEnhancer(),
                 new ArrayLoadEnhancer(),

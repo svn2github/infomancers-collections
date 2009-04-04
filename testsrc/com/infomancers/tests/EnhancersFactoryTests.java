@@ -52,6 +52,10 @@ public class EnhancersFactoryTests {
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturn", "(Ljava/lang/Object;)V"), YieldReturnEnhancer.class},
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturnCore", "(Ljava/lang/Object;)V"), NullEnhancer.class},
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturn", "()V"), NullEnhancer.class},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreak", "(Ljava/lang/Object;)V"), NullEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreakCore", "(Ljava/lang/Object;)V"), NullEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreak", "()V"), YieldBreakEnhancer.class},
                 new Object[]{null, null}
         );
     }

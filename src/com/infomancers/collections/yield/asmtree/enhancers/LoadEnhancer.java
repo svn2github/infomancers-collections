@@ -35,7 +35,7 @@ import org.objectweb.asm.tree.*;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class LoadEnhancer implements PredicatedInsnEnhancer {
+public final class LoadEnhancer implements PredicatedInsnEnhancer {
 
     public boolean shouldEnhance(AbstractInsnNode node) {
         return node.getOpcode() >= Opcodes.ILOAD && node.getOpcode() <= Opcodes.ALOAD && ((VarInsnNode) node).var != 0;

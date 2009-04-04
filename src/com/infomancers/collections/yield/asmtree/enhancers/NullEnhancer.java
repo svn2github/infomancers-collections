@@ -36,7 +36,7 @@ import org.objectweb.asm.tree.InsnList;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class NullEnhancer implements InsnEnhancer {
+public final class NullEnhancer implements InsnEnhancer {
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
         return instruction;
     }

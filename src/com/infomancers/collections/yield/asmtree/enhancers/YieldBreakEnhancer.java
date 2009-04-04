@@ -1,11 +1,9 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
+import com.infomancers.collections.yield.asmbase.Util;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.*;
 
 /**
  * Copyright (c) 2009, Aviad Ben Dov
@@ -37,18 +35,21 @@ import org.objectweb.asm.tree.MethodInsnNode;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public final class ArraylengthEnhancer implements PredicatedInsnEnhancer {
+public class YieldBreakEnhancer implements PredicatedInsnEnhancer {
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        MethodInsnNode getlength = new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
+        AbstractInsnNode ret = new InsnNode(Opcodes.RETURN);
+        instructions.insert(instruction, ret);
 
-        instructions.insert(instruction, getlength);
-
-        instructions.remove(instruction);
-
-        return getlength;
+        return ret;
     }
 
     public boolean shouldEnhance(AbstractInsnNode node) {
-        return node.getOpcode() == Opcodes.ARRAYLENGTH;
+        if (node.getType() == AbstractInsnNode.METHOD_INSN) {
+            MethodInsnNode method = (MethodInsnNode) node;
+
+            return Util.isInvokeYieldBreak(method.getOpcode(), method.name, method.desc);
+        } else {
+            return false;
+        }
     }
 }

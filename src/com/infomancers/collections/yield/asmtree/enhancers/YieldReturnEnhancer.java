@@ -35,9 +35,9 @@ import org.objectweb.asm.tree.*;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class YieldReturnEnhancer implements PredicatedInsnEnhancer {
+public final class YieldReturnEnhancer implements PredicatedInsnEnhancer {
     public boolean shouldEnhance(AbstractInsnNode node) {
-        if (node.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+        if (node.getType() == AbstractInsnNode.METHOD_INSN) {
             MethodInsnNode method = (MethodInsnNode) node;
 
             return Util.isInvokeYieldReturn(method.getOpcode(), method.name, method.desc);
@@ -61,10 +61,7 @@ public class YieldReturnEnhancer implements PredicatedInsnEnhancer {
         instructions.insert(bipush, setState);
         instructions.insert(setState, ret);
 
-        final AbstractInsnNode label = createOrReuseLabel(state, instructions, ret, info);
-//        final AbstractInsnNode frame = createOrReuseFrame(instructions, label, info);
-
-        return label;
+        return createOrReuseLabel(state, instructions, ret, info);
     }
 
     private AbstractInsnNode createOrReuseLabel(int state, InsnList instructions, AbstractInsnNode previous, YielderInformationContainer info) {
