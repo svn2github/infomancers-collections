@@ -50,12 +50,21 @@ public class EnhancersFactoryTests {
                 new Object[]{new VarInsnNode(Opcodes.ALOAD, 0), NullEnhancer.class},
 
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturn", "(Ljava/lang/Object;)V"), YieldReturnEnhancer.class},
-                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturnCore", "(Ljava/lang/Object;)V"), NullEnhancer.class},
-                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturn", "()V"), NullEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturnCore", "(Ljava/lang/Object;)V"), MethodInvocationEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldReturn", "()V"), MethodInvocationEnhancer.class},
 
-                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreak", "(Ljava/lang/Object;)V"), NullEnhancer.class},
-                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreakCore", "(Ljava/lang/Object;)V"), NullEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreak", "(Ljava/lang/Object;)V"), MethodInvocationEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreakCore", "(Ljava/lang/Object;)V"), MethodInvocationEnhancer.class},
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "yieldBreak", "()V"), YieldBreakEnhancer.class},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/String", "length", "()I"), MethodInvocationEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/String", "wait", "()V"), MethodInvocationEnhancer.class},
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "wait", "()V"), NullEnhancer.class},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKEINTERFACE, "java/io/Closeable", "close", "()V"), MethodInvocationEnhancer.class},
+
+                new Object[]{new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;"), NullEnhancer.class},
+
                 new Object[]{null, null}
         );
     }

@@ -1,13 +1,11 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
-import com.infomancers.collections.yield.asmtree.InsnEnhancer;
-import org.objectweb.asm.tree.AbstractInsnNode;
-
-import java.util.Arrays;
-import java.util.Collection;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,38 +33,26 @@ import java.util.Collection;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public final class EnhancersFactory {
 
-    private final Collection<PredicatedInsnEnhancer> enhancers;
-    private static final NullEnhancer nullEnhancer = new NullEnhancer();
+public class MethodInvocationEnhancer implements PredicatedInsnEnhancer {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+        MethodInsnNode method = (MethodInsnNode) instruction;
 
-    public static EnhancersFactory instnace() {
-        return new EnhancersFactory(
-                new YieldReturnEnhancer(),
-                new YieldBreakEnhancer(),
-                new StoreEnhancer(),
-                new LoadEnhancer(),
-                new ArrayLoadEnhancer(),
-                new IincEnhancer(),
-                new ArraylengthEnhancer(),
-                new MethodInvocationEnhancer());
+        int targetStack = method.desc.endsWith("V") ? -1 : 0;
+
+        AbstractInsnNode load = EnhancersUtil.backUntilStackSizedAt(instruction, targetStack);
+        instructions.insert(load, new TypeInsnNode(Opcodes.CHECKCAST, method.owner));
+
+        return instruction;
     }
 
-    private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {
-        this.enhancers = enhancers;
-    }
+    public boolean shouldEnhance(AbstractInsnNode node) {
+        if (node.getType() == AbstractInsnNode.METHOD_INSN && node.getOpcode() != Opcodes.INVOKESTATIC) {
+            MethodInsnNode method = (MethodInsnNode) node;
 
-    private EnhancersFactory(PredicatedInsnEnhancer... enhancers) {
-        this(Arrays.asList(enhancers));
-    }
-
-    public InsnEnhancer createEnhancer(AbstractInsnNode node) {
-        for (PredicatedInsnEnhancer enhancer : enhancers) {
-            if (enhancer.shouldEnhance(node)) {
-                return enhancer;
-            }
+            return !"java/lang/Object".equals(method.owner);
+        } else {
+            return false;
         }
-
-        return nullEnhancer;
     }
 }

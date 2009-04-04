@@ -509,8 +509,7 @@ public class YielderTests {
             @Override
             protected void yieldNextCore() {
                 String s = "Aviad";
-                String[] w = s.split("i");
-                for (String z : w) {
+                for (String z : s.split("i")) {
                     yieldReturn(z);
                 }
             }
