@@ -47,6 +47,9 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.DALOAD), -1},
                 new Object[]{new InsnNode(Opcodes.LALOAD), -1},
                 new Object[]{new InsnNode(Opcodes.AALOAD), -1},
+                new Object[]{new InsnNode(Opcodes.BALOAD), -1},
+                new Object[]{new InsnNode(Opcodes.CALOAD), -1},
+                new Object[]{new InsnNode(Opcodes.SALOAD), -1},
 
                 new Object[]{new InsnNode(Opcodes.ISTORE), -1},
                 new Object[]{new InsnNode(Opcodes.FSTORE), -1},

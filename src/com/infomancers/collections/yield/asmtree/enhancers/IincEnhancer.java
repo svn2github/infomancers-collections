@@ -6,7 +6,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,31 +35,32 @@ import org.objectweb.asm.tree.*;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public final class StoreEnhancer implements PredicatedInsnEnhancer {
-
+public class IincEnhancer implements PredicatedInsnEnhancer {
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        final VarInsnNode varInstruction = (VarInsnNode) instruction;
+        IincInsnNode iinc = (IincInsnNode) instruction;
 
-        final NewMember member = info.getSlot(varInstruction.var);
-        FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.PUTFIELD, clz.name,
-                member.getName(), member.getDesc());
+        NewMember member = info.getSlot(iinc.var);
 
-        AbstractInsnNode backNode = EnhancersUtil.backUntilStackSizedAt(instruction, 0);
+        AbstractInsnNode aload0_0 = new VarInsnNode(Opcodes.ALOAD, 0);
+        AbstractInsnNode aload0_1 = new VarInsnNode(Opcodes.ALOAD, 0);
+        AbstractInsnNode getfield_2 = new FieldInsnNode(Opcodes.GETFIELD, clz.name, member.getName(), member.getDesc());
+        AbstractInsnNode bipush_3 = new IntInsnNode(Opcodes.BIPUSH, iinc.incr);
+        AbstractInsnNode iadd_4 = new InsnNode(Opcodes.IADD);
+        AbstractInsnNode putfield_5 = new FieldInsnNode(Opcodes.PUTFIELD, clz.name, member.getName(), member.getDesc());
 
-        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        if (backNode == null) {
-            instructions.insert(load0);
-        } else {
-            instructions.insert(backNode, load0);
-        }
+        instructions.insert(instruction, aload0_0);
+        instructions.insert(aload0_0, aload0_1);
+        instructions.insert(aload0_1, getfield_2);
+        instructions.insert(getfield_2, bipush_3);
+        instructions.insert(bipush_3, iadd_4);
+        instructions.insert(iadd_4, putfield_5);
 
-        instructions.insert(instruction, replacementInstruction);
         instructions.remove(instruction);
 
-        return replacementInstruction;
+        return putfield_5;
     }
 
     public boolean shouldEnhance(AbstractInsnNode node) {
-        return node.getOpcode() >= Opcodes.ISTORE && node.getOpcode() <= Opcodes.ASTORE;
+        return node.getOpcode() == Opcodes.IINC;
     }
 }

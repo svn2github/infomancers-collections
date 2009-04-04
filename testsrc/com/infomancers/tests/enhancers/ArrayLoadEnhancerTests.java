@@ -1,20 +1,23 @@
 package com.infomancers.tests.enhancers;
 
+import com.infomancers.collections.yield.asm.NewMember;
+import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
 import com.infomancers.collections.yield.asmtree.enhancers.ArrayLoadEnhancer;
 import com.infomancers.tests.TestYIC;
-import static com.infomancers.tests.enhancers.Util.compareLists;
-import static com.infomancers.tests.enhancers.Util.createList;
+import static com.infomancers.tests.enhancers.TestUtil.compareLists;
+import static com.infomancers.tests.enhancers.TestUtil.createList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.ASMifierClassVisitor;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -74,7 +77,7 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
     }
 
     @Test
-    public void arrayLoad() {
+    public void arrayLoad_fromConst() {
         YielderInformationContainer info = new TestYIC(1);
 
         final InsnNode insn = new InsnNode(opcode);
@@ -95,5 +98,48 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
         enhancer.enhance(owner, original, info, insn);
 
         compareLists(expected, original);
+    }
+
+    @Test
+    public void arrayLoad_fromField() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Integer));
+
+        final InsnNode insn = new InsnNode(opcode);
+        final NewMember slot = info.getSlot(1);
+        InsnList original = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                insn);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new TypeInsnNode(Opcodes.CHECKCAST, desc),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new InsnNode(opcode)
+        );
+
+        InsnEnhancer enhancer = new ArrayLoadEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
+    public static void main(String[] args) throws IOException {
+        Object c = new Object() {
+            Object a = new int[]{22};
+
+            void method() {
+                ((int[]) a)[0]++;
+            }
+        };
+
+        ASMifierClassVisitor visit = new ASMifierClassVisitor(new PrintWriter(System.out));
+        ClassReader reader = new ClassReader(c.getClass().getName());
+
+        reader.accept(visit, 0);
     }
 }

@@ -44,9 +44,13 @@ public class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
     private static final String[] descs = "[I;[L;[F;[D;[A;[B;[C;[S".split(";");
 
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        AbstractInsnNode aload = instruction.getPrevious().getPrevious();
-        TypeInsnNode type = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
-        instructions.insert(aload, type);
+        AbstractInsnNode aload = EnhancersUtil.backUntilStackSizedAt(instruction, 0);
+        // for some reason, it checks twice..
+        TypeInsnNode type1 = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
+//        TypeInsnNode type2 = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
+
+        instructions.insert(aload, type1);
+//        instructions.insert(type1, type2);
 
         return instruction;
     }

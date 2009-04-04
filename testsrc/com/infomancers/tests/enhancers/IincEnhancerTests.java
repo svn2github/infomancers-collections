@@ -4,16 +4,18 @@ import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
-import com.infomancers.collections.yield.asmtree.enhancers.LoadEnhancer;
+import com.infomancers.collections.yield.asmtree.enhancers.IincEnhancer;
 import com.infomancers.tests.TestYIC;
 import static com.infomancers.tests.enhancers.TestUtil.compareLists;
 import static com.infomancers.tests.enhancers.TestUtil.createList;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Copyright (c) 2009, Aviad Ben Dov
@@ -45,26 +47,48 @@ import org.objectweb.asm.tree.VarInsnNode;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class LoadEnhancerTests extends EnhancerTestsBase {
-    @Test
-    public void iload2() {
-        YielderInformationContainer info = new TestYIC(1,
-                new NewMember(1, TypeDescriptor.Integer),
-                new NewMember(2, TypeDescriptor.Integer));
+@RunWith(Parameterized.class)
+public class IincEnhancerTests extends EnhancerTestsBase {
 
-        final VarInsnNode insn = new VarInsnNode(Opcodes.ILOAD, 2);
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> parameters() {
+        return Arrays.asList(
+                new Object[]{1},
+                new Object[]{-1}
+        );
+    }
+
+    private final int inc;
+
+    public IincEnhancerTests(int inc) {
+        this.inc = inc;
+    }
+
+    @Test
+    public void inc() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Integer));
+
+        final AbstractInsnNode insn = new IincInsnNode(1, inc);
+
         InsnList original = createList(insn);
 
-
+        final NewMember slot = info.getSlot(1);
         InsnList expected = createList(
                 new VarInsnNode(Opcodes.ALOAD, 0),
-                new FieldInsnNode(Opcodes.GETFIELD, owner.name, "slot$2", "I")
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new IntInsnNode(Opcodes.BIPUSH, inc),
+                new InsnNode(Opcodes.IADD),
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slot.getName(), slot.getDesc())
         );
 
-        InsnEnhancer enhancer = new LoadEnhancer();
+        InsnEnhancer enhancer = new IincEnhancer();
 
         enhancer.enhance(owner, original, info, insn);
 
         compareLists(expected, original);
+
     }
 }

@@ -81,6 +81,12 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
              instruction != null;
              instruction = instruction.getNext()) {
 
+            if (instruction.getType() == AbstractInsnNode.FRAME) {
+                instruction = instruction.getPrevious();
+                method.instructions.remove(instruction.getNext());
+                continue;
+            }
+
             InsnEnhancer enhancer = factory.createEnhancer(instruction);
             instruction = enhancer.enhance(node, method.instructions, info, instruction);
         }
@@ -99,8 +105,9 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
 
         // TODO: Need a better way than this..
         method.maxStack = 7;
+        method.maxLocals = 1;
 
-        // Using the parameters somehow screwed up the result; Why?
+        // TODO: Using the parameters somehow screwed up the result; Why?
         ClassWriter writer = new ClassWriter(0);
 
         node.accept(writer);

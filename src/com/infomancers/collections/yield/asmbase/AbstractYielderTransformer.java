@@ -2,6 +2,7 @@ package com.infomancers.collections.yield.asmbase;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
@@ -71,6 +72,7 @@ public abstract class AbstractYielderTransformer implements ClassFileTransformer
                     result = enhanceClass(reader, info);
 
                     trace("After", result);
+                    check(result);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -88,6 +90,12 @@ public abstract class AbstractYielderTransformer implements ClassFileTransformer
             System.out.println();
             System.out.println("<------------- " + title + " ---------------> ");
             new ClassReader(classfileBytes).accept(traceClassVisitor, 0);
+        }
+    }
+
+    private void check(byte[] bytes) {
+        if (debug) {
+            CheckClassAdapter.verify(new ClassReader(bytes), false, new PrintWriter(System.out));
         }
     }
 

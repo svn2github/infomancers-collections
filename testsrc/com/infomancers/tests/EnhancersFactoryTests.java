@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +24,9 @@ public class EnhancersFactoryTests {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
+                new Object[]{new IincInsnNode(1, 1), IincEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.ARRAYLENGTH), ArraylengthEnhancer.class},
+
                 new Object[]{new InsnNode(Opcodes.IALOAD), ArrayLoadEnhancer.class},
                 new Object[]{new InsnNode(Opcodes.LALOAD), ArrayLoadEnhancer.class},
                 new Object[]{new InsnNode(Opcodes.FALOAD), ArrayLoadEnhancer.class},

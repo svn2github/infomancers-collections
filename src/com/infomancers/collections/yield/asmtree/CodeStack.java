@@ -88,6 +88,12 @@ public final class CodeStack {
                 return -1;
             case Opcodes.LALOAD:
                 return -1;
+            case Opcodes.BALOAD:
+                return -1;
+            case Opcodes.CALOAD:
+                return -1;
+            case Opcodes.SALOAD:
+                return -1;
 
             case Opcodes.ISTORE:
                 return -1;

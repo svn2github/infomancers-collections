@@ -1,12 +1,17 @@
-package com.infomancers.collections.yield.asmtree.enhancers;
+package com.infomancers.tests.enhancers;
 
-import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.InsnEnhancer;
+import com.infomancers.collections.yield.asmtree.enhancers.ArraylengthEnhancer;
+import com.infomancers.tests.TestYIC;
+import static com.infomancers.tests.enhancers.TestUtil.compareLists;
+import static com.infomancers.tests.enhancers.TestUtil.createList;
+import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,31 +40,27 @@ import org.objectweb.asm.tree.*;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public final class StoreEnhancer implements PredicatedInsnEnhancer {
+public class UtilEnhancerTests extends EnhancerTestsBase {
 
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        final VarInsnNode varInstruction = (VarInsnNode) instruction;
+    @Test
+    public void arraylength() {
+        YielderInformationContainer info = new TestYIC(1);
 
-        final NewMember member = info.getSlot(varInstruction.var);
-        FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.PUTFIELD, clz.name,
-                member.getName(), member.getDesc());
+        final AbstractInsnNode insn = new InsnNode(Opcodes.ARRAYLENGTH);
+        InsnList original = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                insn);
 
-        AbstractInsnNode backNode = EnhancersUtil.backUntilStackSizedAt(instruction, 0);
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I")
+        );
 
-        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        if (backNode == null) {
-            instructions.insert(load0);
-        } else {
-            instructions.insert(backNode, load0);
-        }
+        InsnEnhancer enhancer = new ArraylengthEnhancer();
 
-        instructions.insert(instruction, replacementInstruction);
-        instructions.remove(instruction);
+        enhancer.enhance(owner, original, info, insn);
 
-        return replacementInstruction;
+        compareLists(expected, original);
     }
 
-    public boolean shouldEnhance(AbstractInsnNode node) {
-        return node.getOpcode() >= Opcodes.ISTORE && node.getOpcode() <= Opcodes.ASTORE;
-    }
 }

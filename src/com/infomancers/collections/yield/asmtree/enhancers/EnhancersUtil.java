@@ -1,12 +1,10 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
-import com.infomancers.collections.yield.asm.NewMember;
-import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import com.infomancers.collections.yield.asmtree.CodeStack;
+import org.objectweb.asm.tree.AbstractInsnNode;
 
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,31 +33,20 @@ import org.objectweb.asm.tree.*;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public final class StoreEnhancer implements PredicatedInsnEnhancer {
+final class EnhancersUtil {
+    private EnhancersUtil() {
 
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        final VarInsnNode varInstruction = (VarInsnNode) instruction;
-
-        final NewMember member = info.getSlot(varInstruction.var);
-        FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.PUTFIELD, clz.name,
-                member.getName(), member.getDesc());
-
-        AbstractInsnNode backNode = EnhancersUtil.backUntilStackSizedAt(instruction, 0);
-
-        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        if (backNode == null) {
-            instructions.insert(load0);
-        } else {
-            instructions.insert(backNode, load0);
-        }
-
-        instructions.insert(instruction, replacementInstruction);
-        instructions.remove(instruction);
-
-        return replacementInstruction;
     }
 
-    public boolean shouldEnhance(AbstractInsnNode node) {
-        return node.getOpcode() >= Opcodes.ISTORE && node.getOpcode() <= Opcodes.ASTORE;
+
+    public static AbstractInsnNode backUntilStackSizedAt(AbstractInsnNode start, final int requiredSize) {
+        int stackSize = 0;
+        AbstractInsnNode backNode = start;
+        do {
+            stackSize += CodeStack.getChange(backNode);
+            backNode = backNode.getPrevious();
+        } while (stackSize != requiredSize);
+
+        return backNode;
     }
 }

@@ -45,7 +45,9 @@ public final class EnhancersFactory {
                 new YieldReturnEnhancer(),
                 new StoreEnhancer(),
                 new LoadEnhancer(),
-                new ArrayLoadEnhancer());
+                new ArrayLoadEnhancer(),
+                new IincEnhancer(),
+                new ArraylengthEnhancer());
     }
 
     private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {
