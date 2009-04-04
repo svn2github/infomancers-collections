@@ -625,5 +625,16 @@
       <setting name="state" value="2" />
     </Base>
   </component>
+  <component name="libraryTable">
+    <library name="ASM">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/asm-all-3.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/asm-src-3.1.zip!/" />
+      </SOURCES>
+    </library>
+  </component>
 </project>
 

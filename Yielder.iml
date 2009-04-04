@@ -16,17 +16,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/asm-all-3.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/asm-src.zip!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -37,6 +26,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="JUnit" level="application" />
+    <orderEntry type="library" name="ASM" level="project" />
     <orderEntryProperties />
   </component>
   <component name="copyright">

@@ -9,7 +9,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.util.Iterator;
 
@@ -98,12 +97,11 @@ public class TreeYielderTransformer extends AbstractYielderTransformer {
         method.instructions.insert(aload0, getstate);
         method.instructions.insert(getstate, tableswitch);
 
-        TraceMethodVisitor trace = new TraceMethodVisitor();
-        method.accept(trace);
-        System.out.println("After:");
-        System.out.println(trace.getText());
+        // TODO: Need a better way than this..
+        method.maxStack = 7;
 
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        // Using the parameters somehow screwed up the result; Why?
+        ClassWriter writer = new ClassWriter(0);
 
         node.accept(writer);
 

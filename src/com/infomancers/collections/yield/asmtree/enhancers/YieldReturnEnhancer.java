@@ -61,18 +61,34 @@ public class YieldReturnEnhancer implements PredicatedInsnEnhancer {
         instructions.insert(bipush, setState);
         instructions.insert(setState, ret);
 
-        // if the next node is already a label, use that instead of creating a new one.
-        final LabelNode label;
-
-        if (ret.getNext() != null &&
-                ret.getNext().getType() == AbstractInsnNode.LABEL) {
-            label = (LabelNode) ret.getNext();
-            info.setStateLabel(state, label);
-        } else {
-            label = info.getStateLabel(state);
-            instructions.insert(ret, label);
-        }
+        final AbstractInsnNode label = createOrReuseLabel(state, instructions, ret, info);
+//        final AbstractInsnNode frame = createOrReuseFrame(instructions, label, info);
 
         return label;
+    }
+
+    private AbstractInsnNode createOrReuseLabel(int state, InsnList instructions, AbstractInsnNode previous, YielderInformationContainer info) {
+        // if the next node is already a label, use that instead of creating a new one.
+        final AbstractInsnNode next = previous.getNext();
+        if (next != null && next.getType() == AbstractInsnNode.LABEL) {
+            info.setStateLabel(state, (LabelNode) next);
+            return next;
+        } else {
+            LabelNode label = info.getStateLabel(state);
+            instructions.insert(previous, label);
+            return label;
+        }
+    }
+
+    private AbstractInsnNode createOrReuseFrame(InsnList instructions, AbstractInsnNode previous, YielderInformationContainer info) {
+        // if the next node is already a frame, use that instead of creating a new one.
+        final AbstractInsnNode next = previous.getNext();
+        if (next != null && next.getType() == AbstractInsnNode.FRAME) {
+            return next;
+        } else {
+            FrameNode frame = new FrameNode(Opcodes.F_NEW, 0, new Object[0], 0, new Object[0]);
+            instructions.insert(previous, frame);
+            return frame;
+        }
     }
 }

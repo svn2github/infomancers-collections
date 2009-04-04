@@ -98,7 +98,8 @@ public class EnhancerTests {
                 new IntInsnNode(Opcodes.BIPUSH, 1),
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, "state$", "B"),
                 new InsnNode(Opcodes.RETURN),
-                new LabelNode()
+                new LabelNode(),
+                new FrameNode(Opcodes.F_NEW, 0, new Object[0], 0, new Object[0])
         );
 
         InsnEnhancer enhancer = new YieldReturnEnhancer();
@@ -126,7 +127,8 @@ public class EnhancerTests {
                 new IntInsnNode(Opcodes.BIPUSH, 1),
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, "state$", "B"),
                 new InsnNode(Opcodes.RETURN),
-                new LabelNode()
+                new LabelNode(),
+                new FrameNode(Opcodes.F_NEW, 0, new Object[0], 0, new Object[0])
         );
 
 

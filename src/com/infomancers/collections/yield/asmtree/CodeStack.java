@@ -33,7 +33,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class CodeStack {
+public final class CodeStack {
     private static interface Change {
         int change();
     }
