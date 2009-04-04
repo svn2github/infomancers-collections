@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,6 +61,8 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.ICONST_3), 1},
                 new Object[]{new InsnNode(Opcodes.ICONST_4), 1},
                 new Object[]{new InsnNode(Opcodes.ICONST_5), 1},
+
+                new Object[]{new LdcInsnNode(null), 1},
 
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()V"), -1},
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()B"), 0},

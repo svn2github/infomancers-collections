@@ -56,25 +56,15 @@ public final class CodeStack {
 
     public static int getChange(AbstractInsnNode node) {
         switch (node.getOpcode()) {
-            case Opcodes.ARRAYLENGTH:
-            case Opcodes.CHECKCAST:
-                return 0;
 
-            case Opcodes.PUTFIELD:
-                return -1;
+            case Opcodes.ARRAYLENGTH:
+
+            case Opcodes.CHECKCAST:
+
             case Opcodes.GETFIELD:
                 return 0;
 
-            case Opcodes.BIPUSH:
-            case Opcodes.SIPUSH:
-                return 1;
-
-            case Opcodes.ILOAD:
-            case Opcodes.ALOAD:
-            case Opcodes.DLOAD:
-            case Opcodes.FLOAD:
-            case Opcodes.LLOAD:
-                return 1;
+            case Opcodes.PUTFIELD:
 
             case Opcodes.IALOAD:
             case Opcodes.AALOAD:
@@ -84,14 +74,23 @@ public final class CodeStack {
             case Opcodes.BALOAD:
             case Opcodes.CALOAD:
             case Opcodes.SALOAD:
-                return -1;
 
             case Opcodes.ISTORE:
             case Opcodes.ASTORE:
             case Opcodes.DSTORE:
             case Opcodes.FSTORE:
             case Opcodes.LSTORE:
+
                 return -1;
+
+            case Opcodes.BIPUSH:
+            case Opcodes.SIPUSH:
+
+            case Opcodes.ILOAD:
+            case Opcodes.ALOAD:
+            case Opcodes.DLOAD:
+            case Opcodes.FLOAD:
+            case Opcodes.LLOAD:
 
             case Opcodes.ICONST_0:
             case Opcodes.ICONST_1:
@@ -99,6 +98,8 @@ public final class CodeStack {
             case Opcodes.ICONST_3:
             case Opcodes.ICONST_4:
             case Opcodes.ICONST_5:
+
+            case Opcodes.LDC:
                 return 1;
 
             case Opcodes.INVOKEINTERFACE:
