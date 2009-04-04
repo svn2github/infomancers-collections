@@ -48,6 +48,16 @@ public final class CodeStack {
             case Opcodes.GETFIELD:
                 return 0;
 
+            case Opcodes.IASTORE:
+            case Opcodes.AASTORE:
+            case Opcodes.DASTORE:
+            case Opcodes.FASTORE:
+            case Opcodes.LASTORE:
+            case Opcodes.SASTORE:
+            case Opcodes.CASTORE:
+            case Opcodes.BASTORE:
+                return -3;
+
             case Opcodes.PUTFIELD:
 
             case Opcodes.IALOAD:
@@ -64,6 +74,31 @@ public final class CodeStack {
             case Opcodes.DSTORE:
             case Opcodes.FSTORE:
             case Opcodes.LSTORE:
+
+            case Opcodes.IADD:
+            case Opcodes.LADD:
+            case Opcodes.DADD:
+            case Opcodes.FADD:
+
+            case Opcodes.ISUB:
+            case Opcodes.LSUB:
+            case Opcodes.DSUB:
+            case Opcodes.FSUB:
+
+            case Opcodes.IMUL:
+            case Opcodes.LMUL:
+            case Opcodes.DMUL:
+            case Opcodes.FMUL:
+
+            case Opcodes.IDIV:
+            case Opcodes.LDIV:
+            case Opcodes.DDIV:
+            case Opcodes.FDIV:
+
+            case Opcodes.IREM:
+            case Opcodes.LREM:
+            case Opcodes.DREM:
+            case Opcodes.FREM:
 
                 return -1;
 
@@ -93,6 +128,7 @@ public final class CodeStack {
             case Opcodes.FCONST_1:
             case Opcodes.FCONST_2:
 
+            case Opcodes.ACONST_NULL:
 
             case Opcodes.LDC:
                 return 1;

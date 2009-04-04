@@ -49,6 +49,15 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.CALOAD), -1},
                 new Object[]{new InsnNode(Opcodes.SALOAD), -1},
 
+                new Object[]{new InsnNode(Opcodes.IASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.FASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.DASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.LASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.AASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.BASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.CASTORE), -3},
+                new Object[]{new InsnNode(Opcodes.SASTORE), -3},
+
                 new Object[]{new InsnNode(Opcodes.ISTORE), -1},
                 new Object[]{new InsnNode(Opcodes.FSTORE), -1},
                 new Object[]{new InsnNode(Opcodes.DSTORE), -1},
@@ -71,6 +80,33 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.FCONST_0), 1},
                 new Object[]{new InsnNode(Opcodes.FCONST_1), 1},
                 new Object[]{new InsnNode(Opcodes.FCONST_2), 1},
+
+                new Object[]{new InsnNode(Opcodes.ACONST_NULL), 1},
+
+                new Object[]{new InsnNode(Opcodes.IADD), -1},
+                new Object[]{new InsnNode(Opcodes.LADD), -1},
+                new Object[]{new InsnNode(Opcodes.FADD), -1},
+                new Object[]{new InsnNode(Opcodes.DADD), -1},
+
+                new Object[]{new InsnNode(Opcodes.ISUB), -1},
+                new Object[]{new InsnNode(Opcodes.LSUB), -1},
+                new Object[]{new InsnNode(Opcodes.FSUB), -1},
+                new Object[]{new InsnNode(Opcodes.DSUB), -1},
+
+                new Object[]{new InsnNode(Opcodes.IMUL), -1},
+                new Object[]{new InsnNode(Opcodes.LMUL), -1},
+                new Object[]{new InsnNode(Opcodes.FMUL), -1},
+                new Object[]{new InsnNode(Opcodes.DMUL), -1},
+
+                new Object[]{new InsnNode(Opcodes.IDIV), -1},
+                new Object[]{new InsnNode(Opcodes.LDIV), -1},
+                new Object[]{new InsnNode(Opcodes.FDIV), -1},
+                new Object[]{new InsnNode(Opcodes.DDIV), -1},
+
+                new Object[]{new InsnNode(Opcodes.IREM), -1},
+                new Object[]{new InsnNode(Opcodes.LREM), -1},
+                new Object[]{new InsnNode(Opcodes.FREM), -1},
+                new Object[]{new InsnNode(Opcodes.DREM), -1},
 
                 new Object[]{new LdcInsnNode(null), 1},
 

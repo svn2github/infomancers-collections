@@ -36,6 +36,15 @@ public class EnhancersFactoryTests {
                 new Object[]{new InsnNode(Opcodes.CALOAD), ArrayLoadEnhancer.class},
                 new Object[]{new InsnNode(Opcodes.SALOAD), ArrayLoadEnhancer.class},
 
+                new Object[]{new InsnNode(Opcodes.IASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.LASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.FASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.DASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.AASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.BASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.CASTORE), ArrayStoreEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.SASTORE), ArrayStoreEnhancer.class},
+
                 new Object[]{new VarInsnNode(Opcodes.ISTORE, 1), StoreEnhancer.class},
                 new Object[]{new VarInsnNode(Opcodes.LSTORE, 1), StoreEnhancer.class},
                 new Object[]{new VarInsnNode(Opcodes.DSTORE, 1), StoreEnhancer.class},

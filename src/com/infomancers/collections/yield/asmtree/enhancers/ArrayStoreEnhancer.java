@@ -37,15 +37,12 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Stack should be [..., array, index].
- */
-public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
+public class ArrayStoreEnhancer implements PredicatedInsnEnhancer {
     private static final String[] descs = "[I,[J,[F,[D,[Ljava/lang/Object;,[B,[C,[S".split(",");
 
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        AbstractInsnNode aload = EnhancersUtil.backUntilStackSizedAt(instruction, 0);
-        TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
+        AbstractInsnNode aload = EnhancersUtil.backUntilStackSizedAt(instruction, -1);
+        TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IASTORE]);
 
         instructions.insert(aload, checkcast);
 
@@ -53,6 +50,6 @@ public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
     }
 
     public boolean shouldEnhance(AbstractInsnNode node) {
-        return node.getOpcode() >= Opcodes.IALOAD && node.getOpcode() <= Opcodes.SALOAD;
+        return node.getOpcode() >= Opcodes.IASTORE && node.getOpcode() <= Opcodes.SASTORE;
     }
 }

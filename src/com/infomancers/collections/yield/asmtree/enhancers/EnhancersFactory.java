@@ -47,6 +47,7 @@ public final class EnhancersFactory {
                 new StoreEnhancer(),
                 new LoadEnhancer(),
                 new ArrayLoadEnhancer(),
+                new ArrayStoreEnhancer(),
                 new IincEnhancer(),
                 new ArraylengthEnhancer(),
                 new MethodInvocationEnhancer());
