@@ -1,13 +1,14 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
-import com.infomancers.collections.yield.asmtree.InsnEnhancer;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-
-import java.util.Arrays;
-import java.util.Collection;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.TypeInsnNode;
 
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,34 +36,22 @@ import java.util.Collection;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public final class EnhancersFactory {
 
-    private final Collection<PredicatedInsnEnhancer> enhancers;
-    private static final NullEnhancer nullEnhancer = new NullEnhancer();
+/**
+ * Stack should be [..., array, index].
+ */
+public class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
+    private static final String[] descs = "[I;[L;[F;[D;[A;[B;[C;[S".split(";");
 
-    public static EnhancersFactory instnace() {
-        return new EnhancersFactory(
-                new YieldReturnEnhancer(),
-                new StoreEnhancer(),
-                new LoadEnhancer(),
-                new ArrayLoadEnhancer());
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+        AbstractInsnNode aload = instruction.getPrevious().getPrevious();
+        TypeInsnNode type = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
+        instructions.insert(aload, type);
+
+        return instruction;
     }
 
-    private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {
-        this.enhancers = enhancers;
-    }
-
-    private EnhancersFactory(PredicatedInsnEnhancer... enhancers) {
-        this(Arrays.asList(enhancers));
-    }
-
-    public InsnEnhancer createEnhancer(AbstractInsnNode node) {
-        for (PredicatedInsnEnhancer enhancer : enhancers) {
-            if (enhancer.shouldEnhance(node)) {
-                return enhancer;
-            }
-        }
-
-        return nullEnhancer;
+    public boolean shouldEnhance(AbstractInsnNode node) {
+        return node.getOpcode() >= Opcodes.IALOAD && node.getOpcode() <= Opcodes.SALOAD;
     }
 }

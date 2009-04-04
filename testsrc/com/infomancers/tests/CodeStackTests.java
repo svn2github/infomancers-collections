@@ -31,6 +31,7 @@ public class CodeStackTests {
                 new Object[]{new FieldInsnNode(Opcodes.PUTFIELD, "Owner", "myint", "I"), -1},
                 new Object[]{new FieldInsnNode(Opcodes.GETFIELD, "Owner", "myint", "I"), 0},
                 new Object[]{new InsnNode(Opcodes.ARRAYLENGTH), 0},
+                new Object[]{new InsnNode(Opcodes.CHECKCAST), 0},
 
                 new Object[]{new InsnNode(Opcodes.BIPUSH), 1},
                 new Object[]{new InsnNode(Opcodes.SIPUSH), 1},

@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -26,6 +27,15 @@ public class EnhancersFactoryTests {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
+                new Object[]{new InsnNode(Opcodes.IALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.LALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.FALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.DALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.AALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.BALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.CALOAD), ArrayLoadEnhancer.class},
+                new Object[]{new InsnNode(Opcodes.SALOAD), ArrayLoadEnhancer.class},
+
                 new Object[]{new VarInsnNode(Opcodes.ISTORE, 1), StoreEnhancer.class},
                 new Object[]{new VarInsnNode(Opcodes.LSTORE, 1), StoreEnhancer.class},
                 new Object[]{new VarInsnNode(Opcodes.DSTORE, 1), StoreEnhancer.class},

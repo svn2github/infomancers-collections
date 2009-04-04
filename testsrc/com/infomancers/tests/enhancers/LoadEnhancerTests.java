@@ -1,13 +1,22 @@
-package com.infomancers.collections.yield.asmtree.enhancers;
+package com.infomancers.tests.enhancers;
 
+import com.infomancers.collections.yield.asm.NewMember;
+import com.infomancers.collections.yield.asm.TypeDescriptor;
+import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
-import org.objectweb.asm.tree.AbstractInsnNode;
+import com.infomancers.collections.yield.asmtree.enhancers.LoadEnhancer;
+import com.infomancers.tests.TestYIC;
+import static com.infomancers.tests.enhancers.Util.compareLists;
+import static com.infomancers.tests.enhancers.Util.createList;
+import org.junit.Test;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.VarInsnNode;
 
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
- * Copyright (c) 2007, Aviad Ben Dov
+ * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
  * All rights reserved.
  * <p/>
@@ -35,34 +44,27 @@ import java.util.Collection;
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public final class EnhancersFactory {
 
-    private final Collection<PredicatedInsnEnhancer> enhancers;
-    private static final NullEnhancer nullEnhancer = new NullEnhancer();
+public class LoadEnhancerTests extends EnhancerTestsBase {
+    @Test
+    public void iload2() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Integer),
+                new NewMember(2, TypeDescriptor.Integer));
 
-    public static EnhancersFactory instnace() {
-        return new EnhancersFactory(
-                new YieldReturnEnhancer(),
-                new StoreEnhancer(),
-                new LoadEnhancer(),
-                new ArrayLoadEnhancer());
-    }
+        final VarInsnNode insn = new VarInsnNode(Opcodes.ILOAD, 2);
+        InsnList original = createList(insn);
 
-    private EnhancersFactory(Collection<PredicatedInsnEnhancer> enhancers) {
-        this.enhancers = enhancers;
-    }
 
-    private EnhancersFactory(PredicatedInsnEnhancer... enhancers) {
-        this(Arrays.asList(enhancers));
-    }
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, "slot$2", "I")
+        );
 
-    public InsnEnhancer createEnhancer(AbstractInsnNode node) {
-        for (PredicatedInsnEnhancer enhancer : enhancers) {
-            if (enhancer.shouldEnhance(node)) {
-                return enhancer;
-            }
-        }
+        InsnEnhancer enhancer = new LoadEnhancer();
 
-        return nullEnhancer;
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
     }
 }

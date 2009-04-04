@@ -54,6 +54,8 @@ public final class CodeStack {
         switch (node.getOpcode()) {
             case Opcodes.ARRAYLENGTH:
                 return 0;
+            case Opcodes.CHECKCAST:
+                return 0;
 
             case Opcodes.PUTFIELD:
                 return -1;
