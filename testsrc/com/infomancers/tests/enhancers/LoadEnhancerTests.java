@@ -10,9 +10,7 @@ import static com.infomancers.tests.enhancers.TestUtil.compareLists;
 import static com.infomancers.tests.enhancers.TestUtil.createList;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 
 /**
@@ -67,4 +65,109 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         compareLists(expected, original);
     }
+
+    @Test
+    public void iload_memberIsObject() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object));
+
+        final VarInsnNode insn = new VarInsnNode(Opcodes.ILOAD, 1);
+        InsnList original = createList(
+                insn
+        );
+
+        NewMember slot = info.getSlot(1);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Integer"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I")
+        );
+
+        InsnEnhancer enhancer = new LoadEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
+    @Test
+    public void lload_memberIsObject() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object));
+
+        final VarInsnNode insn = new VarInsnNode(Opcodes.LLOAD, 1);
+        InsnList original = createList(
+                insn
+        );
+
+        NewMember slot = info.getSlot(1);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Long"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J")
+        );
+
+        InsnEnhancer enhancer = new LoadEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
+    @Test
+    public void dload_memberIsObject() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object));
+
+        final VarInsnNode insn = new VarInsnNode(Opcodes.DLOAD, 1);
+        InsnList original = createList(
+                insn
+        );
+
+        NewMember slot = info.getSlot(1);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Double"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D")
+        );
+
+        InsnEnhancer enhancer = new LoadEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
+    @Test
+    public void fload_memberIsObject() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object));
+
+        final VarInsnNode insn = new VarInsnNode(Opcodes.FLOAD, 1);
+        InsnList original = createList(
+                insn
+        );
+
+        NewMember slot = info.getSlot(1);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot.getName(), slot.getDesc()),
+                new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Float"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F")
+        );
+
+        InsnEnhancer enhancer = new LoadEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
 }
