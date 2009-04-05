@@ -3,6 +3,7 @@ package com.infomancers.collections.yield.asmtree;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,7 +54,6 @@ public final class CodeStack {
                     "EEEEEEEEEC" + // 7
                     "CCCCCCCEDG" + // 8
                     "GGHHHFEEEE" + // 9
-                    // 0123456789
                     "EEEEEEEEEE" + // 10
                     "EEEEEEFFFF" + // 11
                     "EEEEEEEEEE" + // 12
@@ -63,9 +63,8 @@ public final class CodeStack {
                     "DDDDDDDFGF" + // 16
                     "EEZZZZZZGE" + // 17
                     "FDZZZZZGFF" + // 18
-                    "FZFFZZZZEE" + // 19
+                    "FZFFEEZZEE" + // 19
                     "FF";          // 20
-    // 0123456789
 
 
     public static int getChange(AbstractInsnNode node) {
@@ -97,8 +96,16 @@ public final class CodeStack {
                 return result;
             }
             case Opcodes.MULTIANEWARRAY:
-                // TODO: Support this!
-                return 0;
+                MultiANewArrayInsnNode multiANewArrayInsnNode = (MultiANewArrayInsnNode) node;
+                return -multiANewArrayInsnNode.dims;
+
+            case Opcodes.RETURN:
+            case Opcodes.IRETURN:
+            case Opcodes.LRETURN:
+            case Opcodes.DRETURN:
+            case Opcodes.FRETURN:
+            case Opcodes.ARETURN:
+                throw new IllegalStateException("Shouldn't be following opcode " + node.getOpcode());
             default:
                 return stacks.charAt(node.getOpcode()) - stackDiff;
         }

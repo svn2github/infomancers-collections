@@ -108,6 +108,10 @@ public class CodeStackTests {
                 new Object[]{new InsnNode(Opcodes.FREM), -1},
                 new Object[]{new InsnNode(Opcodes.DREM), -1},
 
+                new Object[]{new MultiANewArrayInsnNode("java/lang/Object", 1), -1},
+                new Object[]{new MultiANewArrayInsnNode("java/lang/Object", 2), -2},
+                new Object[]{new MultiANewArrayInsnNode("java/lang/Object", 3), -3},
+
                 new Object[]{new LdcInsnNode(null), 1},
 
                 new Object[]{new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "owner", "method", "()V"), -1},
