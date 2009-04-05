@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.CodeStack;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -41,7 +42,7 @@ public class ArrayStoreEnhancer implements PredicatedInsnEnhancer {
     private static final String[] descs = "[I,[J,[F,[D,[Ljava/lang/Object;,[B,[C,[S".split(",");
 
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        AbstractInsnNode aload = EnhancersUtil.backUntilStackSizedAt(instruction, -1);
+        AbstractInsnNode aload = CodeStack.backUntilStackSizedAt(instruction, -1, true);
         TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IASTORE]);
 
         instructions.insert(aload, checkcast);

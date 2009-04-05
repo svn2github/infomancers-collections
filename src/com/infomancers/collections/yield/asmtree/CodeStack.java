@@ -69,6 +69,9 @@ public final class CodeStack {
 
     public static int getChange(AbstractInsnNode node) {
         switch (node.getOpcode()) {
+            case -1:
+                return 0;
+
             case Opcodes.INVOKEINTERFACE:
             case Opcodes.INVOKESPECIAL:
             case Opcodes.INVOKEVIRTUAL: {
@@ -120,5 +123,21 @@ public final class CodeStack {
         }
 
         return counter;
+    }
+
+    public static AbstractInsnNode backUntilStackSizedAt(AbstractInsnNode start, final int requiredSize, final boolean followNoStackChangers) {
+        int stackSize = 0;
+        AbstractInsnNode backNode = start;
+        do {
+            stackSize += getChange(backNode);
+            backNode = backNode.getPrevious();
+        } while (stackSize != requiredSize);
+
+        // continue if there are no-stack-changers before this command
+        while (followNoStackChangers && backNode != null && getChange(backNode) == 0) {
+            backNode = backNode.getPrevious();
+        }
+
+        return backNode;
     }
 }

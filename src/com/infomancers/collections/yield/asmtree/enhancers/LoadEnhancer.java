@@ -3,6 +3,7 @@ package com.infomancers.collections.yield.asmtree.enhancers;
 import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.CodeStack;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -65,7 +66,7 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
         FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.GETFIELD, clz.name,
                 member.getName(), member.getDesc());
 
-        AbstractInsnNode backNode = EnhancersUtil.backUntilStackSizedAt(instruction, 1);
+        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, true);
 
         final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
         if (backNode == null) {

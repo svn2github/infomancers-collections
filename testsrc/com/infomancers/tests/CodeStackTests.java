@@ -26,6 +26,8 @@ public class CodeStackTests {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
+                new Object[]{new LabelNode(), 0},
+
                 new Object[]{new FieldInsnNode(Opcodes.PUTFIELD, "Owner", "myint", "I"), -2},
                 new Object[]{new FieldInsnNode(Opcodes.GETFIELD, "Owner", "myint", "I"), 0},
                 new Object[]{new InsnNode(Opcodes.ARRAYLENGTH), 0},

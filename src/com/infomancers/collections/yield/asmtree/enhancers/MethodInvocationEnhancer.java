@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.CodeStack;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -40,7 +41,7 @@ public class MethodInvocationEnhancer implements PredicatedInsnEnhancer {
 
         int targetStack = method.desc.endsWith("V") ? -1 : 0;
 
-        AbstractInsnNode load = EnhancersUtil.backUntilStackSizedAt(instruction, targetStack);
+        AbstractInsnNode load = CodeStack.backUntilStackSizedAt(instruction, targetStack, false);
         instructions.insert(load, new TypeInsnNode(Opcodes.CHECKCAST, method.owner));
 
         return instruction;
