@@ -1,7 +1,9 @@
 package com.infomancers.tests.enhancers;
 
+import org.junit.Assert;
 import org.junit.Before;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.TraceMethodVisitor;
 
 /**
  * Copyright (c) 2009, Aviad Ben Dov
@@ -40,5 +42,80 @@ public class EnhancerTestsBase {
     public void before() {
         owner = new ClassNode();
         owner.name = "owner";
+    }
+
+    public static void compareLists(InsnList expected, InsnList actual) {
+        try {
+            AbstractInsnNode expectedNode, originalNode;
+
+            expectedNode = expected.getFirst();
+            originalNode = actual.getFirst();
+
+            while (originalNode != null) {
+                Assert.assertNotNull("expected is null", expectedNode);
+
+                compareNodes(expectedNode, originalNode);
+
+                originalNode = originalNode.getNext();
+                expectedNode = expectedNode.getNext();
+            }
+
+            Assert.assertNull("Lists with different lengths", expectedNode);
+        } catch (AssertionError e) {
+            TraceMethodVisitor tracer = new TraceMethodVisitor();
+            System.out.println("--- Expected ---");
+            expected.accept(tracer);
+            System.out.println(tracer.getText());
+            tracer.text.clear();
+
+            System.out.println("--- Actual --- ");
+            actual.accept(tracer);
+            System.out.println(tracer.text);
+            tracer.text.clear();
+
+            throw e;
+        }
+    }
+
+    public static InsnList createList(AbstractInsnNode... nodes) {
+        InsnList list = new InsnList();
+        AbstractInsnNode last = null;
+        for (AbstractInsnNode node : nodes) {
+            if (last == null) {
+                list.insert(node);
+            } else {
+                list.insert(last, node);
+            }
+            last = node;
+        }
+
+        return list;
+    }
+
+    public static void compareNodes(AbstractInsnNode expectedNode, AbstractInsnNode actualNode) {
+        org.junit.Assert.assertEquals("opcode", expectedNode.getOpcode(), actualNode.getOpcode());
+
+        if (expectedNode instanceof VarInsnNode) {
+            VarInsnNode eVarNode = (VarInsnNode) expectedNode;
+            VarInsnNode oVarNode = (VarInsnNode) actualNode;
+
+            org.junit.Assert.assertEquals("var", eVarNode.var, oVarNode.var);
+        } else if (expectedNode instanceof FieldInsnNode) {
+            FieldInsnNode eFieldNode = (FieldInsnNode) expectedNode;
+            FieldInsnNode oFieldNode = (FieldInsnNode) actualNode;
+
+            org.junit.Assert.assertEquals("name", eFieldNode.name, oFieldNode.name);
+            org.junit.Assert.assertEquals("desc", eFieldNode.desc, oFieldNode.desc);
+        } else if (expectedNode instanceof IntInsnNode) {
+            IntInsnNode eIntNode = (IntInsnNode) expectedNode;
+            IntInsnNode oIntNode = (IntInsnNode) actualNode;
+
+            org.junit.Assert.assertEquals("operand", eIntNode.operand, oIntNode.operand);
+        } else if (expectedNode instanceof TypeInsnNode) {
+            TypeInsnNode eTypeNode = (TypeInsnNode) expectedNode;
+            TypeInsnNode oTypeNode = (TypeInsnNode) actualNode;
+
+            org.junit.Assert.assertEquals("desc", eTypeNode.desc, oTypeNode.desc);
+        }
     }
 }
