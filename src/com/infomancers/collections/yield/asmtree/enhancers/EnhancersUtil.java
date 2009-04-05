@@ -47,6 +47,11 @@ final class EnhancersUtil {
             backNode = backNode.getPrevious();
         } while (stackSize != requiredSize);
 
+        // continue if there are no-stack-changers before this command
+        while (backNode != null && CodeStack.getChange(backNode) == 0) {
+            backNode = backNode.getPrevious();
+        }
+
         return backNode;
     }
 }

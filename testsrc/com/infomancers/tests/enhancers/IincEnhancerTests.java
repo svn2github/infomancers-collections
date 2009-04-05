@@ -6,8 +6,6 @@ import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
 import com.infomancers.collections.yield.asmtree.enhancers.IincEnhancer;
 import com.infomancers.tests.TestYIC;
-import static com.infomancers.tests.enhancers.TestUtil.compareLists;
-import static com.infomancers.tests.enhancers.TestUtil.createList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

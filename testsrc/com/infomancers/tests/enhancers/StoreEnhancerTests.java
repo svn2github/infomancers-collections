@@ -6,8 +6,6 @@ import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.InsnEnhancer;
 import com.infomancers.collections.yield.asmtree.enhancers.StoreEnhancer;
 import com.infomancers.tests.TestYIC;
-import static com.infomancers.tests.enhancers.TestUtil.compareLists;
-import static com.infomancers.tests.enhancers.TestUtil.createList;
 import org.junit.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -171,6 +169,39 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
                 new InsnNode(Opcodes.FCONST_0),
                 new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;"),
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slot.getName(), slot.getDesc())
+        );
+
+        InsnEnhancer enhancer = new StoreEnhancer();
+
+        enhancer.enhance(owner, original, info, insn);
+
+        compareLists(expected, original);
+    }
+
+    @Test
+    public void istore_withNeutralStackOpcodes_aloadInCorrectPosition() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Integer));
+
+        final VarInsnNode insn = new VarInsnNode(Opcodes.ISTORE, 1);
+
+        NewMember member = info.getSlot(1);
+
+        InsnList original = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, "field", "java/lang/Object"),
+                new TypeInsnNode(Opcodes.CHECKCAST, "T"),
+                new MethodInsnNode(Opcodes.INVOKESTATIC, "A", "method", "(T)I"),
+                insn
+        );
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, "field", "java/lang/Object"),
+                new TypeInsnNode(Opcodes.CHECKCAST, "T"),
+                new MethodInsnNode(Opcodes.INVOKESTATIC, "A", "method", "(T)I"),
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, member.getName(), member.getDesc())
         );
 
         InsnEnhancer enhancer = new StoreEnhancer();

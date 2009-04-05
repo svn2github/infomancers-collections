@@ -42,7 +42,7 @@ import java.util.Iterator;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class TreeYielderTransformer extends AbstractYielderTransformer {
+public final class TreeYielderTransformer extends AbstractYielderTransformer {
     private final EnhancersFactory factory = EnhancersFactory.instnace();
 
     public TreeYielderTransformer(boolean debug) {
