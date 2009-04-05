@@ -38,101 +38,38 @@ import java.util.regex.Pattern;
  */
 
 public final class CodeStack {
+
+    private static final char stackDiff = 'F';
+
+    private static final String stacks =
+            // 0123456789
+            "FGGGGGGGGG" + // 0
+                    "GGGGGGGGGG" + // 1
+                    "GGGGGGGGGG" + // 2
+                    "GGGGGGGGGG" + // 3
+                    "GGGGGGEEEE" + // 4
+                    "EEEEEEEEEE" + // 5
+                    "EEEEEEEEEE" + // 6
+                    "EEEEEEEEEC" + // 7
+                    "CCCCCCCEDG" + // 8
+                    "GGHHHFEEEE" + // 9
+                    // 0123456789
+                    "EEEEEEEEEE" + // 10
+                    "EEEEEEFFFF" + // 11
+                    "EEEEEEEEEE" + // 12
+                    "EEFFFFFFFF" + // 13
+                    "FFFFFFFFEE" + // 14
+                    "EEEEEEEEED" + // 15
+                    "DDDDDDDFGF" + // 16
+                    "EEZZZZZZGE" + // 17
+                    "FDZZZZZGFF" + // 18
+                    "FZFFZZZZEE" + // 19
+                    "FF";          // 20
+    // 0123456789
+
+
     public static int getChange(AbstractInsnNode node) {
         switch (node.getOpcode()) {
-
-            case Opcodes.ARRAYLENGTH:
-
-            case Opcodes.CHECKCAST:
-
-            case Opcodes.GETFIELD:
-                return 0;
-
-            case Opcodes.IASTORE:
-            case Opcodes.AASTORE:
-            case Opcodes.DASTORE:
-            case Opcodes.FASTORE:
-            case Opcodes.LASTORE:
-            case Opcodes.SASTORE:
-            case Opcodes.CASTORE:
-            case Opcodes.BASTORE:
-                return -3;
-
-            case Opcodes.PUTFIELD:
-
-            case Opcodes.IALOAD:
-            case Opcodes.AALOAD:
-            case Opcodes.DALOAD:
-            case Opcodes.FALOAD:
-            case Opcodes.LALOAD:
-            case Opcodes.BALOAD:
-            case Opcodes.CALOAD:
-            case Opcodes.SALOAD:
-
-            case Opcodes.ISTORE:
-            case Opcodes.ASTORE:
-            case Opcodes.DSTORE:
-            case Opcodes.FSTORE:
-            case Opcodes.LSTORE:
-
-            case Opcodes.IADD:
-            case Opcodes.LADD:
-            case Opcodes.DADD:
-            case Opcodes.FADD:
-
-            case Opcodes.ISUB:
-            case Opcodes.LSUB:
-            case Opcodes.DSUB:
-            case Opcodes.FSUB:
-
-            case Opcodes.IMUL:
-            case Opcodes.LMUL:
-            case Opcodes.DMUL:
-            case Opcodes.FMUL:
-
-            case Opcodes.IDIV:
-            case Opcodes.LDIV:
-            case Opcodes.DDIV:
-            case Opcodes.FDIV:
-
-            case Opcodes.IREM:
-            case Opcodes.LREM:
-            case Opcodes.DREM:
-            case Opcodes.FREM:
-
-                return -1;
-
-            case Opcodes.BIPUSH:
-            case Opcodes.SIPUSH:
-
-            case Opcodes.ILOAD:
-            case Opcodes.ALOAD:
-            case Opcodes.DLOAD:
-            case Opcodes.FLOAD:
-            case Opcodes.LLOAD:
-
-            case Opcodes.ICONST_0:
-            case Opcodes.ICONST_1:
-            case Opcodes.ICONST_2:
-            case Opcodes.ICONST_3:
-            case Opcodes.ICONST_4:
-            case Opcodes.ICONST_5:
-
-            case Opcodes.LCONST_0:
-            case Opcodes.LCONST_1:
-
-            case Opcodes.DCONST_0:
-            case Opcodes.DCONST_1:
-
-            case Opcodes.FCONST_0:
-            case Opcodes.FCONST_1:
-            case Opcodes.FCONST_2:
-
-            case Opcodes.ACONST_NULL:
-
-            case Opcodes.LDC:
-                return 1;
-
             case Opcodes.INVOKEINTERFACE:
             case Opcodes.INVOKESPECIAL:
             case Opcodes.INVOKEVIRTUAL: {
@@ -159,9 +96,11 @@ public final class CodeStack {
 
                 return result;
             }
-            default:
-                System.err.println("Returned default for node: " + node + ", opcode: " + node.getOpcode());
+            case Opcodes.MULTIANEWARRAY:
+                // TODO: Support this!
                 return 0;
+            default:
+                return stacks.charAt(node.getOpcode()) - stackDiff;
         }
     }
 

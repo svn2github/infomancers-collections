@@ -1,6 +1,7 @@
 package com.infomancers.collections.yield.asm;
 
 import com.infomancers.collections.yield.asm.promotion.AccessorCreators;
+import com.infomancers.collections.yield.asmbase.Util;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.*;
 
