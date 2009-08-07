@@ -4,6 +4,7 @@ import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.CodeStack;
+import com.infomancers.collections.yield.asmtree.Util;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -63,15 +64,19 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
         final VarInsnNode varInstruction = (VarInsnNode) instruction;
 
         final NewMember member = info.getSlot(varInstruction.var);
-        FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.GETFIELD, clz.name,
-                member.getName(), member.getDesc());
+
+        final VarInsnNode load0;
+        final FieldInsnNode replacementInstruction;
 
         AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, false);
 
-        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        com.infomancers.collections.yield.asmtree.Util.insertOrAdd(instructions, backNode, load0);
+        InsnList list = Util.createList(
+                load0 = new VarInsnNode(Opcodes.ALOAD, 0),
+                replacementInstruction = new FieldInsnNode(Opcodes.GETFIELD, clz.name,
+                        member.getName(), member.getDesc())
+        );
 
-        instructions.insert(instruction, replacementInstruction);
+        Util.insertOrAdd(instructions, backNode, list);
         instructions.remove(instruction);
 
         // Dealing with case when the member is an object due to local variable merge,
@@ -88,10 +93,8 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
 
             final MethodInsnNode unboxInvocation = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, wrappers[offset], unboxMethods[offset], "()" + sigTypes.charAt(offset));
             instructions.insert(checkcast, unboxInvocation);
-
-            return replacementInstruction;
-        } else {
-            return replacementInstruction;
         }
+
+        return replacementInstruction;
     }
 }

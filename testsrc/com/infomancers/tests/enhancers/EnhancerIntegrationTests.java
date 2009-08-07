@@ -3,6 +3,7 @@ package com.infomancers.tests.enhancers;
 import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.InsnEnhancer;
 import com.infomancers.collections.yield.asmtree.Util;
 import com.infomancers.collections.yield.asmtree.enhancers.EnhancersFactory;
 import com.infomancers.tests.TestYIC;
@@ -74,7 +75,25 @@ public final class EnhancerIntegrationTests extends EnhancerTestsBase {
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slots[2].getName(), slots[2].getDesc())
         );
 
-        Util.enhanceLines(info, owner, actual, EnhancersFactory.instnace());
+        printList("Origin", actual);
+
+        int i = 1;
+        // enhance lines as required
+        for (AbstractInsnNode instruction = actual.getLast();
+             instruction != null;
+             instruction = instruction.getPrevious()) {
+
+            if (instruction.getType() == AbstractInsnNode.FRAME) {
+                instruction = instruction.getPrevious();
+                actual.remove(instruction.getNext());
+                continue;
+            }
+
+            InsnEnhancer enhancer = EnhancersFactory.instnace().createEnhancer(instruction);
+            instruction = enhancer.enhance(owner, actual, info, instruction);
+
+            printList("" + i++, actual);
+        }
 
         compareLists(expected, actual);
     }

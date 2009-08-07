@@ -78,15 +78,15 @@ public final class TreeYielderTransformer extends AbstractYielderTransformer {
 
         // create the state-switcher at the beginning of the method
         LabelNode dflt = getFirstLabel(method);
-        LabelNode start = new LabelNode();
-        AbstractInsnNode aload0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        AbstractInsnNode getstate = new FieldInsnNode(Opcodes.GETFIELD, node.name, "state$", "B");
-        AbstractInsnNode tableswitch = new TableSwitchInsnNode(1, info.getCounter(), dflt, info.getStateLabels());
 
-        method.instructions.insertBefore(dflt, start);
-        method.instructions.insert(start, aload0);
-        method.instructions.insert(aload0, getstate);
-        method.instructions.insert(getstate, tableswitch);
+        InsnList tableSwitchList = Util.createList(
+                new LabelNode(),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, node.name, "state$", "B"),
+                new TableSwitchInsnNode(1, info.getCounter(), dflt, info.getStateLabels())
+        );
+
+        method.instructions.insert(tableSwitchList);
 
         // TODO: Need a better way than this..
         method.maxStack = 7;

@@ -60,7 +60,7 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
                 new Object[]{Opcodes.DALOAD, "[D"},
                 new Object[]{Opcodes.LALOAD, "[J"},
                 new Object[]{Opcodes.AALOAD, "[Ljava/lang/Object;"},
-                new Object[]{Opcodes.BALOAD, "[B"},
+//                new Object[]{Opcodes.BALOAD, "[B"}, special case for [B, see EnhancersIntegrationTests
                 new Object[]{Opcodes.CALOAD, "[C"},
                 new Object[]{Opcodes.SALOAD, "[S"}
         );

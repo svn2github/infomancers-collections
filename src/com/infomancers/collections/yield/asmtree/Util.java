@@ -70,7 +70,12 @@ public final class Util {
 
     public static void insertOrAdd(InsnList instructions, AbstractInsnNode backNode, AbstractInsnNode node) {
         if (backNode == null) {
-            instructions.insert(node);
+            backNode = instructions.getFirst();
+            while (backNode.getOpcode() < 0) {
+                backNode = backNode.getNext();
+            }
+
+            instructions.insertBefore(backNode, node);
         } else {
             instructions.insert(backNode, node);
         }
@@ -78,11 +83,16 @@ public final class Util {
 
     public static void insertOrAdd(InsnList instructions, AbstractInsnNode backNode, InsnList list) {
         if (backNode == null) {
-            instructions.insert(list);
+            backNode = instructions.getFirst();
+            while (backNode.getOpcode() < 0) {
+                backNode = backNode.getNext();
+            }
+            instructions.insertBefore(backNode, list);
         } else {
             instructions.insert(backNode, list);
         }
     }
+
 
     public static InsnList createList(AbstractInsnNode... nodes) {
         InsnList list = new InsnList();

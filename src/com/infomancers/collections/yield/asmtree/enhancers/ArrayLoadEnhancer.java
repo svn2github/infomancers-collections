@@ -81,7 +81,7 @@ public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
 
             return ret;
         } else {
-            AbstractInsnNode prev = CodeStack.backUntilStackSizedAt(instruction, 1, false);
+            AbstractInsnNode prev = CodeStack.backUntilStackSizedAt(instruction, 0, true);
 
             TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
 

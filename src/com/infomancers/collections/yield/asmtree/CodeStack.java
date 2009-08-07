@@ -130,17 +130,24 @@ public final class CodeStack {
         return counter;
     }
 
+    private static boolean isJump(AbstractInsnNode node) {
+        return node != null && (node.getType() == AbstractInsnNode.JUMP_INSN ||
+                node.getType() == AbstractInsnNode.LOOKUPSWITCH_INSN ||
+                node.getType() == AbstractInsnNode.TABLESWITCH_INSN);
+
+    }
+
     public static AbstractInsnNode backUntilStackSizedAt(AbstractInsnNode start, final int requiredSize, final boolean followNoStackChangers) {
         int stackSize = 0;
         AbstractInsnNode backNode = start;
         do {
             stackSize += getChange(backNode);
             backNode = backNode.getPrevious();
-        } while (backNode != null && stackSize != requiredSize);
+        } while (backNode != null && !isJump(backNode.getPrevious()) && stackSize != requiredSize);
 
         // continue if there are no-stack-changers before this command
         if (followNoStackChangers) {
-            while (backNode != null && /* backNode.getType() != AbstractInsnNode.LABEL && */ getChange(backNode) == 0) {
+            while (backNode != null && !isJump(backNode.getPrevious()) && getChange(backNode) == 0) {
                 backNode = backNode.getPrevious();
             }
         }
