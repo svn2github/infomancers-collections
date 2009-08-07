@@ -66,7 +66,7 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
         FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.GETFIELD, clz.name,
                 member.getName(), member.getDesc());
 
-        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, true);
+        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, false);
 
         final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
         if (backNode == null) {

@@ -126,6 +126,81 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
         compareLists(expected, original);
     }
 
+    @Test
+    public void twoConsecutiveArrayLoads_fromConst() {
+        YielderInformationContainer info = new TestYIC(1);
+
+        final InsnNode load1 = new InsnNode(opcode);
+        final InsnNode load2 = new InsnNode(opcode);
+        InsnList actual = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new InsnNode(Opcodes.ICONST_0),
+                load1,
+                new VarInsnNode(Opcodes.ALOAD, 2),
+                new InsnNode(Opcodes.ICONST_0),
+                load2);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new TypeInsnNode(Opcodes.CHECKCAST, desc),
+                new InsnNode(Opcodes.ICONST_0),
+                new InsnNode(opcode),
+                new VarInsnNode(Opcodes.ALOAD, 2),
+                new TypeInsnNode(Opcodes.CHECKCAST, desc),
+                new InsnNode(Opcodes.ICONST_0),
+                new InsnNode(opcode)
+        );
+
+        InsnEnhancer enhancer = new ArrayLoadEnhancer();
+
+        enhancer.enhance(owner, actual, info, load1);
+        enhancer.enhance(owner, actual, info, load2);
+
+        compareLists(expected, actual);
+    }
+
+    @Test
+    public void twoConsecutiveArrayLoads_fromField() {
+        YielderInformationContainer info = new TestYIC(1, new NewMember(1, TypeDescriptor.Integer),
+                new NewMember(2, TypeDescriptor.Integer));
+
+        final InsnNode load1 = new InsnNode(opcode);
+        final InsnNode load2 = new InsnNode(opcode);
+
+        final NewMember slot1 = info.getSlot(1);
+        final NewMember slot2 = info.getSlot(2);
+
+        InsnList actual = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot1.getName(), slot1.getDesc()),
+                load1,
+                new VarInsnNode(Opcodes.ALOAD, 2),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot2.getName(), slot2.getDesc()),
+                load2);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new TypeInsnNode(Opcodes.CHECKCAST, desc),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot1.getName(), slot1.getDesc()),
+                new InsnNode(opcode),
+                new VarInsnNode(Opcodes.ALOAD, 2),
+                new TypeInsnNode(Opcodes.CHECKCAST, desc),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot2.getName(), slot2.getDesc()),
+                new InsnNode(opcode)
+        );
+
+        InsnEnhancer enhancer = new ArrayLoadEnhancer();
+
+        enhancer.enhance(owner, actual, info, load1);
+        enhancer.enhance(owner, actual, info, load2);
+
+        compareLists(expected, actual);
+    }
+
     public static void main(String[] args) throws IOException {
         Object c = new Object() {
             Object a = new int[]{22};

@@ -148,7 +148,7 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
                 new NewMember(1, TypeDescriptor.Object));
 
         final VarInsnNode insn = new VarInsnNode(Opcodes.FLOAD, 1);
-        InsnList original = createList(
+        InsnList actual = createList(
                 insn
         );
 
@@ -163,9 +163,38 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, actual, info, insn);
 
-        compareLists(expected, original);
+        compareLists(expected, actual);
+    }
+
+    @Test
+    public void twoAloads_membersAreInt() {
+        YielderInformationContainer info = new TestYIC(1, new NewMember(1, TypeDescriptor.Integer),
+                new NewMember(2, TypeDescriptor.Integer));
+
+        final VarInsnNode load1 = new VarInsnNode(Opcodes.ILOAD, 1);
+        final VarInsnNode load2 = new VarInsnNode(Opcodes.ILOAD, 2);
+        final InsnList actual = createList(load1, load2);
+
+        NewMember slot1 = info.getSlot(1);
+        NewMember slot2 = info.getSlot(2);
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot1.getName(), slot1.getDesc()),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slot2.getName(), slot2.getDesc())
+        );
+
+        InsnEnhancer enhancer = new LoadEnhancer();
+
+        enhancer.enhance(owner, actual, info, load1);
+        enhancer.enhance(owner, actual, info, load2);
+
+        compareLists(expected, actual);
+
+
     }
 
 }

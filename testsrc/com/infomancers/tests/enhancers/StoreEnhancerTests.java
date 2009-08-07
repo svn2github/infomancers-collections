@@ -183,7 +183,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
         YielderInformationContainer info = new TestYIC(1,
                 new NewMember(1, TypeDescriptor.Integer));
 
-        final VarInsnNode insn = new VarInsnNode(Opcodes.ISTORE, 1);
+        final VarInsnNode insn;
 
         NewMember member = info.getSlot(1);
 
@@ -192,7 +192,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
                 new FieldInsnNode(Opcodes.GETFIELD, owner.name, "field", "java/lang/Object"),
                 new TypeInsnNode(Opcodes.CHECKCAST, "T"),
                 new MethodInsnNode(Opcodes.INVOKESTATIC, "A", "method", "(T)I"),
-                insn
+                (insn = new VarInsnNode(Opcodes.ISTORE, 1))
         );
 
         InsnList expected = createList(

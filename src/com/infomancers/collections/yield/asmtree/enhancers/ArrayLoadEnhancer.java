@@ -45,7 +45,7 @@ public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
     private static final String[] descs = "[I,[J,[F,[D,[Ljava/lang/Object;,[B,[C,[S".split(",");
 
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        AbstractInsnNode aload = CodeStack.backUntilStackSizedAt(instruction, 0, true);
+        AbstractInsnNode aload = CodeStack.backUntilStackSizedAt(instruction, 0, false);
         TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
 
         instructions.insert(aload, checkcast);

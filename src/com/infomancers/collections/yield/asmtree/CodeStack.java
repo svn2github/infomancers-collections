@@ -67,6 +67,11 @@ public final class CodeStack {
                     "FF";          // 20
 
 
+    public static boolean changeStack(AbstractInsnNode node) {
+        return !(node.getOpcode() == Opcodes.CHECKCAST ||
+                node.getType() == AbstractInsnNode.LABEL);
+    }
+
     public static int getChange(AbstractInsnNode node) {
         switch (node.getOpcode()) {
             case -1:
@@ -134,8 +139,10 @@ public final class CodeStack {
         } while (stackSize != requiredSize);
 
         // continue if there are no-stack-changers before this command
-        while (followNoStackChangers && backNode != null && getChange(backNode) == 0) {
-            backNode = backNode.getPrevious();
+        if (followNoStackChangers) {
+            while (backNode != null && backNode.getType() != AbstractInsnNode.LABEL && getChange(backNode) == 0) {
+                backNode = backNode.getPrevious();
+            }
         }
 
         return backNode;
