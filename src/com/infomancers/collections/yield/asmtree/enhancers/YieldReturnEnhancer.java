@@ -1,7 +1,7 @@
 package com.infomancers.collections.yield.asmtree.enhancers;
 
-import com.infomancers.collections.yield.asmbase.Util;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.Util;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -51,17 +51,20 @@ public final class YieldReturnEnhancer implements PredicatedInsnEnhancer {
 
         assert state > 0;
 
-        final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        final IntInsnNode bipush = new IntInsnNode(Opcodes.BIPUSH, state);
-        final FieldInsnNode setState = new FieldInsnNode(Opcodes.PUTFIELD, clz.name, "state$", "B");
-        final InsnNode ret = new InsnNode(Opcodes.RETURN);
+        final AbstractInsnNode ret, aload;
 
-        instructions.insert(instruction, load0);
-        instructions.insert(load0, bipush);
-        instructions.insert(bipush, setState);
-        instructions.insert(setState, ret);
+        final InsnList list = Util.createList(
+                aload = new VarInsnNode(Opcodes.ALOAD, 0),
+                new IntInsnNode(Opcodes.BIPUSH, state),
+                new FieldInsnNode(Opcodes.PUTFIELD, clz.name, "state$", "B"),
+                ret = new InsnNode(Opcodes.RETURN)
+        );
 
-        return createOrReuseLabel(state, instructions, ret, info);
+        Util.insertOrAdd(instructions, instruction, list);
+
+        createOrReuseLabel(state, instructions, ret, info);
+
+        return instruction;
     }
 
     private AbstractInsnNode createOrReuseLabel(int state, InsnList instructions, AbstractInsnNode previous, YielderInformationContainer info) {

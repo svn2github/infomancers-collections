@@ -38,6 +38,21 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * Stack should be [..., array, index, value].
+ * <p/>
+ * Note: Special case for the BASTORE opcode, which might store to a [B or a [Z (boolean array)!
+ * <p/>
+ * in that case, the bytecode will be replaced to:
+ * <code>
+ * if (arr.getClass().getCompoundClass().equals(Byte.TYPE)) {
+ * CHECKCAST [B
+ * else
+ * CHECKCAST [Z
+ * <p/>
+ * BASTORE
+ * </code>
+ */
 public class ArrayStoreEnhancer implements PredicatedInsnEnhancer {
     private static final String[] descs = "[I,[J,[F,[D,[Ljava/lang/Object;,[B,[C,[S".split(",");
 

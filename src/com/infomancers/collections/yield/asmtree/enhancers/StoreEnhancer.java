@@ -4,6 +4,7 @@ import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.CodeStack;
+import com.infomancers.collections.yield.asmtree.Util;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -62,11 +63,7 @@ public final class StoreEnhancer implements PredicatedInsnEnhancer {
         AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 0, true);
 
         final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        if (backNode == null) {
-            instructions.insert(load0);
-        } else {
-            instructions.insert(backNode, load0);
-        }
+        Util.insertOrAdd(instructions, backNode, load0);
 
         instructions.insert(instruction, replacementInstruction);
         instructions.remove(instruction);

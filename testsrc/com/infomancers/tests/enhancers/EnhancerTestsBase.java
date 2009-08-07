@@ -44,6 +44,13 @@ public class EnhancerTestsBase {
         owner.name = "owner";
     }
 
+    public static void printList(String title, InsnList list) {
+        TraceMethodVisitor tracer = new TraceMethodVisitor();
+        System.out.println("--- " + title + " ---");
+        list.accept(tracer);
+        System.out.println(tracer.text);
+    }
+
     public static void compareLists(InsnList expected, InsnList actual) {
         try {
             AbstractInsnNode expectedNode, originalNode;
@@ -62,16 +69,8 @@ public class EnhancerTestsBase {
 
             Assert.assertNull("Lists with different lengths", expectedNode);
         } catch (AssertionError e) {
-            TraceMethodVisitor tracer = new TraceMethodVisitor();
-            System.out.println("--- Expected ---");
-            expected.accept(tracer);
-            System.out.println(tracer.getText());
-            tracer.text.clear();
-
-            System.out.println("--- Actual --- ");
-            actual.accept(tracer);
-            System.out.println(tracer.text);
-            tracer.text.clear();
+            printList("Expected", expected);
+            printList("Actual", actual);
 
             throw e;
         }
@@ -93,6 +92,7 @@ public class EnhancerTestsBase {
     }
 
     public static void compareNodes(AbstractInsnNode expectedNode, AbstractInsnNode actualNode) {
+        org.junit.Assert.assertEquals("type", expectedNode.getType(), actualNode.getType());
         org.junit.Assert.assertEquals("opcode", expectedNode.getOpcode(), actualNode.getOpcode());
 
         if (expectedNode instanceof VarInsnNode) {

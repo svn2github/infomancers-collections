@@ -2,11 +2,9 @@ package com.infomancers.collections.yield.asmtree.enhancers;
 
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.CodeStack;
+import com.infomancers.collections.yield.asmtree.Util;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.*;
 
 /**
  * Copyright (c) 2009, Aviad Ben Dov
@@ -40,17 +38,57 @@ import org.objectweb.asm.tree.TypeInsnNode;
 
 /**
  * Stack should be [..., array, index].
+ * <p/>
+ * Note: Special case for the BALOAD opcode, which might load from a [B or a [Z (boolean array)!
+ * <p/>
+ * in that case, the bytecode will be replaced to:
+ * <code>
+ * if (arr.getClass().getComponentType().equals(Byte.TYPE)) {
+ * CHECKCAST [B
+ * else
+ * CHECKCAST [Z
+ * <p/>
+ * BALOAD
+ * </code>
  */
 public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
     private static final String[] descs = "[I,[J,[F,[D,[Ljava/lang/Object;,[B,[C,[S".split(",");
 
     public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
-        AbstractInsnNode aload = CodeStack.backUntilStackSizedAt(instruction, 0, false);
-        TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
+        if (instruction.getOpcode() == Opcodes.BALOAD) {
+            LabelNode l1 = new LabelNode();
+            LabelNode l2 = new LabelNode();
 
-        instructions.insert(aload, checkcast);
+            final AbstractInsnNode ret;
 
-        return instruction;
+            InsnList testAndCast = com.infomancers.collections.yield.asmtree.Util.createList(
+                    ret = new InsnNode(Opcodes.DUP_X1),   // stack: [..., index, array, index]
+                    new InsnNode(Opcodes.POP),      // stack: [..., index, array]
+                    new InsnNode(Opcodes.DUP_X1),   // stack: [..., array, index, array]
+                    new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;"),
+                    new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "getComponentType", "()Ljava/lang/Class;"),
+                    new MethodInsnNode(Opcodes.GETSTATIC, "java/lang/Byte", "TYPE", "Ljava/lang/Class;"),
+                    new JumpInsnNode(Opcodes.IF_ACMPNE, l1),
+                    new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getByte", "(Ljava/lang/Object;I)B"),
+                    new JumpInsnNode(Opcodes.GOTO, l2),
+                    l1,
+                    new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getBoolean", "(Ljava/lang/Object;I)Z"),
+                    l2
+            );
+
+            Util.insertOrAdd(instructions, instruction, testAndCast);
+            instructions.remove(instruction);
+
+            return ret;
+        } else {
+            AbstractInsnNode prev = CodeStack.backUntilStackSizedAt(instruction, 1, false);
+
+            TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
+
+            Util.insertOrAdd(instructions, prev, checkcast);
+
+            return instruction;
+        }
     }
 
     public boolean shouldEnhance(AbstractInsnNode node) {

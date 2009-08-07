@@ -69,11 +69,7 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
         AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, false);
 
         final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
-        if (backNode == null) {
-            instructions.insert(load0);
-        } else {
-            instructions.insert(backNode, load0);
-        }
+        com.infomancers.collections.yield.asmtree.Util.insertOrAdd(instructions, backNode, load0);
 
         instructions.insert(instruction, replacementInstruction);
         instructions.remove(instruction);
@@ -93,7 +89,7 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
             final MethodInsnNode unboxInvocation = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, wrappers[offset], unboxMethods[offset], "()" + sigTypes.charAt(offset));
             instructions.insert(checkcast, unboxInvocation);
 
-            return unboxInvocation;
+            return replacementInstruction;
         } else {
             return replacementInstruction;
         }

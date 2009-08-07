@@ -3,6 +3,7 @@ package com.infomancers.tests.enhancers;
 import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asm.TypeDescriptor;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
+import com.infomancers.collections.yield.asmtree.Util;
 import com.infomancers.collections.yield.asmtree.enhancers.EnhancersFactory;
 import com.infomancers.tests.TestYIC;
 import org.junit.Test;
@@ -73,9 +74,58 @@ public final class EnhancerIntegrationTests extends EnhancerTestsBase {
                 new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slots[2].getName(), slots[2].getDesc())
         );
 
-        for (AbstractInsnNode node : nodes) {
-            EnhancersFactory.instnace().createEnhancer(node).enhance(owner, actual, info, node);
-        }
+        Util.enhanceLines(info, owner, actual, EnhancersFactory.instnace());
+
+        compareLists(expected, actual);
+    }
+
+    @Test
+    public void getFromArrayMember_indexIsMember_storeToMember_booleanArray() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object),
+                new NewMember(2, TypeDescriptor.Integer),
+                new NewMember(3, TypeDescriptor.Boolean)
+        );
+
+        NewMember[] slots = {
+                info.getSlot(1), info.getSlot(2), info.getSlot(3)
+        };
+
+        AbstractInsnNode[] nodes = new AbstractInsnNode[]{
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new VarInsnNode(Opcodes.ILOAD, 2),
+                new InsnNode(Opcodes.BALOAD),
+                new VarInsnNode(Opcodes.ISTORE, 3)
+        };
+
+        InsnList actual = createList(nodes);
+
+        LabelNode l1 = new LabelNode(), l2 = new LabelNode();
+
+        InsnList expected = createList(
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slots[0].getName(), slots[0].getDesc()),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slots[1].getName(), slots[1].getDesc()),
+                new InsnNode(Opcodes.DUP_X1),   // stack: [..., index, array, index]
+                new InsnNode(Opcodes.POP),      // stack: [..., index, array]
+                new InsnNode(Opcodes.DUP_X1),   // stack: [..., array, index, array]
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;"),
+                new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "getComponentType", "()Ljava/lang/Class;"),
+                new MethodInsnNode(Opcodes.GETSTATIC, "java/lang/Byte", "TYPE", "Ljava/lang/Class;"),
+                new JumpInsnNode(Opcodes.IF_ACMPNE, l1),
+                new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getByte", "(Ljava/lang/Object;I)B"),
+                new JumpInsnNode(Opcodes.GOTO, l2),
+                l1,
+                new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getBoolean", "(Ljava/lang/Object;I)Z"),
+                l2,
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slots[2].getName(), slots[2].getDesc())
+        );
+
+        printList("Origin", actual);
+
+        Util.enhanceLines(info, owner, actual, EnhancersFactory.instnace());
 
         compareLists(expected, actual);
     }

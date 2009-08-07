@@ -2,7 +2,6 @@ package com.infomancers.collections.yield.asmtree;
 
 import com.infomancers.collections.yield.asm.NewMember;
 import com.infomancers.collections.yield.asmbase.AbstractYielderTransformer;
-import com.infomancers.collections.yield.asmbase.Util;
 import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import com.infomancers.collections.yield.asmtree.enhancers.EnhancersFactory;
 import org.objectweb.asm.ClassReader;
@@ -75,21 +74,7 @@ public final class TreeYielderTransformer extends AbstractYielderTransformer {
                 }
             }
         }
-
-        // enhance lines as required
-        for (AbstractInsnNode instruction = method.instructions.getFirst();
-             instruction != null;
-             instruction = instruction.getNext()) {
-
-            if (instruction.getType() == AbstractInsnNode.FRAME) {
-                instruction = instruction.getPrevious();
-                method.instructions.remove(instruction.getNext());
-                continue;
-            }
-
-            InsnEnhancer enhancer = factory.createEnhancer(instruction);
-            instruction = enhancer.enhance(node, method.instructions, info, instruction);
-        }
+        Util.enhanceLines(info, node, method.instructions, factory);
 
         // create the state-switcher at the beginning of the method
         LabelNode dflt = getFirstLabel(method);
@@ -114,6 +99,7 @@ public final class TreeYielderTransformer extends AbstractYielderTransformer {
 
         return writer.toByteArray();
     }
+
 
     private MethodNode findMethod(ClassNode clz) {
         for (Object m : clz.methods) {
