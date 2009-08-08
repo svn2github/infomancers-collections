@@ -67,7 +67,7 @@ public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
                     new InsnNode(Opcodes.DUP_X1),   // stack: [..., array, index, array]
                     new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;"),
                     new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/Class", "getComponentType", "()Ljava/lang/Class;"),
-                    new MethodInsnNode(Opcodes.GETSTATIC, "java/lang/Byte", "TYPE", "Ljava/lang/Class;"),
+                    new FieldInsnNode(Opcodes.GETSTATIC, "java/lang/Byte", "TYPE", "Ljava/lang/Class;"),
                     new JumpInsnNode(Opcodes.IF_ACMPNE, l1),
                     new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getByte", "(Ljava/lang/Object;I)B"),
                     new JumpInsnNode(Opcodes.GOTO, l2),
@@ -81,7 +81,7 @@ public final class ArrayLoadEnhancer implements PredicatedInsnEnhancer {
 
             return ret;
         } else {
-            AbstractInsnNode prev = CodeStack.backUntilStackSizedAt(instruction, 0, true);
+            AbstractInsnNode prev = CodeStack.backUntilStackSizedAt(instruction, 0, false);
 
             TypeInsnNode checkcast = new TypeInsnNode(Opcodes.CHECKCAST, descs[instruction.getOpcode() - Opcodes.IALOAD]);
 

@@ -95,7 +95,7 @@ public abstract class AbstractYielderTransformer implements ClassFileTransformer
 
     private void check(byte[] bytes) {
         if (debug) {
-            CheckClassAdapter.verify(new ClassReader(bytes), false, new PrintWriter(System.out));
+            CheckClassAdapter.verify(new ClassReader(bytes), true, new PrintWriter(System.out));
         }
     }
 

@@ -40,7 +40,7 @@ public class YieldBreakEnhancer implements PredicatedInsnEnhancer {
         AbstractInsnNode ret = new InsnNode(Opcodes.RETURN);
         instructions.insert(instruction, ret);
 
-        return ret;
+        return instruction;
     }
 
     public boolean shouldEnhance(AbstractInsnNode node) {
