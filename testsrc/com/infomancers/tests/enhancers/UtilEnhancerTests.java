@@ -56,7 +56,7 @@ public class UtilEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArraylengthEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }

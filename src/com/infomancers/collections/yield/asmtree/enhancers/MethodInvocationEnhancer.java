@@ -5,6 +5,8 @@ import com.infomancers.collections.yield.asmtree.CodeStack;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.List;
+
 /**
  * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
@@ -36,12 +38,12 @@ import org.objectweb.asm.tree.*;
  */
 
 public class MethodInvocationEnhancer implements PredicatedInsnEnhancer {
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         MethodInsnNode method = (MethodInsnNode) instruction;
 
         int targetStack = method.desc.endsWith("V") ? -1 : 0;
 
-        AbstractInsnNode load = CodeStack.backUntilStackSizedAt(instruction, targetStack, false);
+        AbstractInsnNode load = CodeStack.backUntilStackSizedAt(instruction, targetStack, false, limits);
         instructions.insert(load, new TypeInsnNode(Opcodes.CHECKCAST, method.owner));
 
         return instruction;

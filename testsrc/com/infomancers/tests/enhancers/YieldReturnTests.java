@@ -61,7 +61,7 @@ public class YieldReturnTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new YieldReturnEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -90,7 +90,7 @@ public class YieldReturnTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new YieldReturnEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }

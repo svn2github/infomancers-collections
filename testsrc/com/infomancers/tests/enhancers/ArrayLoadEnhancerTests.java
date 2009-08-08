@@ -93,7 +93,7 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArrayLoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -121,7 +121,7 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArrayLoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -153,8 +153,8 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArrayLoadEnhancer();
 
-        enhancer.enhance(owner, actual, info, load1);
-        enhancer.enhance(owner, actual, info, load2);
+        enhancer.enhance(owner, actual, null, info, load1);
+        enhancer.enhance(owner, actual, null, info, load2);
 
         compareLists(expected, actual);
     }
@@ -195,8 +195,8 @@ public class ArrayLoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArrayLoadEnhancer();
 
-        enhancer.enhance(owner, actual, info, load1);
-        enhancer.enhance(owner, actual, info, load2);
+        enhancer.enhance(owner, actual, null, info, load1);
+        enhancer.enhance(owner, actual, null, info, load2);
 
         compareLists(expected, actual);
     }

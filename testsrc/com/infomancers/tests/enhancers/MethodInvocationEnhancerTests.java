@@ -59,7 +59,7 @@ public class MethodInvocationEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new MethodInvocationEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -83,7 +83,7 @@ public class MethodInvocationEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new MethodInvocationEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -108,7 +108,7 @@ public class MethodInvocationEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new MethodInvocationEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -135,7 +135,7 @@ public class MethodInvocationEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new MethodInvocationEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }

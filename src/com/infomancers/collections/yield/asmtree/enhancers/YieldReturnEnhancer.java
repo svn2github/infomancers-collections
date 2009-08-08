@@ -5,6 +5,8 @@ import com.infomancers.collections.yield.asmtree.Util;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.List;
+
 /**
  * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
@@ -46,7 +48,7 @@ public final class YieldReturnEnhancer implements PredicatedInsnEnhancer {
         }
     }
 
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         final int state = info.takeState();
 
         assert state > 0;

@@ -57,7 +57,7 @@ public class YieldBreakTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new YieldBreakEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }

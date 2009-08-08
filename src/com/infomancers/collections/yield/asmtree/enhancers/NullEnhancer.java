@@ -6,6 +6,8 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 
+import java.util.List;
+
 /**
  * Copyright (c) 2007, Aviad Ben Dov
  * <p/>
@@ -37,7 +39,7 @@ import org.objectweb.asm.tree.InsnList;
  */
 
 public final class NullEnhancer implements InsnEnhancer {
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         return instruction;
     }
 }

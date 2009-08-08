@@ -8,6 +8,8 @@ import com.infomancers.collections.yield.asmtree.Util;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.List;
+
 /**
  * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
@@ -60,7 +62,7 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
         return node.getOpcode() >= Opcodes.ILOAD && node.getOpcode() <= Opcodes.ALOAD && ((VarInsnNode) node).var != 0;
     }
 
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         final VarInsnNode varInstruction = (VarInsnNode) instruction;
 
         final NewMember member = info.getSlot(varInstruction.var);
@@ -68,7 +70,7 @@ public final class LoadEnhancer implements PredicatedInsnEnhancer {
         final VarInsnNode load0;
         final FieldInsnNode replacementInstruction;
 
-        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, false);
+        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 1, false, limits);
 
         InsnList list = Util.createList(
                 load0 = new VarInsnNode(Opcodes.ALOAD, 0),

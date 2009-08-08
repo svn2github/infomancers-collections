@@ -5,6 +5,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,19 +138,24 @@ public final class CodeStack {
 
     }
 
-    public static AbstractInsnNode backUntilStackSizedAt(AbstractInsnNode start, final int requiredSize, final boolean followNoStackChangers) {
+    public static AbstractInsnNode backUntilStackSizedAt(AbstractInsnNode start, final int requiredSize, final boolean followNoStackChangers, final List<AbstractInsnNode> limits) {
         int stackSize = 0;
         AbstractInsnNode backNode = start;
         do {
             stackSize += getChange(backNode);
             backNode = backNode.getPrevious();
-        } while (backNode != null && !isJump(backNode) && stackSize != requiredSize);
+        } while (backNode != null && !isJump(backNode) && !limits.contains(backNode) && stackSize != requiredSize);
 
         // continue if there are no-stack-changers before this command
         if (followNoStackChangers) {
-            while (backNode != null && !isJump(backNode) && getChange(backNode) == 0) {
+            while (backNode != null && !isJump(backNode) && !limits.contains(backNode) && getChange(backNode) == 0) {
                 backNode = backNode.getPrevious();
             }
+        }
+
+        // don't create a situation where the new opcode is right before a label; this would probably be a mistake.
+        while (backNode != null && backNode.getNext().getType() == AbstractInsnNode.LABEL) {
+            backNode = backNode.getNext();
         }
 
         return backNode;

@@ -65,7 +65,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new StoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -92,7 +92,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new StoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -119,7 +119,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new StoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -146,7 +146,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new StoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -173,7 +173,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new StoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -206,7 +206,7 @@ public class StoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new StoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }

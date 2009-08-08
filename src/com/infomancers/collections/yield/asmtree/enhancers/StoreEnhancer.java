@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Copyright (c) 2007, Aviad Ben Dov
@@ -53,14 +54,14 @@ public final class StoreEnhancer implements PredicatedInsnEnhancer {
 
     private static MessageFormat valueOfSignatureFormat = new MessageFormat("({0})L{1};");
 
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         final VarInsnNode varInstruction = (VarInsnNode) instruction;
 
         final NewMember member = info.getSlot(varInstruction.var);
         FieldInsnNode replacementInstruction = new FieldInsnNode(Opcodes.PUTFIELD, clz.name,
                 member.getName(), member.getDesc());
 
-        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 0, true);
+        AbstractInsnNode backNode = CodeStack.backUntilStackSizedAt(instruction, 0, true, limits);
 
         final VarInsnNode load0 = new VarInsnNode(Opcodes.ALOAD, 0);
         Util.insertOrAdd(instructions, backNode, load0);

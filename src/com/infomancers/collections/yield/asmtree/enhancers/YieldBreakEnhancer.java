@@ -5,6 +5,8 @@ import com.infomancers.collections.yield.asmbase.YielderInformationContainer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.List;
+
 /**
  * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
@@ -36,7 +38,7 @@ import org.objectweb.asm.tree.*;
  */
 
 public class YieldBreakEnhancer implements PredicatedInsnEnhancer {
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         AbstractInsnNode ret = new InsnNode(Opcodes.RETURN);
         instructions.insert(instruction, ret);
 

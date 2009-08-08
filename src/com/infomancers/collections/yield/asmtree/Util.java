@@ -6,6 +6,11 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.TryCatchBlockNode;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Copyright (c) 2009, Aviad Ben Dov
@@ -38,7 +43,8 @@ import org.objectweb.asm.tree.InsnList;
  */
 
 public final class Util {
-    public static void enhanceLines(YielderInformationContainer info, ClassNode node, InsnList instructions, EnhancersFactory factory) {
+    public static void enhanceLines(YielderInformationContainer info, ClassNode node, InsnList instructions,
+                                    List<TryCatchBlockNode> tryCatchBlocks, EnhancersFactory factory) {
         // enhance lines as required
         for (AbstractInsnNode instruction = instructions.getLast();
              instruction != null;
@@ -51,8 +57,20 @@ public final class Util {
             }
 
             InsnEnhancer enhancer = factory.createEnhancer(instruction);
-            instruction = enhancer.enhance(node, instructions, info, instruction);
+            instruction = enhancer.enhance(node, instructions, getLimits(tryCatchBlocks), info, instruction);
         }
+    }
+
+    private static List<AbstractInsnNode> getLimits(List<TryCatchBlockNode> tryCatchBlocks) {
+        if (tryCatchBlocks == null || tryCatchBlocks.size() == 0) return Collections.emptyList();
+
+        List<AbstractInsnNode> result = new LinkedList<AbstractInsnNode>();
+
+        for (TryCatchBlockNode tryCatchBlock : tryCatchBlocks) {
+            result.add(tryCatchBlock.handler);
+        }
+
+        return result;
     }
 
     public static boolean isYieldNextCoreMethod(String name, String desc) {

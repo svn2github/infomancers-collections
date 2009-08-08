@@ -7,6 +7,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 
+import java.util.List;
+
 /**
  * Copyright (c) 2009, Aviad Ben Dov
  * <p/>
@@ -38,7 +40,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
  */
 
 public final class ArraylengthEnhancer implements PredicatedInsnEnhancer {
-    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, YielderInformationContainer info, AbstractInsnNode instruction) {
+    public AbstractInsnNode enhance(ClassNode clz, InsnList instructions, List<AbstractInsnNode> limits, YielderInformationContainer info, AbstractInsnNode instruction) {
         MethodInsnNode getlength = new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/reflect/Array", "getLength", "(Ljava/lang/Object;)I");
 
         instructions.insert(instruction, getlength);

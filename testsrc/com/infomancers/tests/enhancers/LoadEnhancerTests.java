@@ -42,6 +42,7 @@ import org.objectweb.asm.tree.*;
  */
 
 public class LoadEnhancerTests extends EnhancerTestsBase {
+
     @Test
     public void iload2() {
         YielderInformationContainer info = new TestYIC(1,
@@ -59,7 +60,7 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -85,7 +86,7 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -111,7 +112,7 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -137,7 +138,7 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -163,7 +164,7 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, actual, info, insn);
+        enhancer.enhance(owner, actual, null, info, insn);
 
         compareLists(expected, actual);
     }
@@ -189,8 +190,8 @@ public class LoadEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new LoadEnhancer();
 
-        enhancer.enhance(owner, actual, info, load1);
-        enhancer.enhance(owner, actual, info, load2);
+        enhancer.enhance(owner, actual, null, info, load1);
+        enhancer.enhance(owner, actual, null, info, load2);
 
         compareLists(expected, actual);
 

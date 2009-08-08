@@ -74,7 +74,7 @@ public final class TreeYielderTransformer extends AbstractYielderTransformer {
                 }
             }
         }
-        Util.enhanceLines(info, node, method.instructions, factory);
+        Util.enhanceLines(info, node, method.instructions, method.tryCatchBlocks, factory);
 
         // create the state-switcher at the beginning of the method
         LabelNode dflt = getFirstLabel(method);

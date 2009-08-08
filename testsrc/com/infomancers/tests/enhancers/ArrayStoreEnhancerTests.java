@@ -91,7 +91,7 @@ public class ArrayStoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArrayStoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
@@ -121,7 +121,7 @@ public class ArrayStoreEnhancerTests extends EnhancerTestsBase {
 
         InsnEnhancer enhancer = new ArrayStoreEnhancer();
 
-        enhancer.enhance(owner, original, info, insn);
+        enhancer.enhance(owner, original, null, info, insn);
 
         compareLists(expected, original);
     }
