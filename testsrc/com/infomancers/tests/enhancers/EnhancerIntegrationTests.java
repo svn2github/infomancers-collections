@@ -99,6 +99,68 @@ public final class EnhancerIntegrationTests extends EnhancerTestsBase {
     }
 
     @Test
+    public void getFromArrayMember_indexIsMember_storeToMember_intArray_afterJump() {
+        YielderInformationContainer info = new TestYIC(1,
+                new NewMember(1, TypeDescriptor.Object),
+                new NewMember(2, TypeDescriptor.Integer),
+                new NewMember(3, TypeDescriptor.Integer)
+        );
+
+        NewMember[] slots = {
+                info.getSlot(1), info.getSlot(2), info.getSlot(3)
+        };
+
+        LabelNode l1 = new LabelNode();
+
+        AbstractInsnNode[] nodes = new AbstractInsnNode[]{
+                new JumpInsnNode(Opcodes.GOTO, l1),
+                new VarInsnNode(Opcodes.ALOAD, 1),
+                new VarInsnNode(Opcodes.ILOAD, 2),
+                new InsnNode(Opcodes.IALOAD),
+                new VarInsnNode(Opcodes.ISTORE, 3),
+                l1
+        };
+
+        InsnList actual = createList(nodes);
+
+        LabelNode l2 = new LabelNode();
+        InsnList expected = createList(
+                new JumpInsnNode(Opcodes.GOTO, l2),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slots[0].getName(), slots[0].getDesc()),
+                new TypeInsnNode(Opcodes.CHECKCAST, "[I"),
+                new VarInsnNode(Opcodes.ALOAD, 0),
+                new FieldInsnNode(Opcodes.GETFIELD, owner.name, slots[1].getName(), slots[1].getDesc()),
+                new InsnNode(Opcodes.IALOAD),
+                new FieldInsnNode(Opcodes.PUTFIELD, owner.name, slots[2].getName(), slots[2].getDesc()),
+                l2
+        );
+
+        printList("Origin", actual);
+
+        int i = 1;
+        // enhance lines as required
+        for (AbstractInsnNode instruction = actual.getLast();
+             instruction != null;
+             instruction = instruction.getPrevious()) {
+
+            if (instruction.getType() == AbstractInsnNode.FRAME) {
+                instruction = instruction.getPrevious();
+                actual.remove(instruction.getNext());
+                continue;
+            }
+
+            InsnEnhancer enhancer = EnhancersFactory.instnace().createEnhancer(instruction);
+            instruction = enhancer.enhance(owner, actual, info, instruction);
+
+            printList("" + i++, actual);
+        }
+
+        compareLists(expected, actual);
+    }
+
+    @Test
     public void getFromArrayMember_indexIsMember_storeToMember_booleanArray() {
         YielderInformationContainer info = new TestYIC(1,
                 new NewMember(1, TypeDescriptor.Object),

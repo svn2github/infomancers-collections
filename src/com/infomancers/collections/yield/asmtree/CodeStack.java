@@ -143,11 +143,11 @@ public final class CodeStack {
         do {
             stackSize += getChange(backNode);
             backNode = backNode.getPrevious();
-        } while (backNode != null && !isJump(backNode.getPrevious()) && stackSize != requiredSize);
+        } while (backNode != null && !isJump(backNode) && stackSize != requiredSize);
 
         // continue if there are no-stack-changers before this command
         if (followNoStackChangers) {
-            while (backNode != null && !isJump(backNode.getPrevious()) && getChange(backNode) == 0) {
+            while (backNode != null && !isJump(backNode) && getChange(backNode) == 0) {
                 backNode = backNode.getPrevious();
             }
         }
